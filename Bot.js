@@ -1,6 +1,8 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 import configJson from './config.json' with {type: 'json'}
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+import fs from 'fs'
+import path from 'path';
 
 const token = configJson.token
 
@@ -14,6 +16,70 @@ client.on('interactionCreate', async interaction => {
   if (interaction.commandName === 'ping') {
     await interaction.reply('Pong!');
   }
+
+  if (interaction.commandName === 'add_to_showcase') {
+    await interaction.reply('Working')
+    const creator = interaction.options.get('creator')
+    const title = interaction.options.get('title')
+    const image = interaction.options.get('image')
+
+
+    if(image.filename === `png`){//Download only png (customize this)
+        download(image.url, `${title}+${creator}`)}
+
+    const newEntry = {
+        creator: creator.value,
+        imgSRC: 'placeholder',
+        creationName: title.value,
+        dateAdded: Date.now()
+    };
+
+    //console.log('tESTYDJKFL')
+
+    addEntry(newEntry)
+  }
 });
+
+
+function addEntry(newEntry) {
+
+
+    const filePath = path.join('public_html', 'creations.json'); 
+
+
+
+    fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading file:', err);
+            return;
+        }
+
+        // Parse the JSON data
+        let jsonArray;
+        try {
+            jsonArray = JSON.parse(data);
+        } catch (parseError) {
+            console.error('Error parsing JSON:', parseError);
+            return;
+        }
+
+        jsonArray.push(newEntry);
+
+        fs.writeFile(filePath, JSON.stringify(jsonArray, null, 2), 'utf8', (writeErr) => {
+            if (writeErr) {
+                console.error('Error writing file:', writeErr);
+                return;
+            }
+            console.log('Successfully added new entry and updated the file.');
+        });
+    });
+}
+
+
+function download(url, name){
+    request.get(url)
+        .on('error', console.error)
+        .pipe(fs.createWriteStream(name + '.png'));
+}
 
 client.login(token);

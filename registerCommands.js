@@ -1,5 +1,6 @@
-import { REST, Routes } from 'discord.js';
+import { REST, Routes, ApplicationCommandOptionType } from 'discord.js';
 import configjson from './config.json' with {type: 'json'}
+import { type } from 'os';
 
 const token = configjson.token
 const clientID = configjson.clientID
@@ -10,8 +11,27 @@ const commands = [
     description: 'Replies with Pong!',
   },
   {
-    name: 'addToShowcase',
-    description: 'Upload Items to the Showcase of the website'
+    name: 'add_to_showcase',
+    description: 'Upload Items to the Showcase of the website',
+    options: [
+        {
+            name: 'creator',
+            description: 'User who posted the posty post.',
+            type: ApplicationCommandOptionType.String,
+            require: true
+        },
+        {
+            name: 'title',
+            description: 'The title of the showcase',
+            type: ApplicationCommandOptionType.String,
+            require: true
+        },
+        {
+            name: 'image',
+            description: 'The image to upload',
+            type: ApplicationCommandOptionType.Attachment
+        }
+    ]
   },
 ];
 
