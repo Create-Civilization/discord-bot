@@ -22,26 +22,18 @@ client.on('interactionCreate', async interaction => {
     const creator = interaction.options.get('creator')
     const title = interaction.options.get('title')
     const image = interaction.options.get('image')
-
     if (!image) {
         await interaction.followUp('No image was provided.');
         return;
     }
-
     downloadImage(image.attachment.url, './public_html/creationIMGs', `${title.value}.png`);
-
-    
-
-
     console.log(image.attachment.url)
-
     const newEntry = {
         creator: creator.value,
         imgSRC: `creationIMGs\\${title.value}.png`,
         creationName: title.value,
-        dateAdded: Date.now()
+        dateAdded: Math.floor(Date.now() / 1000),
     };
-
     addEntry(newEntry)
     await interaction.reply('Successfully added new entry and updated the file.');
     await interaction.followUp('Saved as ' + title.value + '.png in public_html/creationIMGs');
