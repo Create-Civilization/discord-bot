@@ -19,6 +19,13 @@ client.on('interactionCreate', async interaction => {
   }
 
   if (interaction.commandName === 'add_to_showcase') {
+    const member = await interaction.guild.members.fetch(interaction.user.id);
+    const requiredRoleId = '1279890889447051359';
+    if (!member.roles.cache.has(requiredRoleId)) {
+        await interaction.reply({content: 'You must have the required role to use this command.', ephemeral: true})
+        return;
+      }
+
     const creator = interaction.options.get('creator')
     const title = interaction.options.get('title')
     const image = interaction.options.get('image')
