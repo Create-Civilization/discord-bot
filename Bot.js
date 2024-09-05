@@ -1,5 +1,6 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 import configJson from './config.json' with {type: 'json'}
+import axios from 'axios';
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 import fs from 'fs'
 import path from 'path';
@@ -18,43 +19,44 @@ client.on('interactionCreate', async interaction => {
   }
 
   if (interaction.commandName === 'add_to_showcase') {
-    await interaction.reply('Working')
     const creator = interaction.options.get('creator')
     const title = interaction.options.get('title')
     const image = interaction.options.get('image')
 
+    if (!image) {
+        await interaction.followUp('No image was provided.');
+        return;
+    }
 
-    if(image.filename === `png`){//Download only png (customize this)
-        download(image.url, `${title}+${creator}`)}
+    downloadImage(image.attachment.url, './public_html/creationIMGs', `${title.value}.png`);
+
+    
+
+
+    console.log(image.attachment.url)
 
     const newEntry = {
         creator: creator.value,
-        imgSRC: 'placeholder',
+        imgSRC: `creationIMGs\\${title.value}.png`,
         creationName: title.value,
         dateAdded: Date.now()
     };
 
-    //console.log('tESTYDJKFL')
-
     addEntry(newEntry)
+    await interaction.reply('Successfully added new entry and updated the file.');
+    await interaction.followUp('Saved as ' + title.value + '.png in public_html/creationIMGs');
   }
 });
 
 
 function addEntry(newEntry) {
-
-
     const filePath = path.join('public_html', 'creations.json'); 
-
-
 
     fs.readFile(filePath, 'utf8', (err, data) => {
         if (err) {
             console.error('Error reading file:', err);
             return;
         }
-
-        // Parse the JSON data
         let jsonArray;
         try {
             jsonArray = JSON.parse(data);
@@ -74,12 +76,41 @@ function addEntry(newEntry) {
         });
     });
 }
-
-
-function download(url, name){
-    request.get(url)
-        .on('error', console.error)
-        .pipe(fs.createWriteStream(name + '.png'));
+function downloadImage(imageUrl, saveDir, fileName) {
+    // Create the directory if it doesn't exist
+    if (!fs.existsSync(saveDir)) {
+      fs.mkdirSync(saveDir, { recursive: true });
+    }
+  
+    // Download the image
+    axios({
+      url: imageUrl,
+      method: 'GET',
+      responseType: 'stream',
+    })
+      .then((response) => {
+        // Define the full path for the saved image
+        const filePath = path.join(saveDir, fileName);
+  
+        // Save the image to the specified directory
+        response.data.pipe(fs.createWriteStream(filePath));
+  
+        // Log when the download is complete
+        response.data.on('end', () => {
+          console.log(`Image saved to ${filePath}`);
+        });
+  
+        // Handle any errors during the save process
+        response.data.on('error', (err) => {
+          console.error('Error saving the image:', err);
+        });
+      })
+      .catch((error) => {
+        console.error('Error downloading the image:', error);
+      });
 }
+
+
+
 
 client.login(token);
