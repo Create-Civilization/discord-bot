@@ -11,6 +11,25 @@ const commands = [
     description: 'Replies with Pong!',
   },
   {
+    name: 'kick',
+    description : 'kicks user',
+    options: [
+      {
+        name: 'username',
+        description: 'username of user you wish to kick',
+        type: ApplicationCommandOptionType.User,
+        require: true
+      },
+      {
+        name: 'reason_for_kick',
+        description: 'explain why this user was kicked (sent to user)',
+        type: ApplicationCommandOptionType.String,
+        require: false
+      }
+
+    ]
+  },
+  {
     name: 'add_to_showcase',
     description: 'Upload Items to the Showcase of the website',
     options: [

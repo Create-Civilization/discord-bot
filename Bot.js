@@ -2,8 +2,10 @@ import { Client, GatewayIntentBits } from 'discord.js';
 import configJson from './config.json' with {type: 'json'}
 import axios from 'axios';
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-import fs from 'fs'
+import fs from 'fs';
 import path from 'path';
+import kickCommand from './commands/kick.js';
+
 
 const token = configJson.token
 
@@ -16,6 +18,11 @@ client.on('interactionCreate', async interaction => {
 
   if (interaction.commandName === 'ping') {
     await interaction.reply('Pong!');
+  }
+
+  if (interaction.commandName === 'kick'){
+    kickCommand(Client,interaction);
+
   }
 
   if (interaction.commandName === 'add_to_showcase') {
