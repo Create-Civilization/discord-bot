@@ -11,24 +11,51 @@ const commands = [
     description: 'Replies with Pong!',
   },
   {
-    name: 'kick',
-    description : 'kicks user',
-    options: [
+  name:"kick",
+  aliases: [],
+  description: "Kick someone",
+  usage: "kick <member here>",
+  options: [
       {
-        name: 'username',
-        description: 'username of user you wish to kick',
-        type: ApplicationCommandOptionType.User,
-        require: true
+          name: 'username',
+          description: 'username of user you wish to kick',
+          type: ApplicationCommandOptionType.User,
+          required: true
+        },
+        {
+          name: 'reason_for_kick',
+          description: 'explain why this user was kicked (sent to user)',
+          type: ApplicationCommandOptionType.String,
+          required: false
+        }]
       },
       {
-        name: 'reason_for_kick',
-        description: 'explain why this user was kicked (sent to user)',
-        type: ApplicationCommandOptionType.String,
-        require: false
-      }
-
-    ]
-  },
+        name: "ban",
+        aliases: [],
+        description: "Ban a server member",
+        usage: "ban a member",
+        options: [
+          {
+            name: 'username',
+            description: 'provide the name of the user you wish to ban',
+            type: ApplicationCommandOptionType.User,
+            required: true
+          },
+          {
+            name: 'reason_for_ban',
+            description: ' provide a reason for the banning of this user',
+            type: ApplicationCommandOptionType.String,
+            required: false
+          },
+          {
+            name: 'delete_message_days',
+            description: 'How many days back would you like to delete this users messages?',
+            type: ApplicationCommandOptionType.String,
+            required: false
+          }
+        ]
+      },
+    
   {
     name: 'add_to_showcase',
     description: 'Upload Items to the Showcase of the website',
@@ -37,31 +64,40 @@ const commands = [
             name: 'creator',
             description: 'User who posted the posty post.',
             type: ApplicationCommandOptionType.String,
-            require: true
+            required: true
         },
         {
             name: 'title',
             description: 'The title of the showcase',
             type: ApplicationCommandOptionType.String,
-            require: true
+            required: true
         },
         {
             name: 'image',
             description: 'The image to upload',
-            type: ApplicationCommandOptionType.Attachment
+            type: ApplicationCommandOptionType.Attachment,
+            required: false,
+
         }
     ]
   },
 ];
 
+
 const rest = new REST({ version: '10' }).setToken(token);
 
-try {
-  console.log('Started refreshing application (/) commands.');
+async function registerCommands() {
+  try {
+    console.log('Started refreshing application (/) commands.');
 
-  await rest.put(Routes.applicationCommands(clientID), { body: commands });
+    // Register the commands globally
+    await rest.put(Routes.applicationCommands(clientID), { body: commands });
 
-  console.log('Successfully reloaded application (/) commands.');
-} catch (error) {
-  console.error(error);
+    console.log('Successfully reloaded application (/) commands.');
+  } catch (error) {
+    console.error('Error reloading application commands:', error);
+  }
 }
+
+// Call the function to register commands
+registerCommands();
