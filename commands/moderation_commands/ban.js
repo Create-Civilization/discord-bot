@@ -78,6 +78,7 @@ export default {
                 content: `${memberToBan.user.tag} has been banned for: ${reason}.`, 
                 ephemeral: true 
             });
+            return;
         
         } catch (err){
             await interaction.reply({content:"something went wrong",ephemeral:true})
