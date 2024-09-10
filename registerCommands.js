@@ -85,7 +85,11 @@ const commands = [
     name: 'coinflip',
     description: 'flip a coin!',
     usage: 'coin flip'
-  }
+  },
+  {
+    name: 'edit_showcase',
+    description: 'Edit showcase entries',
+  },
 ];
 
 
