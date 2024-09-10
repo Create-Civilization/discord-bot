@@ -1,4 +1,4 @@
-import { PermissionsBitField, ApplicationCommandOptionType } from 'discord.js';
+import {PermissionsBitField} from 'discord.js';
 
 export default  {
     name:"kick",

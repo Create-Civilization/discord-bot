@@ -24,7 +24,7 @@ const commands = [
         },
         {
           name: 'reason_for_kick',
-          description: 'explain why this user was kicked (sent to user)',
+          description: 'explain why this user was kicked (this WILL be sent to user)',
           type: ApplicationCommandOptionType.String,
           required: false
         }]
@@ -43,13 +43,13 @@ const commands = [
           },
           {
             name: 'reason_for_ban',
-            description: ' provide a reason for the banning of this user',
+            description: ' provide a reason for the banning of this user (this WILL be sent to the user)',
             type: ApplicationCommandOptionType.String,
-            required: false
+            required: true
           },
           {
-            name: 'delete_message_days',
-            description: 'How many days back would you like to delete this users messages?',
+            name: 'delete_message_back',
+            description: 'How many far back would you like to delete this users messages?',
             type: ApplicationCommandOptionType.String,
             required: false
           }
@@ -81,6 +81,11 @@ const commands = [
         }
     ]
   },
+  {
+    name: 'coinflip',
+    description: 'flip a coin!',
+    usage: 'coin flip'
+  }
 ];
 
 
