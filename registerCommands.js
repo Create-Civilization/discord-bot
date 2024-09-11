@@ -7,7 +7,7 @@ const clientID = configjson.clientID
 
 const commands = [
   {
-    name: 'set_ticket_channel',
+    name: 'create_ticket_channel',
     description: 'sets channel for a ticket maker embed. CAN ONLY BE USED BY OWNER',
     options: [
       {
@@ -110,6 +110,8 @@ const rest = new REST({ version: '10' }).setToken(token);
 async function registerCommands() {
   try {
     console.log('Started refreshing application (/) commands.');
+
+    await rest.put(Routes.applicationCommands(clientID), { body: [] });
 
     // Register the commands globally
     await rest.put(Routes.applicationCommands(clientID), { body: commands });

@@ -1,7 +1,8 @@
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, } from 'discord.js';
 import { EmbedBuilder } from 'discord.js';
 
 export default {
-    name: 'set_ticket_channel',
+    name: 'create_ticket_channel',
      run: async(client, interaction) => {
         const requestingMember = await interaction.guild.members.fetch(interaction.user.id);
         const ticketChannel = await interaction.options.getChannel('channel_name');
@@ -14,6 +15,12 @@ export default {
             await interaction.reply({content:"This channel was not found",ephemeral:true});
             return;
         }
+        const ticket_Button = new ButtonBuilder()
+        .setCustomId("create_ticket")
+        .setLabel("Create Ticket")
+        .setStyle(ButtonStyle.Primary);
+        const theRow = new ActionRowBuilder().addComponents(ticket_Button)
+
         const ticketEmbed = new EmbedBuilder()
         .setColor('#6568BF')
         .setTitle("Ticket Creator")
@@ -24,7 +31,8 @@ export default {
             {name: 'Issues with the MC server', value:'If the server has completely crashed DO NOT MAKE A TICKET, just ping McArctic in general chat. Do not spam him tho, I promise that he will get to it as fast as possible'},
             {name:"Issues with another user", value:"Before making a ticket concerning the behavior of another player and/or faction please read through the rules and make sure they have broken a rule and please have proof at the ready. We handle issues like this on a case by case basis but in general if it happened in another private server it is out of our control. If you feel like the situation is a outlier and is not covered in our rules but needs addressing, please make go ahead and make a ticket and we will see what we can do for you :)"}
         );
-        await ticketChannel.send({ embeds: [ticketEmbed] });
-        await interaction.reply({ content: "Ticket message has been sent!", ephemeral: true });
+        await ticketChannel.send({ embeds: [ticketEmbed], components: [theRow], });
+        await interaction.reply({ content: "Ticket Channel created", ephemeral: true });
+        return;
      }
 }

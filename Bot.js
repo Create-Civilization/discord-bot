@@ -37,13 +37,48 @@ modules.forEach(async (module) => {
 
 // Command handling for slash commands (interaction)
 client.on('interactionCreate', async interaction => {
-  if (!interaction.isChatInputCommand()) return;
-
-  let command = client.commands.get(interaction.commandName);
-  if (!command) return;
-
-  command.run(client, interaction);
+  if(interaction.isChatInputCommand()){
+    let command = client.commands.get(interaction.commandName);
+    if (!command){return;}
+    try{
+      await command.run(client,interaction);
+      return;
+    } catch(err) {
+      console.error(`Error using ${interaction.commandName}`);
+			console.error(error);
+    }
+  }
+  if (interaction.isButton()){
+    const button_id = interaction.customId;
+    console.log('we got here at least')
+    fs.readdir('./commands/button_commands', async (err,files) =>{
+      if (err) {
+        throw new Error("Missing Folder Of Commands! Example: Commands/<Folder>/<Command>.js");
+      }
+      for (const file of files) {
+        if (!file.endsWith(".js")) continue;
+        
+        try {
+          const { default: buttonCommand } = await import(`./commands/button_commands/${file}`);          
+          if (buttonCommand.customId === button_id) {
+            await buttonCommand.run(client, interaction);
+            console.log(`${buttonCommand.customId} button interaction executed.`);
+            return;
+          }
+        } catch (err) {
+          console.error(`Failed to load button command ${file}:`, err);
+        }
+      }
+      
+      console.log("No matching button command found.");
+    });
+  }
 });
+
+
+
+
+
 
 
 
