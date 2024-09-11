@@ -9,14 +9,6 @@ const commands = [
   {
     name: 'create_ticket_channel',
     description: 'sets channel for a ticket maker embed. CAN ONLY BE USED BY OWNER',
-    options: [
-      {
-        name: 'channel_name',
-        description: 'channel to place ticket embed',
-        type: ApplicationCommandOptionType.Channel,
-        required: true
-      }
-    ]
   },
   {
     name: 'ping',
