@@ -119,7 +119,7 @@ export const restartServer = async (client) => {
 
 
         if (result.status === 'ok') {
-            client.channels.cache.get("1272992315069169704").send('VS CRASH DETECTED | RESTARTING SERVER');
+            client.channels.cache.get("1272992315069169704").send(':tada: VS CRASH DETECTED :tada: | :sparkles:  RESTARTING SERVER :sparkles:');
             console.log('Server restarted successfully!');
 
         } else {
