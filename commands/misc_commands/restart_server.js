@@ -10,7 +10,7 @@ export default {
         const member = interaction.guild.members.cache.get(interaction.user.id);
 
         // Check if the member has permission to restart the server
-        if (!member || !allowedRoleIds.some(roleId => member.roles.cache.has(roleId))) {
+        if (!member || !allowedRoleIds.some(roleId => member.roles.cache.has(roleId)) || interaction.guild.id == !'1268369952348442775') {
             return interaction.reply({
                 content: 'You do not have permission to restart the server!',
                 ephemeral: true
