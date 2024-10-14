@@ -24,6 +24,7 @@ export default  {
         try {
             memberToKick.kick({reason:reason});
             interaction.reply({ content: `${memberToKick.user.tag} has been kicked for: ${reason}.`,ephemeral: true });
+            return;
         } catch (error) {
             interaction.reply({content:'there was an error, please make sure this user is kickable',ephemeral:true});
             return;
