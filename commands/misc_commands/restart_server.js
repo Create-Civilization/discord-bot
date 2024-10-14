@@ -6,7 +6,7 @@ export default {
     name: 'restart_server',
     description: 'Restarts the Minecraft server using Crafty API',
     async run(client, interaction) {
-        const allowedRoleIds = ["842585669153849365"];
+        const allowedRoleIds = configJson.adminRolesIDS;  // Log the array  
         const member = interaction.guild.members.cache.get(interaction.user.id);
 
         // Check if the member has permission to restart the server
