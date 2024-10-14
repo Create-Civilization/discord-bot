@@ -1,6 +1,7 @@
-import { Client, Collection, GatewayIntentBits } from 'discord.js';
+import { Client, Collection, GatewayIntentBits} from 'discord.js';
 import configJson from './config.json' with { type: 'json' };
 import fs from 'fs';
+import { checkCrashTask, updateStatusTask } from './tasks.js';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 client.commands = new Collection();
@@ -9,10 +10,19 @@ const token = configJson.token;
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
+
+  setInterval(async () => {
+      await updateStatusTask(client);
+  }, 5000);
+
+  setInterval(async () => {
+    await checkCrashTask(client);
+}, 5 * 60 * 1000);
 });
 
 
-let modules = ["fun_commands", "moderation_commands"];
+
+let modules = ["fun_commands", "moderation_commands", "misc_commands"];
 
 modules.forEach(async (module) => {
   fs.readdir(`./commands/${module}`, async (err, files) => {

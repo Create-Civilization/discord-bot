@@ -90,6 +90,10 @@ const commands = [
     name: 'edit_showcase',
     description: 'Edit showcase entries',
   },
+  {
+    name: 'restart_server',
+    description: 'Restarts the Minecraft server using Crafty API',
+  }
 ];
 
 
