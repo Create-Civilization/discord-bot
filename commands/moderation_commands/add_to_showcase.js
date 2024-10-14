@@ -64,7 +64,7 @@ export default {
     name: "add_to_showcase",
     run: async (client,interaction) => {
         const requestingMember = await interaction.guild.members.fetch(interaction.user.id);
-        if (!requestingMember.permissions.has(PermissionsBitField.Flags.KickMembers)) {
+        if (!requestingMember.permissions.has(PermissionsBitField.Flags.KickMembers) || interaction.guild.id == !'1268369952348442775') {
             await interaction.reply({ content: 'You cannot use this command', ephemeral: true });
         return;}
         const creator = interaction.options.get('creator');
