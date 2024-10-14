@@ -94,7 +94,7 @@ export const fetchServerLogs = async (useFile = false, addColors = false, rawOut
 
 
 //Read da name
-export const restartServer = async (interaction) => {
+export const restartServer = async (client) => {
     const apiToken = configJson.craftyToken; 
     const serverId = configJson.serverID; 
     const apiUrl = `https://${configJson.serverIP}:${configJson.serverPort}/api/v2/servers/${serverId}/action/restart_server`; 
@@ -119,7 +119,9 @@ export const restartServer = async (interaction) => {
 
 
         if (result.status === 'ok') {
+            client.channels.cache.get("1272992315069169704").send('VS CRASH DETECTED | RESTARTING SERVER');
             console.log('Server restarted successfully!');
+
         } else {
             console.error('Failed to restart the server:', result);
         }
@@ -140,7 +142,7 @@ export const checkCrashTask = async (client) => {
             const warnings = serverLogs.filter(log => log.includes(warningMessage));
             if (warnings.length > 0) {
                 console.log('Warning found in server logs');
-                await restartServer(); 
+                await restartServer(client); 
                 return true; 
             } else {
                 console.log('No warnings found in server logs');
