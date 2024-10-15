@@ -97,6 +97,10 @@ const commands = [
   {
     name: 'restart_server',
     description: 'Restarts the Minecraft server using Crafty API',
+  },
+  {
+    name: 'stop_server',
+    description: 'Stops The Server Using Crafty API',
   }
 ];
 
