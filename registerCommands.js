@@ -1,15 +1,10 @@
 import { REST, Routes, ApplicationCommandOptionType } from 'discord.js';
 import configjson from './config.json' with {type: 'json'}
-import { type } from 'os';
 
 const token = configjson.token
 const clientID = configjson.clientID
 
 const commands = [
-  {
-    name: 'create_ticket_channel',
-    description: 'sets channel for a ticket maker embed. CAN ONLY BE USED BY OWNER',
-  },
   {
     name: 'ping',
     description: 'Replies with Pong!',
@@ -99,6 +94,29 @@ const commands = [
     description: 'Restarts the Minecraft server using Crafty API',
   },
   {
+    name: 'close',
+    description: 'Close current ticket',
+    options: [
+      {
+        name: 'reason',
+        description: 'The reason for closing the ticket',
+        type: ApplicationCommandOptionType.String,
+        required: true,
+      }
+    ]
+  },
+  {
+    name: 'reply',
+    description: 'Replay to current ticket',
+    options: [
+      {
+        name: 'message',
+        description: 'The reply to the ticket',
+        type: ApplicationCommandOptionType.String,
+        required: true,
+      }
+    ]
+  },
     name: 'stop_server',
     description: 'Stops The Server Using Crafty API',
   }
@@ -111,8 +129,6 @@ async function registerCommands() {
   try {
     console.log('Started refreshing application (/) commands.');
 
-    await rest.put(Routes.applicationCommands(clientID), { body: [] });
-
     // Register the commands globally
     await rest.put(Routes.applicationCommands(clientID), { body: commands });
 
@@ -124,3 +140,4 @@ async function registerCommands() {
 
 // Call the function to register commands
 registerCommands();
+console.log('Commands:', commands);
