@@ -2,10 +2,9 @@ import { Client, Collection, GatewayIntentBits, EmbedBuilder, Partials, Embed} f
 import configJson from './config.json' with { type: 'json' };
 import fs from 'fs';
 import { checkCrashTask, updateStatusTask } from './tasks.js';
-import { channel } from 'diagnostics_channel';
-import { exit } from 'process';
-
-
+import {initDatabase, getTicketByAuthor, insertTicket} from './database.js'
+import { embedMaker } from './helperFunctions.js';
+const db = initDatabase();
 
 
 
@@ -60,22 +59,6 @@ modules.forEach(async (module) => {
 });
 
 
-
-//Embed Function 
-function embedMaker(colorHex, title, description, footerText = null, footerIconURL = null){
-  const newEmbed = new EmbedBuilder()
-  //Reqired
-    .setColor(colorHex)
-    .setTitle(title)
-    .setDescription(description)
-
-  //Optional
-    .setFooter({text: footerText, iconURL: footerIconURL});
-
-
-
-  return newEmbed
-}
 //Handle Tickets
 client.on('messageCreate',  async (message) => {
   if (message.author.id === client.user.id) return;
@@ -84,36 +67,69 @@ client.on('messageCreate',  async (message) => {
       const helpTicketChannel = client.channels.cache.get(configJson.helpTicketChannelID)
 
       try {
-        const activeThreads = await helpTicketChannel.threads.fetchActive();
-        if (!activeThreads.threads.some(thread => thread.name === `${message.author.username}'s Help Ticket`)){
-          const sentMessage = await helpTicketChannel.send({embeds: [embedMaker(0x32CD32, `${message.author.username}'s Help Ticket`, "waiting for thread", `${message.author.username} | ${message.author.id}`, message.author.displayAvatarURL({dynamic: true}))]})
+        const activeThread = await getTicketByAuthor(message.author.id);
+        if (!activeThread){
+
+          const sentMessage = await helpTicketChannel.send({embeds: [embedMaker({
+            colorHex: 0x32CD32, 
+            title: `${message.author.globalName}'s Help Ticket`, 
+            description: "waiting for thread", 
+            footer: {
+              text:`${message.author.globalName} | ${message.author.id}`,
+              iconURL: message.author.displayAvatarURL(),
+            },
+          })]})
+
+
           const theThread = await helpTicketChannel.threads.create({
             name: `${message.author.username}'s Help Ticket`,
             startMessage: sentMessage.id,
             reason: 'Help Ticket',
           })
-          sentMessage.edit({embeds: [embedMaker(0x32CD32, `${message.author.username}'s Help Ticket`, `<#${theThread.id}>`)]})
-        } else {
+          insertTicket(message.author.id, theThread.id, sentMessage.id)
 
+
+          sentMessage.edit({embeds: [embedMaker({
+            colorHex: 0x32CD32, 
+            title: `${message.author.globalName}'s Help Ticket`, 
+            description: `<#${theThread.id}>`, 
+            footer: {
+              text: `${message.author.globalName} | ${message.author.id}`,
+              iconURL: message.author.displayAvatarURL()
+            },
+          })]})
+
+
+          const threadChannel = client.channels.cache.get(theThread.id)
+          threadChannel.send({embeds: [embedMaker({
+            colorHex: 0xbfbfbf, 
+            title: `A New Ticket Has Been Made`, 
+            description: `To respond to this ticket use \`/reply\` every other message will be ignored. To close the ticket do \`/close\``
+          })]})
+
+
+        } else if(activeThread) {
+
+          const thread = await client.channels.fetch(activeThread.threadChannelID);
+
+          thread.send({embeds: [embedMaker({
+            colorHex: 0x32CD32, 
+            title: `Message Recived`, 
+            description: message.content,
+            footer: {
+              text: message.author.globalName
+            }
+          })]})
         }
 
       } catch(err) {
         console.log(err)
       }
-
-
-
-      
-
-
-
-
-
     }else{
       message.channel.send("No Help Channel Setup. Let a server Admin know.")
     }
   }
-})
+}) 
 
 // Command handling for slash commands (interaction)
 client.on('interactionCreate', async interaction => {
@@ -125,7 +141,7 @@ client.on('interactionCreate', async interaction => {
       return;
     } catch(err) {
       console.error(`Error using ${interaction.commandName}`);
-			console.error(error);
+			console.error(err);
     }
   }
   if (interaction.isButton()){
@@ -153,6 +169,14 @@ client.on('interactionCreate', async interaction => {
       console.log("No matching button command found.");
     });
   }
+});
+
+client.on('error', (error) => {
+  console.error('Client error:', error);
+});
+
+process.on('unhandledRejection', (error) => {
+  console.error('Unhandled promise rejection:', error);
 });
 
 
