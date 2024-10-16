@@ -2,3 +2,4 @@
 config.json
 /public_html
 configExample.json
+*.db
