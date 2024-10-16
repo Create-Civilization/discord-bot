@@ -1,9 +1,24 @@
-import { Client, Collection, GatewayIntentBits} from 'discord.js';
+import { Client, Collection, GatewayIntentBits, EmbedBuilder, Partials, Embed} from 'discord.js';
 import configJson from './config.json' with { type: 'json' };
 import fs from 'fs';
 import { checkCrashTask, updateStatusTask } from './tasks.js';
+import { channel } from 'diagnostics_channel';
+import { exit } from 'process';
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+
+
+
+
+const client = new Client({ 
+  intents: [
+    GatewayIntentBits.Guilds, 
+    GatewayIntentBits.GuildMembers, 
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.DirectMessages, // To handle DMs
+  ],
+  partials: [Partials.Channel] // To access uncached DM channels
+});
+
 client.commands = new Collection();
 
 const token = configJson.token;
@@ -22,7 +37,7 @@ client.on('ready', () => {
 
 
 
-let modules = ["fun_commands", "moderation_commands", "misc_commands"];
+let modules = ["fun_commands", "moderation_commands", "server_commands"];
 
 modules.forEach(async (module) => {
   fs.readdir(`./commands/${module}`, async (err, files) => {
@@ -44,6 +59,61 @@ modules.forEach(async (module) => {
   });
 });
 
+
+
+//Embed Function 
+function embedMaker(colorHex, title, description, footerText = null, footerIconURL = null){
+  const newEmbed = new EmbedBuilder()
+  //Reqired
+    .setColor(colorHex)
+    .setTitle(title)
+    .setDescription(description)
+
+  //Optional
+    .setFooter({text: footerText, iconURL: footerIconURL});
+
+
+
+  return newEmbed
+}
+//Handle Tickets
+client.on('messageCreate',  async (message) => {
+  if (message.author.id === client.user.id) return;
+  if(message.channel.type == 1){
+    if(configJson.helpTicketChannelID){
+      const helpTicketChannel = client.channels.cache.get(configJson.helpTicketChannelID)
+
+      try {
+        const activeThreads = await helpTicketChannel.threads.fetchActive();
+        if (!activeThreads.threads.some(thread => thread.name === `${message.author.username}'s Help Ticket`)){
+          const sentMessage = await helpTicketChannel.send({embeds: [embedMaker(0x32CD32, `${message.author.username}'s Help Ticket`, "waiting for thread", `${message.author.username} | ${message.author.id}`, message.author.displayAvatarURL({dynamic: true}))]})
+          const theThread = await helpTicketChannel.threads.create({
+            name: `${message.author.username}'s Help Ticket`,
+            startMessage: sentMessage.id,
+            reason: 'Help Ticket',
+          })
+          sentMessage.edit({embeds: [embedMaker(0x32CD32, `${message.author.username}'s Help Ticket`, `<#${theThread.id}>`)]})
+        } else {
+
+        }
+
+      } catch(err) {
+        console.log(err)
+      }
+
+
+
+      
+
+
+
+
+
+    }else{
+      message.channel.send("No Help Channel Setup. Let a server Admin know.")
+    }
+  }
+})
 
 // Command handling for slash commands (interaction)
 client.on('interactionCreate', async interaction => {
