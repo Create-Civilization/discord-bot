@@ -117,6 +117,7 @@ const commands = [
       }
     ]
   },
+  {
     name: 'stop_server',
     description: 'Stops The Server Using Crafty API',
   }
