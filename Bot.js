@@ -80,7 +80,6 @@ client.on('messageCreate',  async (message) => {
             },
           })]})
 
-
           const theThread = await helpTicketChannel.threads.create({
             name: `${message.author.username}'s Help Ticket`,
             startMessage: sentMessage.id,
@@ -107,6 +106,17 @@ client.on('messageCreate',  async (message) => {
             description: `To respond to this ticket use \`/reply\` every other message will be ignored. To close the ticket do \`/close\``
           })]})
 
+          message.react('✅')
+
+          threadChannel.send({embeds: [embedMaker({
+            colorHex: 0x32CD32, 
+            title: `Message Recived`, 
+            description: message.content,
+            footer: {
+              text: message.author.globalName
+            }
+          })]})
+
 
         } else if(activeThread) {
 
@@ -120,6 +130,8 @@ client.on('messageCreate',  async (message) => {
               text: message.author.globalName
             }
           })]})
+
+          message.react('✅')
         }
 
       } catch(err) {
