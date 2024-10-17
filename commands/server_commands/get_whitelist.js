@@ -33,7 +33,7 @@ export default {
         let newEmbed = embedMaker({
             colorHex: 0x32CD32,
             title: `${dbObject.username}'s whitelist info`,
-            description: `Minecraft username: \`${dbObject.username}\` | Minecraft UUID: \`${dbObject.playerUUID}\` | Discord ID: \`${dbObject.discordID}\` `,
+            description: `Minecraft username: \`${dbObject.username}\` | Minecraft UUID: \`${dbObject.playerUUID}\` | Discord ID: \`${dbObject.discordID}\` | Reason For Join: \`${dbObject.reason}\` `,
             footer: {
                 text: `${guild.name} | ${guild.id}`,
                 iconURL: guild.iconURL({dynamic: true}) || undefined

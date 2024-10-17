@@ -90,8 +90,7 @@ const commands = [
       {
         name: 'command',
         description: 'The command to run NO /. Also you wont get a response so. Sucks to suck',
-        type: ApplicationCommandOptionType.String,
-        required: true,
+        type: ApplicationCommandOptionType.String
       }
     ]
   },

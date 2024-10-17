@@ -21,6 +21,7 @@ export function initWhiteListDatabase() {
           playerUUID TEXT NOT NULL UNIQUE,  -- The UUID of the Minecraft player, must be unique
           discordID TEXT NOT NULL UNIQUE,  -- The Discord ID of the player, must be unique
           username TEXT NOT NULL,
+          reason TEXT NOT NULL,
           createdAt INTEGER DEFAULT (strftime('%s', 'now'))  -- Time when the record was created
         )
     `).run();
