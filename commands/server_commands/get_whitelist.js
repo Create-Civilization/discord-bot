@@ -1,5 +1,6 @@
 import {getUserByUUID, getUserByDiscordID, addUserToWhitelist, deleteEntryByUserID, initWhiteListDatabase} from '../../other_functions/whitelistDatabaseFuncs.js'
 import { embedMaker } from '../../other_functions/helperFunctions.js';
+import configJson from '../../config.json' with { type: 'json' };
 
 
 export default {
