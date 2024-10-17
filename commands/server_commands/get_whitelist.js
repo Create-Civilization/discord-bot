@@ -6,6 +6,7 @@ export default {
     name: "get_whitelist",
     description: "Get whitelist data of a user",
     async run(client, interaction) {
+        const allowedRoleIds = configJson.adminRolesIDS;
 
         if(!allowedRoleIds.some(roleId => interaction.member.roles.cache.has(roleId))){
             return interaction.reply({
