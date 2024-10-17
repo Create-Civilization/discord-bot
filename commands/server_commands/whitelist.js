@@ -5,8 +5,15 @@ import { ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle, Event
 export default {
     name: "whitelist",
     description: "Add or remove a user from the whitelist",
-    async run(client, interaction) {
+    async run(client, interaction, isServerAlive) {
         const isAlreadyWL = await getUserByDiscordID(interaction.user.id)
+
+        if(!isServerAlive){
+            return interaction.reply({
+                content: `Server is offline try again when its back up`,
+                ephemeral: true
+            })
+        }
 
         if(isAlreadyWL){
             return interaction.reply({

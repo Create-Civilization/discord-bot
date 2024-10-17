@@ -7,10 +7,16 @@ import configJson from '../../config.json' with { type: 'json' };
 export default {
     name: "remove_whitelist",
     description: "Remove yourself from the whitelist",
-    async run(client, interaction) {
+    async run(client, interaction, isServerAlive) {
         const isAlreadyWL = await getUserByDiscordID(interaction.user.id)
         const guild = interaction.guild;
 
+        if(!isServerAlive){
+            return interaction.reply({
+                content: `Server is offline try again when its online`,
+                ephemeral: true
+            })  
+        }
 
         if(!isAlreadyWL){
             return interaction.reply({

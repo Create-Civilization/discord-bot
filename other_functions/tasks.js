@@ -15,6 +15,7 @@ export const setBotStatus = async (client, onlinePlayers, maxPlayers) => {
                 status: 'dnd',
             });
             console.log(`Bot status updated! Server Offline`);
+            return false;
 
         } else {
             await client.user.setPresence({
@@ -22,9 +23,11 @@ export const setBotStatus = async (client, onlinePlayers, maxPlayers) => {
                 status: 'online',
             });
             console.log(`Bot status updated! ${onlinePlayers}/${maxPlayers} players online`);
+            return true;
         }
     } catch (error) {
         console.error('Error updating bot status:', error);
+        return false;
     }
 };
 

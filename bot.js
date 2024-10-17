@@ -9,6 +9,7 @@ import { sendCommandToServer } from './other_functions/craftyAPIfuncs.js'
 import whitelist from './commands/server_commands/whitelist.js';
 const ticketsdb = initDatabase();
 const whitelistdb = initWhiteListDatabase();
+let isServerAlive = false;
 
 
 
@@ -30,7 +31,7 @@ client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 
   setInterval(async () => {
-      await updateStatusTask(client);
+      isServerAlive = await updateStatusTask(client)
   }, 5000);
 
   setInterval(async () => {
@@ -153,7 +154,7 @@ client.on('interactionCreate', async interaction => {
     let command = client.commands.get(interaction.commandName);
     if (!command){return;}
     try{
-      await command.run(client,interaction);
+      await command.run(client,interaction,isServerAlive);
       return;
     } catch(err) {
       console.error(`Error using ${interaction.commandName}`);
