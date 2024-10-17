@@ -197,7 +197,6 @@ client.on(Events.InteractionCreate, async interaction => {
       } else if (mojangAPI && typeof mojangAPI === 'object') {
         //Valid Username
         try{
-          console.log(mojangAPI.id, interaction.user.id, mojangAPI.name)
           await addUserToWhitelist(mojangAPI.id, interaction.user.id, mojangAPI.name)
           await sendCommandToServer(`whitelist add ${mojangAPI.name}`)
           const member = await guild.members.fetch(interaction.user.id);

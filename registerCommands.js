@@ -1,4 +1,4 @@
-import { REST, Routes, ApplicationCommandOptionType } from 'discord.js';
+import { REST, Routes, ApplicationCommandOptionType, Options } from 'discord.js';
 import configjson from './config.json' with {type: 'json'}
 
 const token = configjson.token
@@ -82,7 +82,19 @@ const commands = [
   {
     name: 'remove_whitelist',
     description: 'Remove yourself from the whitelist'
-  }
+  },
+  {
+    name: 'send_command_to_server',
+    description: 'Send a command to the minecraft server',
+    options: [
+      {
+        name: 'command',
+        description: 'The command to run NO /. Also you wont get a response so. Sucks to suck',
+        type: ApplicationCommandOptionType.String,
+        require: true,
+      }
+    ]
+  },
 ];
 
 
