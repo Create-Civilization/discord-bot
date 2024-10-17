@@ -91,10 +91,34 @@ const commands = [
         name: 'command',
         description: 'The command to run NO /. Also you wont get a response so. Sucks to suck',
         type: ApplicationCommandOptionType.String,
-        require: true,
+        required: true,
       }
     ]
   },
+  {
+    name: 'get_whitelist',
+    description: 'Get the whitelist data of a discord user',
+    options: [
+      {
+        name: 'user_to_get',
+        description: 'User to get data for',
+        type: ApplicationCommandOptionType.User,
+        required: true,
+      }
+    ]
+  },
+  {
+    name: 'admin_remove_whitelist',
+    description: 'Admin command to remove anyone off whitelist',
+    options: [
+      {
+        name: 'user_to_remove',
+        description: 'User to remove from whitelist',
+        type: ApplicationCommandOptionType.User,
+        required: true,
+      }
+    ]
+  }
 ];
 
 
