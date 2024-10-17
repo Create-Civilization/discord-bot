@@ -1,6 +1,6 @@
 import { PermissionsBitField } from "discord.js";
-import { getTicketByAuthor, insertTicket, deleteTicketByTicketID, getTicketByChannel } from '../../database.js';
-import { embedMaker } from '../../helperFunctions.js';
+import { getTicketByAuthor, insertTicket, deleteTicketByTicketID, getTicketByChannel } from '../../other_functions/ticketDatabaseFuncs.js';
+import { embedMaker } from '../../other_functions/helperFunctions.js';
 import configJson from '../../config.json' with { type: 'json' };
 
 export default {

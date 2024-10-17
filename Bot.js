@@ -1,10 +1,14 @@
-import { Client, Collection, GatewayIntentBits, EmbedBuilder, Partials, Embed} from 'discord.js';
+import { Client, Collection, GatewayIntentBits, EmbedBuilder, Partials, Embed, Events} from 'discord.js';
 import configJson from './config.json' with { type: 'json' };
-import fs from 'fs';
-import { checkCrashTask, updateStatusTask } from './tasks.js';
-import {initDatabase, getTicketByAuthor, insertTicket} from './database.js'
-import { embedMaker } from './helperFunctions.js';
-const db = initDatabase();
+import fs, { accessSync } from 'fs';
+import { checkCrashTask, updateStatusTask } from './other_functions/tasks.js';
+import {initDatabase, getTicketByAuthor, insertTicket} from './other_functions/ticketDatabaseFuncs.js'
+import {getUserByUUID, getUserByDiscordID, addUserToWhitelist, deleteEntryByUserID, initWhiteListDatabase} from './other_functions/whitelistDatabaseFuncs.js';
+import { embedMaker, isMcUsernameReal, getMinecraftNameByUUID} from './other_functions/helperFunctions.js';
+import { sendCommandToServer } from './other_functions/craftyAPIfuncs.js'
+import whitelist from './commands/server_commands/whitelist.js';
+const ticketsdb = initDatabase();
+const whitelistdb = initWhiteListDatabase();
 
 
 
@@ -183,6 +187,74 @@ client.on('interactionCreate', async interaction => {
   }
 });
 
+//Handle whitelistModal
+client.on(Events.InteractionCreate, async interaction => {
+  if (!interaction.isModalSubmit()) return;
+
+  if (interaction.customId === 'whitelistModal') {
+      // Get the data entered by the user
+      const inGameName = interaction.fields.getTextInputValue('inGameName');
+      const reason = interaction.fields.getTextInputValue('reason');
+      const mojangAPI = await isMcUsernameReal(inGameName)
+      const guild = interaction.guild;
+      const whitelistRole = guild.roles.cache.get(configJson.whitelistedRoleID)
+      
+      await interaction.deferReply({ephemeral: true})
+
+      if(mojangAPI == 404) {
+        return interaction.editReply({
+          content: 'No account found with that usernmame. Please double check it',
+          ephemeral: true,
+        })
+      } else if (mojangAPI && typeof mojangAPI === 'object') {
+        //Valid Username
+        try{
+          await addUserToWhitelist(mojangAPI.id, interaction.user.id, mojangAPI.name)
+          await sendCommandToServer(`whitelist add ${mojangAPI.name}`)
+          const member = await guild.members.fetch(interaction.user.id);
+          await member.roles.add(whitelistRole);
+        } catch(err){
+          console.log(`There was an error running addUserToWhitelist ${err}`)
+          return interaction.editReply({
+            content: `A fatal error occured if this happens multiple times make a support ticket`,
+            ephemeral: true
+          })
+        }
+
+        return interaction.editReply({
+          content: `Added ${mojangAPI.name} to the whitelist. If you added the wrong username or want to be removed to /remove_whitelist`,
+          ephemeral: true,
+        })
+     }
+     else {
+      console.log(JSON.stringify(mojangAPI))
+      return interaction.editReply({
+          content: 'Unknown Error Occured. Try again later',
+          ephemeral: true,
+      });
+  }
+  }
+});
+
+
+//Remove member from whitelist
+client.on('guildMemberRemove', async (member) => {
+  const databaseEntry = await getUserByDiscordID(member.id);
+  if (!databaseEntry){
+
+  }else{
+    const mcUUID = databaseEntry.playerUUID
+    const discordID = databaseEntry.discordID
+    //Unwhitelist command
+    const mcNameCorrect = await getMinecraftNameByUUID(mcUUID)
+    await sendCommandToServer(`whitelist remove ${mcNameCorrect.name}`)
+    await deleteEntryByUserID(discordID);
+  }
+
+})
+
+
+//Error catching
 client.on('error', (error) => {
   console.error('Client error:', error);
 });
