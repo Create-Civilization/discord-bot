@@ -1,11 +1,11 @@
 import { Client, Collection, GatewayIntentBits, ActivityType } from 'discord.js';
 import fetch from 'node-fetch';
 import https from 'https';
-import configJson from './config.json' with { type: 'json' };
+import configJson from '../config.json' with { type: 'json' };
 
 
 
-
+//I will be so real I wrote this and idk why I did it like this. I am sorry but I am not going to fix it. I am just not touching this.
 // BOT STATUS (I HATE COMMENTS)
 export const setBotStatus = async (client, onlinePlayers, maxPlayers) => {
     try {

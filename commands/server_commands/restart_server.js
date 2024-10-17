@@ -1,6 +1,7 @@
 import fetch from 'node-fetch';
 import configJson from '../../config.json' with { type: 'json' };
 import https from 'https';
+import { restartMinecraftServer } from '../../other_functions/craftyAPIfuncs.js'
 
 export default {
     name: 'restart_server',
@@ -20,30 +21,8 @@ export default {
         // Defer the reply to acknowledge the interaction
         await interaction.deferReply({ ephemeral: true });
 
-        const serverId = configJson.serverID; 
-        const apiToken = configJson.craftyToken; 
-        const apiUrl = `https://${configJson.serverIP}:${configJson.serverPort}/api/v2/servers/${serverId}/action/restart_server`;
-
-        const agent = new https.Agent({
-            rejectUnauthorized: false 
-        });
-
-        // Send the API request to Crafty to restart the server
         try {
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${apiToken}`,
-                    'Content-Type': 'application/json'
-                },
-                agent 
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error: ${response.status}`);
-            }
-
-            const result = await response.json();
+            const result = await restartMinecraftServer();
 
             // Edit the deferred reply based on the result
             if (result.status === 'ok') {
