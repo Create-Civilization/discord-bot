@@ -12,7 +12,7 @@ export default {
 
         if(allowedRoleIds.some(roleId => interaction.member.roles.cache.has(roleId))){
             try{
-            const command = await interaction.options.get('message').value;
+            const command = await interaction.options.get('command').value;
             sendCommandToServer(command)
 
             interaction.editReply({

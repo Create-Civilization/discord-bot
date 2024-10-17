@@ -7,12 +7,12 @@ export default {
     description: "Get whitelist data of a user",
     async run(client, interaction) {
 
-       /* if(!allowedRoleIds.some(roleId => interaction.member.roles.cache.has(roleId))){
+        if(!allowedRoleIds.some(roleId => interaction.member.roles.cache.has(roleId))){
             return interaction.reply({
                 content: 'You do not have permission to run this',
                 ephemeral: true
             })
-        } */
+        }
 
         await interaction.deferReply({ephemeral: true})
 
