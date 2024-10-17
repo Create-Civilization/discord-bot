@@ -1,5 +1,7 @@
 ./config.js
 config.json
 /public_html
+/log
+/backups
 configExample.json
 *.db
