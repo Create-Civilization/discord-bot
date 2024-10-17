@@ -3,5 +3,6 @@ config.json
 /public_html
 /log
 /backups
+/node_modules
 configExample.json
 *.db
