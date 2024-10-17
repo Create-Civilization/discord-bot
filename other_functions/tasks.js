@@ -166,10 +166,12 @@ export const updateStatusTask = async (client) => {
         if (stats) {
             const onlinePlayers = stats.online;
             const maxPlayers = stats.max;
-            await setBotStatus(client, onlinePlayers, maxPlayers);
+            const returnVar = await setBotStatus(client, onlinePlayers, maxPlayers);
+            return returnVar
         }
     } catch(error) {
         console.error('Error in updateStatusTask:', error);
+        return false
     }
 };
 
