@@ -37,16 +37,16 @@ export function initWhiteListDatabase() {
 }
 
 
-function addUserToWhitelist(playerUUID, discordID, username) {
+function addUserToWhitelist(playerUUID, discordID, username, reason) {
   return new Promise((resolve, reject) => {
-      if (!playerUUID || !discordID || !username) {
+      if (!playerUUID || !discordID || !username || !reason) {
           return reject(new Error("Invalid parameters: playerUUID, discordID, and username are required."));
       }
 
-      const query = `INSERT INTO whitelistData (playerUUID, discordID, username) VALUES (?, ?, ?)`;
+      const query = `INSERT INTO whitelistData (playerUUID, discordID, username, reason) VALUES (?, ?, ?, ?)`;
       try {
           const stmt = db.prepare(query);
-          const info = stmt.run(playerUUID, discordID, username);
+          const info = stmt.run(playerUUID, discordID, username, reason);
           resolve(info.lastInsertRowid);
       } catch (err) {
           console.error("Error inserting into whitelistData:", err); // Log the error for debugging
