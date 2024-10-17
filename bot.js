@@ -32,6 +32,7 @@ client.on('ready', () => {
 
   setInterval(async () => {
       isServerAlive = await updateStatusTask(client)
+      console.log(isServerAlive)
   }, 5000);
 
   setInterval(async () => {
