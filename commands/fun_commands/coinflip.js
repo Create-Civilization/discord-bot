@@ -1,6 +1,10 @@
+import { SlashCommandBuilder} from "discord.js";
+
 export default {
-    name: 'coinflip',
-    run: async(client, interaction) =>{
+    data: new SlashCommandBuilder()
+        .setName('coinflip')
+        .setDescription('Flips a coin'),
+    async execute(client, interaction) {
         const num = Math.floor(Math.random()*11)
         if (num%2 === 0){
             await interaction.reply({content:"Heads!!!",ephmeral: false})
@@ -8,5 +12,5 @@ export default {
         else {
             await interaction.reply({content:"Tails!!!",ephmeral: false})
         }
-    }
+    },
 }

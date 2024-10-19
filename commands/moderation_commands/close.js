@@ -1,15 +1,12 @@
-import { PermissionsBitField } from "discord.js";
-import { getTicketByAuthor, insertTicket, deleteTicketByTicketID, getTicketByChannel } from '../../other_functions/ticketDatabaseFuncs.js';
+import { SlashCommandBuilder} from "discord.js";
+import {deleteTicketByTicketID, getTicketByChannel } from '../../other_functions/ticketDatabaseFuncs.js';
 import { embedMaker } from '../../other_functions/helperFunctions.js';
 import configJson from '../../config.json' with { type: 'json' };
 
 export default {
-    name: "close",
-    description: "Close the current thread",
-
-
-
-
+    data: new SlashCommandBuilder()
+        .setName('close')
+        .setDescription('Close the current thread'),
     async run(client, interaction) {
         const allowedRoleIds = configJson.adminRolesIDS; 
         const channel = interaction.channel;

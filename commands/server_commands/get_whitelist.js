@@ -1,12 +1,14 @@
-import {getUserByUUID, getUserByDiscordID, addUserToWhitelist, deleteEntryByUserID, initWhiteListDatabase} from '../../other_functions/whitelistDatabaseFuncs.js'
+import {getUserByDiscordID,} from '../../other_functions/whitelistDatabaseFuncs.js'
 import { embedMaker } from '../../other_functions/helperFunctions.js';
 import configJson from '../../config.json' with { type: 'json' };
+import { SlashCommandBuilder} from "discord.js";
 
 
 export default {
-    name: "get_whitelist",
-    description: "Get whitelist data of a user",
-    async run(client, interaction) {
+    data: new SlashCommandBuilder()
+        .setName('get_whitelist')
+        .setDescription('Get whitelist data of a user'),
+    async execute(client, interaction) {
         const allowedRoleIds = configJson.adminRolesIDS;
 
         if(!allowedRoleIds.some(roleId => interaction.member.roles.cache.has(roleId))){

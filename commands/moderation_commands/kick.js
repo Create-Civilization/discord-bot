@@ -1,8 +1,10 @@
-import {PermissionsBitField} from 'discord.js';
+import {PermissionsBitField, SlashCommandBuilder} from 'discord.js';
 
 export default  {
-    name:"kick",
-    run: async (client, interaction) =>{
+    data: new SlashCommandBuilder()
+        .setName('kick')
+        .setDescription('Kicks a user'),
+    async execute(client, interaction) {
         const memberToKickOption = interaction.options.get('username');
         const memberToKick = interaction.guild.members.cache.get(memberToKickOption.user.id);
         const reason = interaction.options.get('reason_for_kick')?.value || 'No reason given';

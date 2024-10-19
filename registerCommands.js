@@ -1,140 +1,47 @@
-import { REST, Routes, ApplicationCommandOptionType, Options } from 'discord.js';
-import configjson from './config.json' with {type: 'json'}
+import { REST, Routes} from 'discord.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import config from './config.json' with { type: 'json' };
 
-const token = configjson.token
-const clientID = configjson.clientID
+const token = config.token;
+const clientID = config.clientID;
+const guildID = config.guildID;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const commands = [
-  {
-    name: 'ping',
-    description: 'Replies with Pong!',
-  },
-  {
-    name: 'add_to_showcase',
-    description: 'Upload Items to the Showcase of the website',
-    options: [
-        {
-            name: 'creator',
-            description: 'User who posted the posty post.',
-            type: ApplicationCommandOptionType.String,
-            required: true
-        },
-        {
-            name: 'title',
-            description: 'The title of the showcase',
-            type: ApplicationCommandOptionType.String,
-            required: true
-        },
-        {
-            name: 'image',
-            description: 'The image to upload',
-            type: ApplicationCommandOptionType.Attachment,
-            required: false,
+const commands = [];
+const foldersPath = path.join(__dirname, 'commands');
+const commandFolders = fs.readdirSync(foldersPath);
 
-        }
-    ]
-  },
-  {
-    name: 'coinflip',
-    description: 'flip a coin!',
-    usage: 'coin flip'
-  },
-  {
-    name: 'edit_showcase',
-    description: 'Edit showcase entries',
-  },
-  {
-    name: 'restart_server',
-    description: 'Restarts the Minecraft server using Crafty API',
-  },
-  {
-    name: 'close',
-    description: 'Close current ticket',
-    options: [
-      {
-        name: 'reason',
-        description: 'The reason for closing the ticket',
-        type: ApplicationCommandOptionType.String,
-        required: true,
-      }
-    ]
-  },
-  {
-    name: 'reply',
-    description: 'Replay to current ticket',
-    options: [
-      {
-        name: 'message',
-        description: 'The reply to the ticket',
-        type: ApplicationCommandOptionType.String,
-        required: true,
-      }
-    ]
-  },
-  {
-    name: 'stop_server',
-    description: 'Stops The Server Using Crafty API',
-  },
-  {
-    name: 'whitelist',
-    description: 'Whitelist yourself to the server',
-  },
-  {
-    name: 'remove_whitelist',
-    description: 'Remove yourself from the whitelist'
-  },
-  {
-    name: 'send_command_to_server',
-    description: 'Send a command to the minecraft server',
-    options: [
-      {
-        name: 'command',
-        description: 'The command to run NO /. Also you wont get a response so. Sucks to suck',
-        type: ApplicationCommandOptionType.String
-      }
-    ]
-  },
-  {
-    name: 'get_whitelist',
-    description: 'Get the whitelist data of a discord user',
-    options: [
-      {
-        name: 'user_to_get',
-        description: 'User to get data for',
-        type: ApplicationCommandOptionType.User,
-        required: true,
-      }
-    ]
-  },
-  {
-    name: 'admin_remove_whitelist',
-    description: 'Admin command to remove anyone off whitelist',
-    options: [
-      {
-        name: 'user_to_remove',
-        description: 'User to remove from whitelist',
-        type: ApplicationCommandOptionType.User,
-        required: true,
-      }
-    ]
-  }
-];
-
-
-const rest = new REST({ version: '10' }).setToken(token);
-
-async function registerCommands() {
-  try {
-    console.log('Started refreshing application (/) commands.');
-
-    // Register the commands globally
-    await rest.put(Routes.applicationCommands(clientID), { body: commands });
-
-    console.log('Successfully reloaded application (/) commands.');
-  } catch (error) {
-    console.error('Error reloading application commands:', error);
-  }
+for (const folder of commandFolders) {
+	const commandsPath = path.join(foldersPath, folder);
+	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+	for (const file of commandFiles) {
+		const filePath = path.join(commandsPath, file);
+		const fileUrl = pathToFileURL(filePath);
+		const command = await import(fileUrl.href); 
+		if ('data' in command && 'execute' in command) {
+			commands.push(command.data.toJSON());
+		} else {
+			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+		}
+	}
 }
 
-// Call the function to register commands
-registerCommands();
+const rest = new REST().setToken(token);
+
+(async () => {
+	try {
+		console.log(`Started refreshing ${commands.length} application (/) commands.`);
+
+		const data = await rest.put(
+			Routes.applicationGuildCommands(clientID, guildID),
+			{ body: commands },
+		);
+
+		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+	} catch (error) {
+		console.error(error);
+	}
+})();

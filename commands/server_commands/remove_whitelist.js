@@ -1,13 +1,14 @@
 
 import { sendCommandToServer } from '../../other_functions/craftyAPIfuncs.js';
-import {getUserByUUID, getUserByDiscordID, addUserToWhitelist, initWhiteListDatabase, deleteEntryByUserID} from '../../other_functions/whitelistDatabaseFuncs.js';
-import { ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle, Events } from 'discord.js';
+import {getUserByDiscordID, deleteEntryByUserID} from '../../other_functions/whitelistDatabaseFuncs.js';
+import { SlashCommandBuilder} from 'discord.js';
 import configJson from '../../config.json' with { type: 'json' };
 
 export default {
-    name: "remove_whitelist",
-    description: "Remove yourself from the whitelist",
-    async run(client, interaction, isServerAlive) {
+    data: new SlashCommandBuilder()
+        .setName('remove_whitelist')
+        .setDescription('Remove yourself from the whitelist'),
+    async execute(client, interaction, isServerAlive) {
         const isAlreadyWL = await getUserByDiscordID(interaction.user.id)
         const guild = interaction.guild;
 
