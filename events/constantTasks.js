@@ -1,12 +1,12 @@
 const { Events } = require('discord.js');
 const { checkCrashTask, updateStatusTask } = require('../other_functions/tasks.js');
+const { checkAllNames } = require('../other_functions/checkAllMcNames.js');
 
 module.exports = {
     name: Events.ClientReady,
     once: false,
     async execute(client) {
-        console.log(`Logged in as ${client.user.tag}!`);
-
+        
         setInterval(async () => {
             client.isServerAlive = await updateStatusTask(client)
             console.log(client.isServerAlive)
