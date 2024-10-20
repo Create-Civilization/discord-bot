@@ -1,13 +1,14 @@
-import {getUserByUUID, getUserByDiscordID, addUserToWhitelist, deleteEntryByUserID, initWhiteListDatabase} from '../../other_functions/whitelistDatabaseFuncs.js'
-import { embedMaker } from '../../other_functions/helperFunctions.js';
-import { sendCommandToServer } from '../../other_functions/craftyAPIfuncs.js';
-import configJson from '../../config.json' with { type: 'json' };
+const { getUserByDiscordID, deleteEntryByUserID } = require('../../other_functions/whitelistDatabaseFuncs.js');
+const { sendCommandToServer } = require('../../other_functions/craftyAPIfuncs.js');
+const configJson = require('../../config.json');
+const { SlashCommandBuilder } = require('discord.js');
 
 
-export default {
-    name: "admin_remove_whitelist",
-    description: "Get whitelist data of a user",
-    async run(client, interaction) {
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName('admin_remove_whitelist')
+        .setDescription('Get whitelist data of a user'),
+    async execute(client, interaction) {
         const allowedRoleIds = configJson.adminRolesIDS;
 
         if(!allowedRoleIds.some(roleId => interaction.member.roles.cache.has(roleId))){

@@ -1,11 +1,14 @@
-import fetch from 'node-fetch';
-import configJson from '../../config.json' with { type: 'json' };
-import https from 'https';
+const configJson = require('../../config.json');
+const https = require('https');
+const { SlashCommandBuilder } = require('discord.js');
 
-export default {
-    name: 'stop_server',
-    description: 'Stops The Server Using Crafty API',
-    async run(client, interaction) {
+
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName('stop_server')
+        .setDescription('Stops The Server Using Crafty API'),
+    async execute(client, interaction) {
+        const fetch = (await import('node-fetch')).default;
         const allowedRoleIds = configJson.adminRolesIDS;  // Log the array  
         const member = interaction.guild.members.cache.get(interaction.user.id);
 

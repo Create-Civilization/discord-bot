@@ -1,10 +1,12 @@
-import { sendCommandToServer } from "../../other_functions/craftyAPIfuncs.js";
-import configJson from '../../config.json' with { type: 'json' };
+const { sendCommandToServer } = require('../../other_functions/craftyAPIfuncs.js');
+const configJson = require('../../config.json');
+const { SlashCommandBuilder } = require('discord.js');
 
-export default {
-    name: 'send_command_to_server',
-    description: "Send a command to the server",
-    async run(client,interaction) {
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName('send_command_to_server')
+        .setDescription('Send a command to the server'),
+    async execute(client,interaction) {
         const allowedRoleIds = configJson.adminRolesIDS; 
         const channel = interaction.channel;
 

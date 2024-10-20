@@ -1,11 +1,11 @@
-import Database from 'better-sqlite3';
-import fs from 'fs';
-import path from 'path';
+const Database = require('better-sqlite3');
+const fs = require('fs');
+const path = require('path');
 
 let db;
 const dbPath = './tickets.db';
 
-export function initDatabase() {
+function initTicketDatabase() {
   const dbExists = fs.existsSync(dbPath);
 
   if (!dbExists) {
@@ -90,4 +90,4 @@ function deleteTicketByTicketID(ticketId) {
     });
   }
 
-export { getTicketByAuthor, insertTicket, deleteTicketByTicketID , getTicketByChannel};
+module.exports = { getTicketByAuthor, insertTicket, deleteTicketByTicketID , getTicketByChannel, initTicketDatabase };

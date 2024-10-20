@@ -1,11 +1,13 @@
-import { getTicketByAuthor, insertTicket, deleteTicketByTicketID, getTicketByChannel } from '../../other_functions/ticketDatabaseFuncs.js';
-import { embedMaker } from '../../other_functions/helperFunctions.js';
-import configJson from '../../config.json' with { type: 'json' };
+const { getTicketByChannel } = require('../../other_functions/ticketDatabaseFuncs.js');
+const { embedMaker } = require('../../other_functions/helperFunctions.js');
+const configJson = require('../../config.json');
+const { SlashCommandBuilder } = require('discord.js');
 
-export default {
-    name: "reply",
-    description: "Reply to the current ticket",
-    async run(client, interaction) {
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName('reply')
+        .setDescription('Replies to the current ticket'),
+    async execute(client, interaction) {
         const allowedRoleIds = configJson.adminRolesIDS; 
         const channel = interaction.channel;
 

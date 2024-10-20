@@ -1,17 +1,17 @@
+const { sendCommandToServer } = require('../../other_functions/craftyAPIfuncs.js');
+const { getUserByDiscordID, deleteEntryByUserID } = require('../../other_functions/whitelistDatabaseFuncs.js');
+const { SlashCommandBuilder } = require('discord.js');
+const configJson = require('../../config.json');
 
-import { sendCommandToServer } from '../../other_functions/craftyAPIfuncs.js';
-import {getUserByUUID, getUserByDiscordID, addUserToWhitelist, initWhiteListDatabase, deleteEntryByUserID} from '../../other_functions/whitelistDatabaseFuncs.js';
-import { ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle, Events } from 'discord.js';
-import configJson from '../../config.json' with { type: 'json' };
-
-export default {
-    name: "remove_whitelist",
-    description: "Remove yourself from the whitelist",
-    async run(client, interaction, isServerAlive) {
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName('remove_whitelist')
+        .setDescription('Remove yourself from the whitelist'),
+    async execute(client, interaction) {
         const isAlreadyWL = await getUserByDiscordID(interaction.user.id)
         const guild = interaction.guild;
 
-        if(!isServerAlive){
+        if(!client.isServerAlive){
             return interaction.reply({
                 content: `Server is offline try again when its online`,
                 ephemeral: true

@@ -1,12 +1,13 @@
-import fetch from 'node-fetch';
-import configJson from '../../config.json' with { type: 'json' };
-import https from 'https';
-import { restartMinecraftServer } from '../../other_functions/craftyAPIfuncs.js'
+const configJson = require('../../config.json');
+const { restartMinecraftServer } = require('../../other_functions/craftyAPIfuncs.js');
+const { SlashCommandBuilder } = require('discord.js');
 
-export default {
-    name: 'restart_server',
-    description: 'Restarts the Minecraft server using Crafty API',
-    async run(client, interaction) {
+
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName('restart_server')
+        .setDescription('Restarts the Minecraft server using Crafty API'),
+    async execute(client, interaction) {
         const allowedRoleIds = configJson.adminRolesIDS;  // Log the array  
         const member = interaction.guild.members.cache.get(interaction.user.id);
 

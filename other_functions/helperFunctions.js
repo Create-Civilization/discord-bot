@@ -1,13 +1,11 @@
-import { Client, Collection, GatewayIntentBits, EmbedBuilder, Partials, Embed} from 'discord.js';
-import fetch from 'node-fetch';
-import {deleteEntryByUserID, } from './whitelistDatabaseFuncs.js'
+const { Client, Collection, GatewayIntentBits, EmbedBuilder, Partials, Embed } = require('discord.js');
+const { deleteEntryByUserID } = require('./whitelistDatabaseFuncs');
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
 function embedMaker({ colorHex, title, description, footer = {}, author = {} }) {
-    console.log(colorHex);
     const newEmbed = new EmbedBuilder()
         //Required
         .setColor(colorHex)
@@ -33,6 +31,7 @@ function embedMaker({ colorHex, title, description, footer = {}, author = {} }) 
 
 
 async function isMcUsernameReal(username){
+    const fetch = (await import('node-fetch')).default;
     try {
         const response = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`);
 
@@ -58,6 +57,7 @@ async function isMcUsernameReal(username){
 }
 
 async function getMinecraftNameByUUID(mcUUID){
+    const fetch = (await import('node-fetch')).default;
     try {
         const response = await fetch(`https://sessionserver.mojang.com/session/minecraft/profile/${mcUUID}`);
 
@@ -86,4 +86,4 @@ async function getMinecraftNameByUUID(mcUUID){
 
 
 
-export { embedMaker, isMcUsernameReal, getMinecraftNameByUUID};
+module.exports = { embedMaker, isMcUsernameReal, getMinecraftNameByUUID};

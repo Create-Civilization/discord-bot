@@ -1,12 +1,11 @@
-import Database from 'better-sqlite3';
-import fs from 'fs';
-import path, { resolve } from 'path';
-
+const Database = require('better-sqlite3');
+const fs = require('fs');
+const path = require('path');
 
 const dbPath = './whitelistData.db';
 let db;
 
-export function initWhiteListDatabase() {
+function initWhiteListDatabase() {
   const dbExists = fs.existsSync(dbPath);
 
   if (!dbExists) {
@@ -101,4 +100,4 @@ function addUserToWhitelist(playerUUID, discordID, username, reason) {
   }
 
   
-export {getUserByUUID, getUserByDiscordID, addUserToWhitelist, deleteEntryByUserID};
+module.exports = {getUserByUUID, getUserByDiscordID, addUserToWhitelist, deleteEntryByUserID, initWhiteListDatabase};

@@ -1,140 +1,46 @@
-import { REST, Routes, ApplicationCommandOptionType, Options } from 'discord.js';
-import configjson from './config.json' with {type: 'json'}
+const { REST, Routes } = require('discord.js');
+const { clientID, guildID, token } = require('./config.json');
+const fs = require('node:fs');
+const path = require('node:path');
 
-const token = configjson.token
-const clientID = configjson.clientID
+const commands = [];
+// Grab all the command folders from the commands directory you created earlier
+const foldersPath = path.join(__dirname, 'commands');
+const commandFolders = fs.readdirSync(foldersPath);
 
-const commands = [
-  {
-    name: 'ping',
-    description: 'Replies with Pong!',
-  },
-  {
-    name: 'add_to_showcase',
-    description: 'Upload Items to the Showcase of the website',
-    options: [
-        {
-            name: 'creator',
-            description: 'User who posted the posty post.',
-            type: ApplicationCommandOptionType.String,
-            required: true
-        },
-        {
-            name: 'title',
-            description: 'The title of the showcase',
-            type: ApplicationCommandOptionType.String,
-            required: true
-        },
-        {
-            name: 'image',
-            description: 'The image to upload',
-            type: ApplicationCommandOptionType.Attachment,
-            required: false,
-
-        }
-    ]
-  },
-  {
-    name: 'coinflip',
-    description: 'flip a coin!',
-    usage: 'coin flip'
-  },
-  {
-    name: 'edit_showcase',
-    description: 'Edit showcase entries',
-  },
-  {
-    name: 'restart_server',
-    description: 'Restarts the Minecraft server using Crafty API',
-  },
-  {
-    name: 'close',
-    description: 'Close current ticket',
-    options: [
-      {
-        name: 'reason',
-        description: 'The reason for closing the ticket',
-        type: ApplicationCommandOptionType.String,
-        required: true,
-      }
-    ]
-  },
-  {
-    name: 'reply',
-    description: 'Replay to current ticket',
-    options: [
-      {
-        name: 'message',
-        description: 'The reply to the ticket',
-        type: ApplicationCommandOptionType.String,
-        required: true,
-      }
-    ]
-  },
-  {
-    name: 'stop_server',
-    description: 'Stops The Server Using Crafty API',
-  },
-  {
-    name: 'whitelist',
-    description: 'Whitelist yourself to the server',
-  },
-  {
-    name: 'remove_whitelist',
-    description: 'Remove yourself from the whitelist'
-  },
-  {
-    name: 'send_command_to_server',
-    description: 'Send a command to the minecraft server',
-    options: [
-      {
-        name: 'command',
-        description: 'The command to run NO /. Also you wont get a response so. Sucks to suck',
-        type: ApplicationCommandOptionType.String
-      }
-    ]
-  },
-  {
-    name: 'get_whitelist',
-    description: 'Get the whitelist data of a discord user',
-    options: [
-      {
-        name: 'user_to_get',
-        description: 'User to get data for',
-        type: ApplicationCommandOptionType.User,
-        required: true,
-      }
-    ]
-  },
-  {
-    name: 'admin_remove_whitelist',
-    description: 'Admin command to remove anyone off whitelist',
-    options: [
-      {
-        name: 'user_to_remove',
-        description: 'User to remove from whitelist',
-        type: ApplicationCommandOptionType.User,
-        required: true,
-      }
-    ]
-  }
-];
-
-
-const rest = new REST({ version: '10' }).setToken(token);
-
-async function registerCommands() {
-  try {
-    console.log('Started refreshing application (/) commands.');
-
-    // Register the commands globally
-    await rest.put(Routes.applicationCommands(clientID), { body: commands });
-
-    console.log('Successfully reloaded application (/) commands.');
-  } catch (error) {
-    console.error('Error reloading application commands:', error);
-  }
+for (const folder of commandFolders) {
+	// Grab all the command files from the commands directory you created earlier
+	const commandsPath = path.join(foldersPath, folder);
+	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+	// Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
+	for (const file of commandFiles) {
+		const filePath = path.join(commandsPath, file);
+		const command = require(filePath);
+		if ('data' in command && 'execute' in command) {
+			commands.push(command.data.toJSON());
+		} else {
+			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+		}
+	}
 }
 
-// Call the function to register commands
-registerCommands();
+// Construct and prepare an instance of the REST module
+const rest = new REST().setToken(token);
+
+// and deploy your commands!
+(async () => {
+	try {
+		console.log(`Started refreshing ${commands.length} application (/) commands.`);
+
+		// The put method is used to fully refresh all commands in the guild with the current set
+		const data = await rest.put(
+			Routes.applicationGuildCommands(clientID, guildID),
+			{ body: commands },
+		);
+
+		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+	} catch (error) {
+		// And of course, make sure you catch and log any errors!
+		console.error(error);
+	}
+})();

@@ -1,17 +1,16 @@
-import { PermissionsBitField } from "discord.js";
-import { getTicketByAuthor, insertTicket, deleteTicketByTicketID, getTicketByChannel } from '../../other_functions/ticketDatabaseFuncs.js';
-import { embedMaker } from '../../other_functions/helperFunctions.js';
-import configJson from '../../config.json' with { type: 'json' };
-
-export default {
-    name: "close",
-    description: "Close the current thread",
+const { SlashCommandBuilder } = require('discord.js');
+const { deleteTicketByTicketID, getTicketByChannel } = require('../../other_functions/ticketDatabaseFuncs.js');
+const { embedMaker } = require('../../other_functions/helperFunctions.js');
+const config = require('../../config.json');
 
 
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName('close')
+        .setDescription('Close the current thread'),
+    async execute(client, interaction) {
 
-
-    async run(client, interaction) {
-        const allowedRoleIds = configJson.adminRolesIDS; 
+        const allowedRoleIds = config.adminRolesIDS; 
         const channel = interaction.channel;
 
         if (channel.isThread() && allowedRoleIds.some(roleId => interaction.member.roles.cache.has(roleId))) {
@@ -21,7 +20,7 @@ export default {
                     const reason = await interaction.options.get('reason').value;
                     const threadOwner = await client.users.fetch(ticket.authorID);
                     const guild = interaction.guild;
-                    const helpChannelOBJ = client.channels.cache.get(configJson.helpTicketChannelID);
+                    const helpChannelOBJ = client.channels.cache.get(config.helpTicketChannelID);
                     const fetchedMessage = await helpChannelOBJ.messages.fetch(ticket.threadChannelID);
 
                     const thread = await client.channels.fetch(ticket.threadChannelID);
