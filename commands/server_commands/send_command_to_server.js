@@ -1,8 +1,8 @@
-import { sendCommandToServer } from "../../other_functions/craftyAPIfuncs.js";
-import configJson from '../../config.json' with { type: 'json' };
-import { SlashCommandBuilder} from "discord.js";
+const { sendCommandToServer } = require('../../other_functions/craftyAPIfuncs.js');
+const configJson = require('../../config.json');
+const { SlashCommandBuilder } = require('discord.js');
 
-export default {
+module.exports = {
     data: new SlashCommandBuilder()
         .setName('send_command_to_server')
         .setDescription('Send a command to the server'),

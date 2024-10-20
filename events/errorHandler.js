@@ -1,9 +1,9 @@
-import {Events} from 'discord.js';
+const { Events } = require('discord.js');
 
-export default {
+module.exports = {
     name: Events.ClientError,
     once: false,
-    async execute(error) {
+    async execute(client, error) {
         console.error('Client error:', error);
     },
-}
+};

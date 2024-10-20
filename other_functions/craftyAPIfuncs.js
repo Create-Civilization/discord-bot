@@ -1,12 +1,11 @@
-import fetch from 'node-fetch';
-import configJson from '../config.json' with { type: 'json' };
-import https from 'https';
-
-const serverId = configJson.serverID; 
-const apiToken = configJson.craftyToken; 
+const fs = require('fs');
+const path = require('path');
+const https = require('https');
+const { craftyToken, serverID, serverIP, serverPort } = require('../config.json');
 
 async function restartMinecraftServer(){
-    const apiUrl = `https://${configJson.serverIP}:${configJson.serverPort}/api/v2/servers/${serverId}/action/restart_server`;
+    const fetch = (await import('node-fetch')).default;
+    const apiUrl = `https://${serverIP}:${serverPort}/api/v2/servers/${serverID}/action/restart_server`;
 
     const agent = new https.Agent({
         rejectUnauthorized: false 
@@ -17,7 +16,7 @@ async function restartMinecraftServer(){
         const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${apiToken}`,
+                'Authorization': `Bearer ${craftyToken}`,
                 'Content-Type': 'application/json'
             },
             agent 
@@ -37,7 +36,8 @@ async function restartMinecraftServer(){
 
 
 async function sendCommandToServer(commandString) {
-    const apiUrl = `https://${configJson.serverIP}:${configJson.serverPort}/api/v2/servers/${serverId}/stdin`;
+    const fetch = (await import('node-fetch')).default;
+    const apiUrl = `https://${serverIP}:${serverPort}/api/v2/servers/${serverID}/stdin`;
     
     const agent = new https.Agent({
         rejectUnauthorized: false 
@@ -48,7 +48,7 @@ async function sendCommandToServer(commandString) {
             method: 'POST',
             headers: {
                 'Content-Type': 'text/plain', 
-                'Authorization': `Bearer ${apiToken}` 
+                'Authorization': `Bearer ${craftyToken}` 
             },
             body: commandString,
             agent
@@ -68,4 +68,4 @@ async function sendCommandToServer(commandString) {
 }
 
 
-export {restartMinecraftServer, sendCommandToServer}
+module.exports = {restartMinecraftServer, sendCommandToServer}

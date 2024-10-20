@@ -1,16 +1,14 @@
+const { getUserByDiscordID } = require('../../other_functions/whitelistDatabaseFuncs.js');
+const { ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle, SlashCommandBuilder } = require('discord.js');
 
-import {getUserByDiscordID} from '../../other_functions/whitelistDatabaseFuncs.js';
-import { ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle, Events } from 'discord.js';
-import { SlashCommandBuilder} from "discord.js";
-
-export default {
+module.exports = {
     data: new SlashCommandBuilder()
         .setName('whitelist')
         .setDescription('Add or remove a user from the whitelist'),
-    async execute(client, interaction, isServerAlive) {
+    async execute(client, interaction) {
         const isAlreadyWL = await getUserByDiscordID(interaction.user.id)
 
-        if(!isServerAlive){
+        if(!client.isServerAlive){
             return interaction.reply({
                 content: `Server is offline try again when its back up`,
                 ephemeral: true

@@ -1,9 +1,9 @@
-import { getTicketByChannel } from '../../other_functions/ticketDatabaseFuncs.js';
-import { embedMaker } from '../../other_functions/helperFunctions.js';
-import configJson from '../../config.json' with { type: 'json' };
-import { SlashCommandBuilder} from "discord.js";
+const { getTicketByChannel } = require('../../other_functions/ticketDatabaseFuncs.js');
+const { embedMaker } = require('../../other_functions/helperFunctions.js');
+const configJson = require('../../config.json');
+const { SlashCommandBuilder } = require('discord.js');
 
-export default {
+module.exports = {
     data: new SlashCommandBuilder()
         .setName('reply')
         .setDescription('Replies to the current ticket'),

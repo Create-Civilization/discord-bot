@@ -1,13 +1,11 @@
-const { Events} = require('discord.js');
-
-import {Events} from 'discord.js';
-import configJson from '../config.json' with { type: 'json' };
-import {getTicketByAuthor, insertTicket} from './other_functions/ticketDatabaseFuncs.js'
-import { embedMaker} from './other_functions/helperFunctions.js';
+const { Events } = require('discord.js');
+const configJson = require('../config.json');
+const { getTicketByAuthor, insertTicket } = require('../other_functions/ticketDatabaseFuncs.js');
+const { embedMaker } = require('../other_functions/helperFunctions.js');
 
 
 
-export default {
+module.exports = {
     name: Events.MessageCreate,
     once: false,
     async execute(client, message) {
@@ -60,7 +58,7 @@ export default {
       
                 threadChannel.send({embeds: [embedMaker({
                   colorHex: 0x32CD32, 
-                  title: `Message Recived`, 
+                  title: `Message Received`, 
                   description: message.content,
                   footer: {
                     text: message.author.globalName
@@ -74,7 +72,7 @@ export default {
       
                 thread.send({embeds: [embedMaker({
                   colorHex: 0x32CD32, 
-                  title: `Message Recived`, 
+                  title: `Message Received`, 
                   description: message.content,
                   footer: {
                     text: message.author.globalName

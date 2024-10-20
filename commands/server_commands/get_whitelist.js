@@ -1,10 +1,10 @@
-import {getUserByDiscordID,} from '../../other_functions/whitelistDatabaseFuncs.js'
-import { embedMaker } from '../../other_functions/helperFunctions.js';
-import configJson from '../../config.json' with { type: 'json' };
-import { SlashCommandBuilder} from "discord.js";
+const { getUserByDiscordID } = require('../../other_functions/whitelistDatabaseFuncs.js');
+const { embedMaker } = require('../../other_functions/helperFunctions.js');
+const configJson = require('../../config.json');
+const { SlashCommandBuilder } = require('discord.js');
 
 
-export default {
+module.exports = {
     data: new SlashCommandBuilder()
         .setName('get_whitelist')
         .setDescription('Get whitelist data of a user'),

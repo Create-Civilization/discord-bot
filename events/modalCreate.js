@@ -1,12 +1,12 @@
-import {Events} from 'discord.js';
-import configJson from '../config.json' with { type: 'json' };
-import {addUserToWhitelist} from './other_functions/whitelistDatabaseFuncs.js';
-import {isMcUsernameReal} from './other_functions/helperFunctions.js';
-import { sendCommandToServer } from './other_functions/craftyAPIfuncs.js'
+const { Events } = require('discord.js');
+const configJson = require('../config.json');
+const { addUserToWhitelist } = require('../other_functions/whitelistDatabaseFuncs.js');
+const { isMcUsernameReal } = require('../other_functions/helperFunctions.js');
+const { sendCommandToServer } = require('../other_functions/craftyAPIfuncs.js');
 
-export default{
+module.exports = {
     name: Events.InteractionCreate,
-    async execute(interaction) {
+    async execute(client, interaction) {
         if (!interaction.isModalSubmit()) return;
 
         if (interaction.customId === 'whitelistModal') {

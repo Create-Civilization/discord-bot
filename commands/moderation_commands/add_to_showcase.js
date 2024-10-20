@@ -1,9 +1,8 @@
-import { PermissionsBitField } from "discord.js";
-import axios from 'axios';
-import fs from 'fs';
-import path from 'path';
-import { exec } from "child_process";
-import { SlashCommandBuilder} from "discord.js";
+const { PermissionsBitField, SlashCommandBuilder } = require('discord.js');
+const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
+const { exec } = require('child_process');
 
 function addEntry(newEntry) {
     const filePath = path.join('public_html', 'creations.json');
@@ -62,7 +61,7 @@ function addEntry(newEntry) {
       });
   }
 
-export default {
+module.exports = {
     data: new SlashCommandBuilder()
         .setName('add_to_showcase')
         .setDescription('Adds an entry to the showcase'),

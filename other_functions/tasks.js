@@ -1,13 +1,12 @@
-import { Client, Collection, GatewayIntentBits, ActivityType } from 'discord.js';
-import fetch from 'node-fetch';
-import https from 'https';
-import configJson from '../config.json' with { type: 'json' };
+const { Client, Collection, GatewayIntentBits, ActivityType } = require('discord.js');
+const https = require('https');
+const configJson = require('../config.json');
 
 
 
 //I will be so real I wrote this and idk why I did it like this. I am sorry but I am not going to fix it. I am just not touching this.
 // BOT STATUS (I HATE COMMENTS)
-export const setBotStatus = async (client, onlinePlayers, maxPlayers) => {
+const setBotStatus = async (client, onlinePlayers, maxPlayers) => {
     try {
         if (maxPlayers == 0) {
             await client.user.setPresence({
@@ -32,7 +31,8 @@ export const setBotStatus = async (client, onlinePlayers, maxPlayers) => {
 };
 
 // GET EM STATS
-export const fetchServerStats = async () => {
+const fetchServerStats = async () => {
+    const fetch = (await import('node-fetch')).default;
     const apiToken = configJson.craftyToken; 
     const serverId = configJson.serverID; 
     const apiUrl = `https://${configJson.serverIP}:${configJson.serverPort}/api/v2/servers/${serverId}/stats`; 
@@ -61,7 +61,8 @@ export const fetchServerStats = async () => {
 //READABLITY MY ASS
 
 // logs
-export const fetchServerLogs = async (useFile = false, addColors = false, rawOutput = false, outputAsHTML = false) => {
+const fetchServerLogs = async (useFile = false, addColors = false, rawOutput = false, outputAsHTML = false) => {
+    const fetch = (await import('node-fetch')).default;
     const apiToken = configJson.craftyToken;
     const serverId = configJson.serverID; 
     const apiUrl = `https://${configJson.serverIP}:${configJson.serverPort}/api/v2/servers/${serverId}/logs`;
@@ -97,7 +98,8 @@ export const fetchServerLogs = async (useFile = false, addColors = false, rawOut
 
 
 //Read da name
-export const restartServer = async (client) => {
+const restartServer = async (client) => {
+    const fetch = (await import('node-fetch')).default;
     const apiToken = configJson.craftyToken; 
     const serverId = configJson.serverID; 
     const apiUrl = `https://${configJson.serverIP}:${configJson.serverPort}/api/v2/servers/${serverId}/action/restart_server`; 
@@ -134,7 +136,7 @@ export const restartServer = async (client) => {
 };
 
 
-export const checkCrashTask = async (client) => {
+const checkCrashTask = async (client) => {
     try {
         const serverLogs = await fetchServerLogs(true, true, false, false);
 
@@ -160,7 +162,7 @@ export const checkCrashTask = async (client) => {
     return false; 
 };
 
-export const updateStatusTask = async (client) => {
+const updateStatusTask = async (client) => {
     try {
         const stats = await fetchServerStats(); 
         if (stats) {
@@ -180,4 +182,4 @@ export const updateStatusTask = async (client) => {
 
 
 
-
+module.exports = {setBotStatus, fetchServerStats, fetchServerLogs, restartServer, checkCrashTask, updateStatusTask};

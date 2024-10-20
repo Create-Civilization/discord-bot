@@ -1,10 +1,10 @@
-import {getUserByDiscordID, deleteEntryByUserID} from '../../other_functions/whitelistDatabaseFuncs.js'
-import { sendCommandToServer } from '../../other_functions/craftyAPIfuncs.js';
-import configJson from '../../config.json' with { type: 'json' };
-import { SlashCommandBuilder} from "discord.js";
+const { getUserByDiscordID, deleteEntryByUserID } = require('../../other_functions/whitelistDatabaseFuncs.js');
+const { sendCommandToServer } = require('../../other_functions/craftyAPIfuncs.js');
+const configJson = require('../../config.json');
+const { SlashCommandBuilder } = require('discord.js');
 
 
-export default {
+module.exports = {
     data: new SlashCommandBuilder()
         .setName('admin_remove_whitelist')
         .setDescription('Get whitelist data of a user'),

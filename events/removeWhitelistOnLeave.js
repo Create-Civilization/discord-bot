@@ -1,12 +1,13 @@
-import {Events} from 'discord.js';
-import {getUserByDiscordID, deleteEntryByUserID} from './other_functions/whitelistDatabaseFuncs.js';
-import {getMinecraftNameByUUID} from './other_functions/helperFunctions.js';
-import { sendCommandToServer } from './other_functions/craftyAPIfuncs.js'
+const { Events } = require('discord.js');
+const { getUserByDiscordID, deleteEntryByUserID } = require('../other_functions/whitelistDatabaseFuncs.js');
+const { getMinecraftNameByUUID } = require('../other_functions/helperFunctions.js');
+const { sendCommandToServer } = require('../other_functions/craftyAPIfuncs.js');
 
-export default {
+
+module.exports = {
     name: Events.GuildMemberRemove,
     once: false,
-    async execute(member) {
+    async execute(client, member) {
         const databaseEntry = await getUserByDiscordID(member.id);
         if (!databaseEntry){
       

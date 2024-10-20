@@ -1,8 +1,9 @@
-import configJson from '../../config.json' with { type: 'json' };
-import { restartMinecraftServer } from '../../other_functions/craftyAPIfuncs.js'
-import { SlashCommandBuilder} from "discord.js";
+const configJson = require('../../config.json');
+const { restartMinecraftServer } = require('../../other_functions/craftyAPIfuncs.js');
+const { SlashCommandBuilder } = require('discord.js');
 
-export default {
+
+module.exports = {
     data: new SlashCommandBuilder()
         .setName('restart_server')
         .setDescription('Restarts the Minecraft server using Crafty API'),

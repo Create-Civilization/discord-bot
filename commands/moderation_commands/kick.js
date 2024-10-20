@@ -1,6 +1,7 @@
-import {PermissionsBitField, SlashCommandBuilder} from 'discord.js';
+const { PermissionsBitField, SlashCommandBuilder } = require('discord.js');
 
-export default  {
+
+module.exports = {
     data: new SlashCommandBuilder()
         .setName('kick')
         .setDescription('Kicks a user'),
