@@ -4,7 +4,13 @@ const { PermissionsBitField, SlashCommandBuilder } = require('discord.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('kick')
-        .setDescription('Kicks a user'),
+        .setDescription('Kicks a user')
+        .addUserOption(option => option.setName('username')
+          .setDescription('The user to kick')
+          .setRequired(true))
+        .addStringOption(option => option.setName('reason_for_kick')
+          .setDescription('The reason for the kick')
+          .setRequired(true)),
     async execute(client, interaction) {
         const memberToKickOption = interaction.options.get('username');
         const memberToKick = interaction.guild.members.cache.get(memberToKickOption.user.id);

@@ -7,7 +7,10 @@ const { SlashCommandBuilder } = require('discord.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('get_whitelist')
-        .setDescription('Get whitelist data of a user'),
+        .setDescription('Get whitelist data of a user')
+        .addUserOption(option => option.setName('user_to_get')
+            .setDescription('The user to get')
+            .setRequired(true)),
     async execute(client, interaction) {
         const allowedRoleIds = configJson.adminRolesIDS;
 

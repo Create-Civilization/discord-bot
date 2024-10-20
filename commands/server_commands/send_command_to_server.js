@@ -5,7 +5,10 @@ const { SlashCommandBuilder } = require('discord.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('send_command_to_server')
-        .setDescription('Send a command to the server'),
+        .setDescription('Send a command to the server')
+        .addStringOption(option => option.setName('command')
+            .setDescription('The command to send')
+            .setRequired(true)),
     async execute(client,interaction) {
         const allowedRoleIds = configJson.adminRolesIDS; 
         const channel = interaction.channel;

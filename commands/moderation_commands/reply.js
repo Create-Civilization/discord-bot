@@ -6,7 +6,10 @@ const { SlashCommandBuilder } = require('discord.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('reply')
-        .setDescription('Replies to the current ticket'),
+        .setDescription('Replies to the current ticket')
+        .addStringOption(option => option.setName('message')
+            .setDescription('The message to send')
+            .setRequired(true)),
     async execute(client, interaction) {
         const allowedRoleIds = configJson.adminRolesIDS; 
         const channel = interaction.channel;

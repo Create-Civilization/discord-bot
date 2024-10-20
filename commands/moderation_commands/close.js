@@ -7,7 +7,10 @@ const config = require('../../config.json');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('close')
-        .setDescription('Close the current thread'),
+        .setDescription('Close the current thread')
+        .addStringOption(option => option.setName('reason')
+            .setDescription('The reason for closing the ticket')
+            .setRequired(true)),
     async execute(client, interaction) {
 
         const allowedRoleIds = config.adminRolesIDS; 

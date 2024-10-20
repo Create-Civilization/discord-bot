@@ -64,7 +64,19 @@ function addEntry(newEntry) {
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('add_to_showcase')
-        .setDescription('Adds an entry to the showcase'),
+        .setDescription('Adds an entry to the showcase')
+        .addStringOption(option => 
+          option.setName('creator')
+          .setDescription('The creator of the creation')
+          .setRequired(true))
+        .addStringOption(option => 
+          option.setName('title')
+          .setDescription('The title of the creation')
+          .setRequired(true))
+        .addAttachmentOption(option => 
+          option.setName('image')
+          .setDescription('The image of the creation')),
+
     async execute(client,interaction) {
         const requestingMember = await interaction.guild.members.fetch(interaction.user.id);
         if (!requestingMember.permissions.has(PermissionsBitField.Flags.KickMembers) || interaction.guild.id == !'1268369952348442775') {
