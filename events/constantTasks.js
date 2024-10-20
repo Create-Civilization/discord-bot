@@ -1,6 +1,5 @@
 const { Events } = require('discord.js');
 const { checkCrashTask, updateStatusTask } = require('../other_functions/tasks.js');
-const { checkAllNames } = require('../other_functions/checkAllMcNames.js');
 
 module.exports = {
     name: Events.ClientReady,
