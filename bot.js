@@ -73,6 +73,7 @@ const client = new Client({
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.MessageContent,
     ],
     partials: [Partials.Channel]
 });

@@ -12,6 +12,7 @@ module.exports = {
         if (message.author.id === client.user.id) return;
         if(message.channel.type == 1){
           if(configJson.helpTicketChannelID){
+            const attachmentsArray = Array.from(message.attachments.values());
             const helpTicketChannel = client.channels.cache.get(configJson.helpTicketChannelID)
       
             try {
@@ -63,7 +64,7 @@ module.exports = {
                   footer: {
                     text: message.author.globalName
                   }
-                })]})
+                })], files: attachmentsArray.length > 0 ? attachmentsArray : []})
       
       
               } else if(activeThread) {
@@ -77,7 +78,7 @@ module.exports = {
                   footer: {
                     text: message.author.globalName
                   }
-                })]})
+                })], files: attachmentsArray.length > 0 ? attachmentsArray : []})
       
                 message.react('✅')
               }
