@@ -7,7 +7,7 @@ async function unregisterCommands() {
 
     try {
         // Fetch all registered commands for the bot in the guild
-        const commands = await rest.get(Routes.applicationGuildCommands(clientID, guildID));
+        const commands = await rest.get(Routes.applicationGuildCommands(clientID));
 
         // Log the commands that will be deleted
         console.log('Unregistering the following commands:');
@@ -18,7 +18,7 @@ async function unregisterCommands() {
         // Delete each command
         await Promise.all(commands.map(command => {
             console.log(command.name);
-            return rest.delete(Routes.applicationGuildCommand(clientID, guildID, command.id));
+            return rest.delete(Routes.applicationGuildCommand(clientID, command.id));
         }));
 
         console.log('Successfully unregistered all commands.');
