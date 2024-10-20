@@ -1,27 +1,33 @@
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const {guildID, clientID, token}= require('./config.json');
+const { guildID, clientID, token } = require('./config.json');
 
 async function unregisterCommands() {
     const rest = new REST({ version: '9' }).setToken(token);
 
     try {
-        // Fetch all registered commands for the bot in the guild
-        const commands = await rest.get(Routes.applicationGuildCommands(clientID));
+        // Unregister global commands by passing an empty array
+        console.log('Unregistering all global commands...');
+        await rest.put(Routes.applicationCommands(clientID), { body: [] });
+        console.log('Successfully unregistered all global commands.');
 
-        // Log the commands that will be deleted
-        console.log('Unregistering the following commands:');
-        commands.forEach(command => {
+        // Unregister guild commands
+        console.log('Unregistering all guild commands...');
+        const guildCommands = await rest.get(Routes.applicationGuildCommands(clientID, guildID));
+
+        // Log the guild commands that will be deleted
+        console.log('Unregistering the following guild commands:');
+        guildCommands.forEach(command => {
             console.log(`- ${command.name} (${command.id})`);
         });
 
-        // Delete each command
-        await Promise.all(commands.map(command => {
-            console.log(command.name);
-            return rest.delete(Routes.applicationGuildCommand(clientID, command.id));
-        }));
+        // Delete each guild command
+        await Promise.all(guildCommands.map(command => 
+            rest.delete(Routes.applicationGuildCommand(clientID, guildID, command.id))
+        ));
 
-        console.log('Successfully unregistered all commands.');
+        console.log('Successfully unregistered all guild commands.');
+
     } catch (error) {
         console.error('Error unregistering commands:', error);
     }
