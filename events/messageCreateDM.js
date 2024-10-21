@@ -14,6 +14,7 @@ module.exports = {
           if(configJson.helpTicketChannelID){
             const attachmentsArray = Array.from(message.attachments.values());
             const helpTicketChannel = client.channels.cache.get(configJson.helpTicketChannelID)
+            const guild = helpTicketChannel.guild
       
             try {
               const activeThread = await getTicketByAuthor(message.author.id);
@@ -56,13 +57,26 @@ module.exports = {
                 })]})
       
                 message.react('✅')
+
+                const date = new Date();
+                const formattedDate = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+
+                let hours = date.getHours();
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12;
       
                 threadChannel.send({embeds: [embedMaker({
                   colorHex: 0x32CD32, 
                   title: `Message Received`, 
                   description: message.content,
                   footer: {
-                    text: message.author.globalName
+                    text: `${guild.name} on ${formattedDate} at ${hours}:${minutes} ${ampm}`,
+                    iconURL: guild.iconURL({dynamic: true}) || undefined
+                  },
+                  author: {
+                    name: message.author.username,
+                    iconURL: message.author.avatarURL({dynamic: true}) || undefined
                   }
                 })], files: attachmentsArray.length > 0 ? attachmentsArray : []})
       
@@ -70,13 +84,26 @@ module.exports = {
               } else if(activeThread) {
       
                 const thread = await client.channels.fetch(activeThread.threadChannelID);
+
+                const date = new Date();
+                const formattedDate = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+                
+                let hours = date.getHours();
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12;
       
                 thread.send({embeds: [embedMaker({
                   colorHex: 0x32CD32, 
                   title: `Message Received`, 
                   description: message.content,
                   footer: {
-                    text: message.author.globalName
+                    text: `${guild.name} on ${formattedDate} at ${hours}:${minutes} ${ampm}`,
+                    iconURL: guild.iconURL({dynamic: true}) || undefined
+                  },
+                  author: {
+                    name: message.author.username,
+                    iconURL: message.author.avatarURL({dynamic: true}) || undefined
                   }
                 })], files: attachmentsArray.length > 0 ? attachmentsArray : []})
       

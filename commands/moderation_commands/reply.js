@@ -24,13 +24,22 @@ module.exports = {
 
                     const thread = await client.channels.fetch(ticket.threadChannelID);
 
+                    const date = new Date();
+                    const formattedDate = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+
+                    let hours = date.getHours();
+                    const minutes = date.getMinutes().toString().padStart(2, '0');
+                    const ampm = hours >= 12 ? 'PM' : 'AM';
+                    hours = hours % 12 || 12;
+
+
                     // Send to user
                     let newEmbed = embedMaker({
                         colorHex: 0x32CD32,
                         title: `Response Received`,
                         description: `${response}`,
                         footer: {
-                            text: `${guild.name} | ${guild.id}`,
+                            text: `${guild.name} on ${formattedDate} at ${hours}:${minutes} ${ampm}`,
                             iconURL: guild.iconURL({dynamic: true}) || undefined
                         },
                         author: {
@@ -47,7 +56,7 @@ module.exports = {
                         title: `Message Sent`,
                         description: `${response}`,
                         footer: {
-                            text: `${guild.name} | ${guild.id}`,
+                            text: `${guild.name} on ${formattedDate} at ${hours}:${minutes} ${ampm}`,
                             iconURL: guild.iconURL({dynamic: true}) || undefined
                         },
                         author: {
