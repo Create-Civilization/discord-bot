@@ -80,6 +80,19 @@ function addUserToWhitelist(playerUUID, discordID, username, reason) {
     });
   }
 
+  
+  function getUserByMinecraftUsername(username) {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT * FROM whitelistData WHERE username = ?`;
+      try {
+        const row = db.prepare(query).get(username);
+        resolve(row);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
 
 
   function deleteEntryByUserID(discordID) {
@@ -100,4 +113,4 @@ function addUserToWhitelist(playerUUID, discordID, username, reason) {
   }
 
   
-module.exports = {getUserByUUID, getUserByDiscordID, addUserToWhitelist, deleteEntryByUserID, initWhiteListDatabase};
+module.exports = {getUserByMinecraftUsername, getUserByUUID, getUserByDiscordID, addUserToWhitelist, deleteEntryByUserID, initWhiteListDatabase};

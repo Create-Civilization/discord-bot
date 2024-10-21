@@ -6,8 +6,8 @@ const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('get_whitelist')
-        .setDescription('Get whitelist data of a user')
+        .setName('get_whitelist_by_discord')
+        .setDescription('Get whitelist data of a user by using discord account')
         .addUserOption(option => option.setName('user_to_get')
             .setDescription('The user to get')
             .setRequired(true)),
