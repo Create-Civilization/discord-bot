@@ -42,7 +42,11 @@ module.exports = {
             footer: {
                 text: `${guild.name} | ${guild.id}`,
                 iconURL: guild.iconURL({dynamic: true}) || undefined
-            }
+            },
+            author: {
+                name: interaction.user.username,
+                iconURL: interaction.user.avatarURL({dynamic: true}) || undefined
+            },
         });
 
         await interaction.channel.send({embeds: [newEmbed]});
