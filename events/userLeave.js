@@ -9,6 +9,7 @@ module.exports = {
     name: Events.GuildMemberRemove,
     once: false,
     async execute(client, member) {
+        console.log(configJson.logChannelID)
         if(configJson.logChannelID){
             const Logchannel = await client.channels.cache.get(configJson.logChannelID);
             const guild = member.guild;

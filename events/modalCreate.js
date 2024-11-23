@@ -55,6 +55,7 @@ module.exports = {
                       iconURL: interaction.user.avatarURL({dynamic: true}) || undefined
                   },
                 });
+                console.log("MADE IT HERE")
                 const Logchannel = await client.channels.cache.get(configJson.logChannelID);
                 await Logchannel.send({embeds: [newEmbed]});
               }
