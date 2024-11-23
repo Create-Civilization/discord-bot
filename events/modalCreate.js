@@ -40,6 +40,7 @@ module.exports = {
               }
 
               //Check if log channel exists and if so send a log message
+              console.log("MADE IT HERE TEST TEST TES")
               if(configJson.logChannelID) {
                 const dbObject = await getUserByDiscordID(interaction.user.id);
                 let newEmbed = embedMaker({
