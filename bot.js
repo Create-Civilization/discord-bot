@@ -20,7 +20,8 @@ const defaultConfig = {
     whitelistedRoleID: '',
     serverID: '',
     serverIP: '',
-    serverPort: ''
+    serverPort: '',
+    logChannelID: ''
 };
 
 
