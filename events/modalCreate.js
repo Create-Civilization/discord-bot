@@ -39,28 +39,6 @@ module.exports = {
                 })
               }
 
-              //Check if log channel exists and if so send a log message
-              console.log("MADE IT HERE TEST TEST TES")
-              if(configJson.logChannelID) {
-                const dbObject = await getUserByDiscordID(interaction.user.id);
-                let newEmbed = embedMaker({
-                  colorHex: 0x32CD32,
-                  title: `${dbObject.username}'s just whitelisted`,
-                  description: `Minecraft username: \`${dbObject.username}\` | Minecraft UUID: \`${dbObject.playerUUID}\` | Discord ID: \`${dbObject.discordID}\` | Reason For Join: \`${dbObject.reason}\` `,
-                  footer: {
-                      text: `${guild.name} | ${guild.id}`,
-                      iconURL: guild.iconURL({dynamic: true}) || undefined
-                  },
-                  author: {
-                      name: interaction.user.username,
-                      iconURL: interaction.user.avatarURL({dynamic: true}) || undefined
-                  },
-                });
-                console.log("MADE IT HERE")
-                const Logchannel = await client.channels.cache.get(configJson.logChannelID);
-                await Logchannel.send({embeds: [newEmbed]});
-              }
-
       
               return interaction.editReply({
                 content: `Added ${mojangAPI.name} to the whitelist. If you added the wrong username or want to be removed to /remove_whitelist`,
