@@ -68,11 +68,25 @@ function addUserToWhitelist(playerUUID, discordID, username, reason) {
   }
   
   // Function to get user data by Discord ID
-  function getUserByDiscordID(discordID) {
+  function getUserByDiscordID(discordID = null) {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM whitelistData WHERE discordID = ?`;
+      let query;
+      let params = [];
+      let row;
+
+      if(discordID){
+        query = `SELECT * FROM whitelistData WHERE discordID = ?`;
+        params = [discordID];
+      } else {
+        query = `SELECT * FROM whitelistData`;
+      }
+
       try {
-        const row = db.prepare(query).get(discordID);
+        if(discordID){
+          row = db.prepare(query).get(...params);
+        } else if(!discordID) {
+          row = db.prepare(query).all(...params); 
+        }
         resolve(row);
       } catch (err) {
         reject(err);
@@ -81,15 +95,29 @@ function addUserToWhitelist(playerUUID, discordID, username, reason) {
   }
 
   
-  function getUserByMinecraftUsername(username) {
+  function getUserByMinecraftUsername(username = null) {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM whitelistData WHERE username = ?`;
+      let query;
+      let params = [];
+
+      if(username){
+        query = `SELECT * FROM whitelistData WHERE username = ?`;
+        params = [username];
+      } else {
+        query = `SELECT * FROM whitelistData`;
+      }
+
       try {
-        const row = db.prepare(query).get(username);
+        if(username){
+          row = db.prepare(query).get(...params);
+        } else if(!username) {
+          row = db.prepare(query).all(...params); 
+        }
         resolve(row);
       } catch (err) {
         reject(err);
       }
+
     });
   }
 

@@ -75,12 +75,17 @@ const client = new Client({
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.DirectMessages,
         GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.GuildPresences,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildScheduledEvents
     ],
     partials: [Partials.Channel]
 });
 
 let isServerAlive = false;
 client.isServerAlive = isServerAlive;
+
 
 client.commands = new Collection();
 const commandsPath = path.join(__dirname, 'commands');

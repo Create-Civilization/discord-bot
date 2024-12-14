@@ -1,9 +1,8 @@
 const { Events } = require('discord.js');
 const { getUserByDiscordID, deleteEntryByUserID } = require('../other_functions/whitelistDatabaseFuncs.js');
-const { getMinecraftNameByUUID } = require('../other_functions/helperFunctions.js');
+const { getMinecraftNameByUUID, embedMaker } = require('../other_functions/helperFunctions.js');
 const { sendCommandToServer } = require('../other_functions/craftyAPIfuncs.js');
 const configJson = require('../config.json'); 
-
 
 module.exports = {
     name: Events.GuildMemberRemove,
@@ -15,8 +14,8 @@ module.exports = {
             const guild = member.guild;
             let newEmbed = embedMaker({
                 colorHex: 0xCC0000,
-                title: `${member.username} left the server`,
-                description: undefined,
+                title: `User Leave`,
+                description: `${member.user.username} has left the server`,
                 footer: {
                     text: `${guild.name} | ${guild.id}`,
                     iconURL: guild.iconURL({dynamic: true}) || undefined
@@ -32,3 +31,5 @@ module.exports = {
 
     }
 }
+
+
