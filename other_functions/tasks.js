@@ -1,6 +1,9 @@
 const { Client, Collection, GatewayIntentBits, ActivityType } = require('discord.js');
 const https = require('https');
 const configJson = require('../config.json');
+const { getAllTickets, getTicketsOlderThan, deleteTicketByTicketID } = require('./ticketDatabaseFuncs.js');
+const {embedMaker} = require('./helperFunctions.js')
+const exp = require('constants');
 
 
 
@@ -177,9 +180,68 @@ const updateStatusTask = async (client) => {
     }
 };
 
+const checkStaleTickets = async (client) => {
+    try {
+        const expiredTickets = await getTicketsOlderThan(configJson.ticketExpiryTimeSeconds);
+
+        if (expiredTickets.length > 0) {
+            for (let i = 0; i < expiredTickets.length; i++) {
+                try {
+                    const ticket = expiredTickets[i];
+                    const threadOwner = await client.users.fetch(ticket.authorID);
+                    const guild = client.guilds.cache.get(configJson.guildID);
+                    const helpChannelOBJ = client.channels.cache.get(configJson.helpTicketChannelID);
+                    const fetchedMessage = await helpChannelOBJ.messages.fetch(ticket.threadChannelID);
+                    const thread = await client.channels.fetch(ticket.threadChannelID);
+
+                    await deleteTicketByTicketID(ticket.id);
+
+
+                    let newEmbed = embedMaker({
+                        colorHex: 0xD70040,
+                        title: `Ticket Closed`,
+                        description: `Ticket has been closed by <@${client.user.id}>. Reason: Ticket Expired After \`${(configJson.ticketExpiryTimeSeconds /60/60/24)}\` days. If this ticket is still relevant, please make a new one.`,
+                        footer: {
+                            text: `${client.user.username || 'Bot'}`,  
+                            iconURL: client.user.avatarURL({ dynamic: true }) || undefined  
+                        }
+                    });
+                    await fetchedMessage.edit({ embeds: [newEmbed] });
+
+                    newEmbed = embedMaker({
+                        colorHex: 0xD70040,
+                        title: `Ticket Closed Due To Expiry`,
+                        description: `Ticket has expired after \`${(configJson.ticketExpiryTimeSeconds /60/60/24)}\` days.`,
+                        footer: {
+                            text: `${guild.name} | ${guild.id}`,
+                            iconURL: guild.iconURL({ dynamic: true }) || undefined
+                        },
+                        author: {
+                            name: `${client.user.username || 'Bot'}`,
+                            iconURL: client.user.avatarURL({ dynamic: true }) || undefined
+                        }
+                    });
+                    await threadOwner.send({ embeds: [newEmbed] });
+
+                    await thread.setLocked(true);
+                    await thread.setArchived(true);
+
+                } catch (error) {
+                    console.error('Error in processing ticket:', error);
+                }
+            }
+        } else {
+            console.log("No expired tickets found.");
+        }
+    } catch (error) {
+        console.error('Error in checkStaleTickets:', error);
+    }
+};
 
 
 
 
 
-module.exports = {setBotStatus, fetchServerStats, fetchServerLogs, restartServer, checkCrashTask, updateStatusTask};
+
+
+module.exports = {setBotStatus, fetchServerStats, fetchServerLogs, restartServer, checkCrashTask, updateStatusTask, checkStaleTickets};

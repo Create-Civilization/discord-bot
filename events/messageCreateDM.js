@@ -53,7 +53,7 @@ module.exports = {
                 threadChannel.send({embeds: [embedMaker({
                   colorHex: 0xbfbfbf, 
                   title: `A New Ticket Has Been Made`, 
-                  description: `To respond to this ticket use \`/reply\` every other message will be ignored. To close the ticket do \`/close\``
+                  description: `To respond to this ticket use \`/reply\` every other message will be ignored. To close the ticket do \`/close\` this ticket will automaticly close after \`${(configJson.ticketExpiryTimeSeconds / 60 / 60 / 24)}\` days`,
                 })]})
       
                 message.react('✅')

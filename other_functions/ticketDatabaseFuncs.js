@@ -20,7 +20,7 @@ function initTicketDatabase() {
         authorID TEXT NOT NULL,
         threadChannelID TEXT NOT NULL,
         embedMessageID TEXT NOT NULL,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        lastActivity INTEGER DEFAULT (strftime('%s', 'now'))
       )
     `).run();
 
@@ -90,4 +90,40 @@ function deleteTicketByTicketID(ticketId) {
     });
   }
 
-module.exports = { getTicketByAuthor, insertTicket, deleteTicketByTicketID , getTicketByChannel, initTicketDatabase };
+function getAllTickets() {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT * FROM tickets`;
+      try {
+        const stmt = db.prepare(query);
+        const rows = stmt.all();
+        resolve(rows); 
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  function getTicketsOlderThan(seconds) {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT * FROM tickets WHERE lastActivity < ?`;
+      try {
+        const stmt = db.prepare(query);
+        const rows = stmt.all(Math.floor(Date.now() / 1000) - seconds); 
+        resolve(rows);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  function updateTicketActivity(ticketId) {
+    const query = `UPDATE tickets SET lastActivity = ? WHERE id = ?`;
+    try {
+      const stmt = db.prepare(query);
+      stmt.run(Math.floor(Date.now() / 1000), ticketId);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+module.exports = { getTicketByAuthor, insertTicket, deleteTicketByTicketID , getTicketByChannel, initTicketDatabase, getAllTickets, getTicketsOlderThan, updateTicketActivity };

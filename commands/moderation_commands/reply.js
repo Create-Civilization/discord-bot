@@ -1,4 +1,4 @@
-const { getTicketByChannel } = require('../../other_functions/ticketDatabaseFuncs.js');
+const { getTicketByChannel, updateTicketActivity } = require('../../other_functions/ticketDatabaseFuncs.js');
 const { embedMaker } = require('../../other_functions/helperFunctions.js');
 const configJson = require('../../config.json');
 const { SlashCommandBuilder } = require('discord.js');
@@ -50,6 +50,7 @@ module.exports = {
 
                     await threadOwner.send({embeds: [newEmbed]});
 
+                    await updateTicketActivity(ticket.id);
                     // Send to thread
                     newEmbed = embedMaker({
                         colorHex: 0x32CD32,
@@ -64,6 +65,8 @@ module.exports = {
                             iconURL: interaction.user.avatarURL({dynamic: true}) || undefined
                         }
                     });
+
+
 
                     await thread.send({embeds: [newEmbed]});
                     return interaction.reply({

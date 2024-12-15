@@ -21,7 +21,8 @@ const defaultConfig = {
     serverID: '',
     serverIP: '',
     serverPort: '',
-    logChannelID: ''
+    logChannelID: '',
+    ticketExpiryTimeSeconds: 86400,
 };
 
 
