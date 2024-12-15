@@ -24,6 +24,10 @@ module.exports = {
             message[i] = `<#${message[i]}>`;
         }
 
+        if (message.length === 0) {
+            message.push('No tickets found.');
+        }
+
         await interaction.reply({ content: message.join(' '), ephemeral: true });
     }
 };
