@@ -43,7 +43,7 @@ module.exports = {
         }
         const guild = interaction.guild;
         const whitelistRole = await guild.roles.cache.get(configJson.whitelistedRoleID)
-        const member = await guild.members.fetch(interaction.user.id);
+        const member = await guild.members.fetch(userId);
         if (await member.roles.cache.has(whitelistRole.id)) {
             await member.roles.remove(whitelistRole);
         }
