@@ -1,7 +1,7 @@
 const { Events } = require('discord.js');
 const configJson = require('../config.json');
 const { addUserToWhitelist, getUserByDiscordID } = require('../other_functions/whitelistDatabaseFuncs.js');
-const { isMcUsernameReal } = require('../other_functions/helperFunctions.js');
+const { isMcUsernameReal, embedMaker } = require('../other_functions/helperFunctions.js');
 const { sendCommandToServer } = require('../other_functions/craftyAPIfuncs.js');
 
 module.exports = {
@@ -38,6 +38,35 @@ module.exports = {
                   ephemeral: true
                 })
               }
+
+
+
+
+              const Logchannel = await client.channels.cache.get(configJson.logChannelID);
+              const dbObject = await getUserByDiscordID(interaction.user.id)
+
+              let newEmbed = embedMaker({
+                colorHex: 0x32CD32,
+                title: `New User Whitelisted`,
+                description: `Minecraft username: \`${dbObject.username}\` | Minecraft UUID: \`${dbObject.playerUUID}\` | Discord Name: <@${dbObject.discordID}> | Reason For Join: \`${dbObject.reason}\` `,
+                footer: {
+                    text: `${guild.name} | ${guild.id}`,
+                    iconURL: guild.iconURL({dynamic: true}) || undefined
+                },
+                author: {
+                    name: interaction.user.username,
+                    iconURL: interaction.user.avatarURL({dynamic: true}) || undefined
+                },
+            });
+
+            try {
+              await Logchannel.send({embeds: [newEmbed]})
+            } catch(err) {
+              console.log("There was an error sending embed to log channel in modalCreate")
+              console.log(err)
+            }
+
+
 
       
               return interaction.editReply({
