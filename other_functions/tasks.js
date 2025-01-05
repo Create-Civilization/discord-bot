@@ -36,18 +36,14 @@ const setBotStatus = async (client, onlinePlayers, maxPlayers) => {
 // GET EM STATS
 const fetchServerStats = async () => {
     const fetch = (await import('node-fetch')).default;
-    const apiToken = configJson.craftyToken; 
-    const serverId = configJson.serverID; 
-    const apiUrl = `https://${configJson.serverIP}:${configJson.serverPort}/api/v2/servers/${serverId}/stats`; 
+    const apiUrl = 'https://api.mcsrvstat.us/3/play.createcivilization.com'; // New API endpoint
 
     try {
         const response = await fetch(apiUrl, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${apiToken}`,
                 'Content-Type': 'application/json'
-            },
-            agent: new https.Agent({ rejectUnauthorized: false }) // YUCKY SSL
+            }
         });
 
         if (!response.ok) {
@@ -55,130 +51,36 @@ const fetchServerStats = async () => {
         }
 
         const result = await response.json();
-        return result.data; 
+        return result; // Return full server stats from the MCSrvStat API
     } catch (error) {
-        console.error('Error fetching server stats:', error);
-        return null; 
+        console.error('Failed to fetch server stats:', error.message);
+        return null; // Return null in case of an error
     }
 };
-//READABLITY MY ASS
-
-// logs
-const fetchServerLogs = async (useFile = false, addColors = false, rawOutput = false, outputAsHTML = false) => {
-    const fetch = (await import('node-fetch')).default;
-    const apiToken = configJson.craftyToken;
-    const serverId = configJson.serverID; 
-    const apiUrl = `https://${configJson.serverIP}:${configJson.serverPort}/api/v2/servers/${serverId}/logs`;
-
-    const params = new URLSearchParams({
-        file: useFile,
-        colors: addColors,
-        raw: rawOutput,
-        html: outputAsHTML,
-    });
-
-    try {
-        const response = await fetch(`${apiUrl}?${params}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${apiToken}`,
-                'Content-Type': 'application/json',
-            },
-            agent: new https.Agent({ rejectUnauthorized: false }), // YUCKY SSL
-        });
-
-        if (!response.ok) {
-            throw new Error(`Error fetching logs: ${response.status}`);
-        }
-
-        const result = await response.json();
-        return result.data;  // Return the logs data directly
-    } catch (error) {
-        console.error('Error fetching server logs:', error);
-        return null; 
-    }
-};
-
-
-//Read da name
-const restartServer = async (client) => {
-    const fetch = (await import('node-fetch')).default;
-    const apiToken = configJson.craftyToken; 
-    const serverId = configJson.serverID; 
-    const apiUrl = `https://${configJson.serverIP}:${configJson.serverPort}/api/v2/servers/${serverId}/action/restart_server`; 
-
-    const agent = new https.Agent({ rejectUnauthorized: false }); 
-
-    try {
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${apiToken}`,
-                'Content-Type': 'application/json'
-            },
-            agent 
-        });
-
-        if (!response.ok) {
-            throw new Error(`Error restarting server: ${response.status}`);
-        }
-
-        const result = await response.json();
-
-
-        if (result.status === 'ok') {
-            client.channels.cache.get("1272992315069169704").send(':tada: VS CRASH DETECTED :tada: | :sparkles:  RESTARTING SERVER :sparkles:');
-            console.log('Server restarted successfully!');
-
-        } else {
-            console.error('Failed to restart the server:', result);
-        }
-    } catch (error) {
-        console.error('Error restarting server:', error);
-    }
-};
-
-
-const checkCrashTask = async (client) => {
-    try {
-        const serverLogs = await fetchServerLogs(true, true, false, false);
-
-        if (Array.isArray(serverLogs)) {
-            const warningMessage = '[Burger Factory/]: Too many game frames in the game frame queue. Is the physics stage broken?';
-            
-            
-            const warnings = serverLogs.filter(log => log.includes(warningMessage));
-            if (warnings.length > 0) {
-                console.log('Warning found in server logs');
-                await restartServer(client); 
-                return true; 
-            } else {
-                console.log('No warnings found in server logs');
-            }
-        } else {
-            console.error('Server logs is not an array or is undefined:', serverLogs);
-        }
-    } catch (error) {
-        console.error('Error in periodicTasks:', error);
-    }
-
-    return false; 
-};
+//READABLITY MY 
 
 const updateStatusTask = async (client) => {
     try {
+
         const stats = await fetchServerStats(); 
+
         if (stats) {
-            const onlinePlayers = stats.online;
-            const maxPlayers = stats.max;
+            const onlinePlayers = stats.players.online; 
+            const maxPlayers = stats.players.max; 
+            
+
             const returnVar = await setBotStatus(client, onlinePlayers, maxPlayers);
-            return returnVar
+            return returnVar;
+        } else {
+            console.log('No server stats returned.');
+            return false; 
         }
-    } catch(error) {
+    } catch (error) {
         console.error('Error in updateStatusTask:', error);
-        return false
+        return false; 
     }
 };
+
 
 const checkStaleTickets = async (client) => {
     try {
@@ -244,4 +146,4 @@ const checkStaleTickets = async (client) => {
 
 
 
-module.exports = {setBotStatus, fetchServerStats, fetchServerLogs, restartServer, checkCrashTask, updateStatusTask, checkStaleTickets};
+module.exports = {setBotStatus, fetchServerStats, updateStatusTask, checkStaleTickets};

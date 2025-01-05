@@ -82,8 +82,6 @@ async function getMinecraftNameByUUID(mcUUID){
     }
 }
 
-//check whitelistDB and update names
-
 
 
 module.exports = { embedMaker, isMcUsernameReal, getMinecraftNameByUUID};

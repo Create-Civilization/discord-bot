@@ -1,11 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
-const { craftyToken, serverID, serverIP, serverPort } = require('../config.json');
+const { pannelToken, serverID, serverIP, serverPort } = require('../config.json');
+const { sign } = require('crypto');
 
 async function restartMinecraftServer(){
     const fetch = (await import('node-fetch')).default;
-    const apiUrl = `https://${serverIP}:${serverPort}/api/v2/servers/${serverID}/action/restart_server`;
+    const apiUrl = `https://panel.createcivilization.com/api/client/servers/${serverID}/power`;
 
     const agent = new https.Agent({
         rejectUnauthorized: false 
@@ -16,9 +17,12 @@ async function restartMinecraftServer(){
         const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${craftyToken}`,
+                'Authorization': `Bearer ${pannelToken}`,
                 'Content-Type': 'application/json'
             },
+            body: JSON.stringify({
+                signal: 'restart'
+            }),
             agent 
         });
 
@@ -37,35 +41,43 @@ async function restartMinecraftServer(){
 
 async function sendCommandToServer(commandString) {
     const fetch = (await import('node-fetch')).default;
-    const apiUrl = `https://${serverIP}:${serverPort}/api/v2/servers/${serverID}/stdin`;
     
+    // Replace with your server's actual API URL (Pterodactyl panel URL)
+    const apiUrl = `https://panel.createcivilization.com/api/client/servers/${serverID}/command`;
+
     const agent = new https.Agent({
-        rejectUnauthorized: false 
+        rejectUnauthorized: false,
     });
 
     try {
         const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
-                'Content-Type': 'text/plain', 
-                'Authorization': `Bearer ${craftyToken}` 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${pannelToken}`,
+                'Accept': 'Application/vnd.pterodactyl.v1+json',
             },
-            body: commandString,
-            agent
+            body: JSON.stringify({
+                command: commandString,
+            }),
+            agent,
         });
 
         if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
+            const errorDetails = await response.text(); // Capture error body if any
+            throw new Error(`Error: ${response.status}, Details: ${errorDetails || 'No details provided'}`);
         }
 
-        const result = await response.json(); 
-        return result;
+        // Handle potential empty or non-JSON responses
+        const resultText = await response.text();
+        return resultText ? JSON.parse(resultText) : { message: 'Command sent successfully, no response returned.' };
 
     } catch (error) {
-        console.error('Error sending command to server:', error);
+        console.error('Error sending command to server:', error.message);
         throw error;
     }
 }
+
 
 
 module.exports = {restartMinecraftServer, sendCommandToServer}

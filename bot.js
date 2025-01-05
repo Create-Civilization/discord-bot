@@ -14,7 +14,7 @@ const defaultConfig = {
     token: '',
     clientID: '',
     guildID: '', 
-    craftyToken: '', 
+    pannelToken: '', 
     adminRolesIDS: [], 
     helpTicketChannelID: '',
     whitelistedRoleID: '',
