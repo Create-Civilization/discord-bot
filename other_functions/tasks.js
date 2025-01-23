@@ -61,20 +61,23 @@ const fetchServerStats = async () => {
 
 const updateStatusTask = async (client) => {
     try {
+        const stats = await fetchServerStats();
 
-        const stats = await fetchServerStats(); 
-
-        if (stats) {
-            const onlinePlayers = stats.players.online; 
-            const maxPlayers = stats.players.max; 
-            
-
-            const returnVar = await setBotStatus(client, onlinePlayers, maxPlayers);
-            return returnVar;
-        } else {
+        if (!stats) {
             console.log('No server stats returned.');
+            return false;
+        }
+
+        if (stats.debug.online === false) {
+            console.log('Server Is Offline');
             return false; 
         }
+
+        const onlinePlayers = stats.players ? stats.players.online : 0; 
+        const maxPlayers = stats.players ? stats.players.max : 0; 
+
+        const returnVar = await setBotStatus(client, onlinePlayers, maxPlayers);
+        return returnVar;
     } catch (error) {
         console.error('Error in updateStatusTask:', error);
         return false; 
