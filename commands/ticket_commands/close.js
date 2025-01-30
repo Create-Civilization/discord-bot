@@ -34,7 +34,7 @@ module.exports = {
                     let newEmbed = embedMaker({
                         colorHex: 0xD70040,
                         title: `Ticket Closed`,
-                        description: `Ticket has been closed by <@${interaction.user.id}>. Reason: ${reason}`,
+                        description: `Ticket has been closed ${anonymousMode ? "anonymously": ""} by <@${interaction.user.id}>. Reason: ${reason}`,
                         footer: {
                             text: `${interaction.user.globalName} | ${interaction.user.id}`,
                             iconURL: interaction.user.avatarURL({dynamic: true}) || undefined

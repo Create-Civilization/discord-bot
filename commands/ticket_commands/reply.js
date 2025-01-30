@@ -66,8 +66,8 @@ module.exports = {
                             iconURL: guild.iconURL({dynamic: true}) || undefined
                         },
                         author: {
-                            name: interaction.user.username,
-                            iconURL: interaction.user.avatarURL({dynamic: true}) || undefined
+                            name: anonymousMode ? guild.name : interaction.user.username,
+                            iconURL: anonymousMode ? guild.iconURL({dynamic: true}) : interaction.user.avatarURL({dynamic: true}) || undefined
                         }
                     });
 
