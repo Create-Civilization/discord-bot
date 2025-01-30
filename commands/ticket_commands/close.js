@@ -10,7 +10,9 @@ module.exports = {
         .setDescription('Close the current thread')
         .addStringOption(option => option.setName('reason')
             .setDescription('The reason for closing the ticket')
-            .setRequired(true)),
+            .setRequired(true))
+        .addBooleanOption(option => option.setName('anonymous')
+            .setDescription('Set to true if you want to send the reply anonymously')),
     async execute(client, interaction) {
 
         const allowedRoleIds = config.adminRolesIDS; 
@@ -25,6 +27,7 @@ module.exports = {
                     const guild = interaction.guild;
                     const helpChannelOBJ = client.channels.cache.get(config.helpTicketChannelID);
                     const fetchedMessage = await helpChannelOBJ.messages.fetch(ticket.threadChannelID);
+                    const anonymousMode = await interaction.options.get('anonymous');
 
                     const thread = await client.channels.fetch(ticket.threadChannelID);
                     await deleteTicketByTicketID(ticket.id);
@@ -51,8 +54,8 @@ module.exports = {
 
                         },
                         author: {
-                            name: interaction.user.globalName,
-                            iconURL: interaction.user.avatarURL({dynamic: true}) || undefined
+                            name: anonymousMode ? guild.name : interaction.user.globalName,
+                            iconURL: anonymousMode ? guild.iconURL({dynamic: true}) : interaction.user.avatarURL({dynamic: true}) || undefined
                         }
                     })
                                     

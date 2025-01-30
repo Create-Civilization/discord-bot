@@ -9,7 +9,9 @@ module.exports = {
         .setDescription('Replies to the current ticket')
         .addStringOption(option => option.setName('message')
             .setDescription('The message to send')
-            .setRequired(true)),
+            .setRequired(true))
+        .addBooleanOption(option => option.setName('anonymous')
+            .setDescription('Set to true if you want to send the reply anonymously')),
     async execute(client, interaction) {
         const allowedRoleIds = configJson.adminRolesIDS; 
         const channel = interaction.channel;
@@ -19,8 +21,11 @@ module.exports = {
                 const ticket = await getTicketByChannel(channel.id);
                 if (ticket) {
                     const response = await interaction.options.get('message').value;
+
                     const threadOwner = await client.users.fetch(ticket.authorID);
-                    const guild = interaction.guild;
+                    const guild = await interaction.guild;
+                    
+                    const anonymousMode = await interaction.options.get('anonymous')
 
                     const thread = await client.channels.fetch(ticket.threadChannelID);
 
@@ -43,8 +48,8 @@ module.exports = {
                             iconURL: guild.iconURL({dynamic: true}) || undefined
                         },
                         author: {
-                            name: interaction.user.username,
-                            iconURL: interaction.user.avatarURL({dynamic: true}) || undefined
+                            name: anonymousMode ? guild.name : interaction.user.username,
+                            iconURL: anonymousMode ? guild.iconURL({dynamic: true}) : interaction.user.avatarURL({dynamic: true}) || undefined
                         }
                     });
 

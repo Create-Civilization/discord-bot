@@ -1,5 +1,5 @@
 const { Events } = require('discord.js');
-const { checkCrashTask, updateStatusTask, checkStaleTickets } = require('../other_functions/tasks.js');
+const { updateStatusTask, checkStaleTickets } = require('../other_functions/tasks.js');
 
 module.exports = {
     name: Events.ClientReady,
@@ -10,10 +10,6 @@ module.exports = {
             client.isServerAlive = await updateStatusTask(client)
             console.log(client.isServerAlive)
         }, 5000);
-      
-        setInterval(async () => {
-          await checkCrashTask(client);
-      }, 5 * 60 * 1000);
 
         setInterval(async () => {
             await checkStaleTickets(client);
