@@ -2,8 +2,10 @@ const { Client, Collection, GatewayIntentBits, ActivityType } = require('discord
 const https = require('https');
 const configJson = require('../config.json');
 const { getAllTickets, getTicketsOlderThan, deleteTicketByTicketID } = require('./ticketDatabaseFuncs.js');
-const {embedMaker} = require('./helperFunctions.js')
+const {embedMaker, getMinecraftNameByUUID} = require('./helperFunctions.js')
 const exp = require('constants');
+const { getAllWhitelistData, setUserUsername } = require('./whitelistDatabaseFuncs.js');
+const { Console } = require('console');
 
 
 
@@ -144,9 +146,44 @@ const checkStaleTickets = async (client) => {
 };
 
 
+const checkForIgnChanges = async (client) => {
+    try {
+        const whitelist = await getAllWhitelistData();
+        const BATCH_SIZE = 5;
+        const DELAY_BETWEEN_BATCHES = 1000;
+        
+        for (let i = 0; i < whitelist.length; i += BATCH_SIZE) {
+            const batch = whitelist.slice(i, i + BATCH_SIZE);
+            
+            const promises = batch.map(async (element) => {
+                try {
+                    const username = await getMinecraftNameByUUID(element.playerUUID);
+                    
+                    if (username.name !== element.username) {
+                        console.log(`Username changed for ${element.username} (${element.playerUUID}) -> ${username.name}`);
+                        await setUserUsername('playerUUID', element.playerUUID, username.name);
+                    } else {
+                        console.log(`No changes found for ${element.username}`);
+                    }
+                } catch (error) {
+                    console.error(`Error checking username for ${element.playerUUID}:`, error.message);
+                }
+            });
+            
+            await Promise.all(promises);
+            if (i + BATCH_SIZE < whitelist.length) {
+                await new Promise(resolve => setTimeout(resolve, DELAY_BETWEEN_BATCHES));
+            }
+        }
+    } catch (error) {
+        console.error('Error in checkForIgnChanges:', error);
+    }
+};
 
 
 
 
 
-module.exports = {setBotStatus, fetchServerStats, updateStatusTask, checkStaleTickets};
+
+
+module.exports = {setBotStatus, fetchServerStats, updateStatusTask, checkStaleTickets, checkForIgnChanges};

@@ -1,7 +1,7 @@
 const { Events } = require('discord.js');
 const { getUserByDiscordID, deleteEntryByUserID } = require('../other_functions/whitelistDatabaseFuncs.js');
 const { getMinecraftNameByUUID } = require('../other_functions/helperFunctions.js');
-const { sendCommandToServer } = require('../other_functions/craftyAPIfuncs.js');
+const { sendCommandToServer } = require('../other_functions/panelAPIFunctions.js');
 
 
 module.exports = {

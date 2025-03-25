@@ -12,7 +12,6 @@ async function restartMinecraftServer(){
         rejectUnauthorized: false 
     });
 
-    // Send the API request to Crafty to restart the server
     try {
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -41,8 +40,7 @@ async function restartMinecraftServer(){
 
 async function sendCommandToServer(commandString) {
     const fetch = (await import('node-fetch')).default;
-    
-    // Replace with your server's actual API URL (Pterodactyl panel URL)
+
     const apiUrl = `https://panel.createcivilization.com/api/client/servers/${serverID}/command`;
 
     const agent = new https.Agent({
@@ -64,11 +62,10 @@ async function sendCommandToServer(commandString) {
         });
 
         if (!response.ok) {
-            const errorDetails = await response.text(); // Capture error body if any
+            const errorDetails = await response.text();
             throw new Error(`Error: ${response.status}, Details: ${errorDetails || 'No details provided'}`);
         }
 
-        // Handle potential empty or non-JSON responses
         const resultText = await response.text();
         return resultText ? JSON.parse(resultText) : { message: 'Command sent successfully, no response returned.' };
 

@@ -2,7 +2,7 @@ const { Events } = require('discord.js');
 const configJson = require('../config.json');
 const { addUserToWhitelist, getUserByDiscordID } = require('../other_functions/whitelistDatabaseFuncs.js');
 const { isMcUsernameReal, embedMaker } = require('../other_functions/helperFunctions.js');
-const { sendCommandToServer } = require('../other_functions/craftyAPIfuncs.js');
+const { sendCommandToServer } = require('../other_functions/panelAPIFunctions.js');
 
 module.exports = {
     name: Events.InteractionCreate,
@@ -33,6 +33,18 @@ module.exports = {
                 await member.roles.add(whitelistRole);
               } catch(err){
                 console.log(`There was an error running addUserToWhitelist ${err}`)
+                return interaction.editReply({
+                  content: `A fatal error occured if this happens multiple times make a support ticket`,
+                  ephemeral: true
+                })
+              }
+
+
+              //Set The Nickname
+              try{
+                await member.setNickname(mojangAPI.name)
+              } catch(err){
+                console.log(`There was an error running setNickname ${err}`)
                 return interaction.editReply({
                   content: `A fatal error occured if this happens multiple times make a support ticket`,
                   ephemeral: true

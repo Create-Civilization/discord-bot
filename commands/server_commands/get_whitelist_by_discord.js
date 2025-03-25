@@ -1,5 +1,5 @@
 const { getUserByDiscordID } = require('../../other_functions/whitelistDatabaseFuncs.js');
-const { embedMaker } = require('../../other_functions/helperFunctions.js');
+const { embedMaker } = require('../../other_functions/panelAPIFunctions.js');
 const configJson = require('../../config.json');
 const { SlashCommandBuilder } = require('discord.js');
 

@@ -1,4 +1,4 @@
-const { sendCommandToServer } = require('../../other_functions/craftyAPIfuncs.js');
+const { sendCommandToServer } = require('../../other_functions/panelAPIFunctions.js');
 const configJson = require('../../config.json');
 const { SlashCommandBuilder } = require('discord.js');
 

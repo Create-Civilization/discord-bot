@@ -140,5 +140,31 @@ function addUserToWhitelist(playerUUID, discordID, username, reason) {
     });
   }
 
+  function getAllWhitelistData() {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT * FROM whitelistData`;
+      try {
+        const stmt = db.prepare(query);
+        const rows = stmt.all();
+        resolve(rows);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  function setUserUsername(searchBy, searchValue, newUsername) {
+    return new Promise((resolve, reject) => {
+      const query = `UPDATE whitelistData SET username = ? WHERE ${searchBy} = ?`;
+      try {
+        const stmt = db.prepare(query);
+        const info = stmt.run(newUsername, searchValue);
+        resolve(info.changes);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
   
-module.exports = {getUserByMinecraftUsername, getUserByUUID, getUserByDiscordID, addUserToWhitelist, deleteEntryByUserID, initWhiteListDatabase};
+module.exports = {getUserByMinecraftUsername, getUserByUUID, getUserByDiscordID, addUserToWhitelist, deleteEntryByUserID, initWhiteListDatabase, getAllWhitelistData, setUserUsername};
