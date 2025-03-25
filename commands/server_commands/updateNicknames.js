@@ -21,6 +21,7 @@ module.exports = {
             for (const element of whitelist) {
                 try {
                     const member = await guild.members.fetch(element.discordID).catch(() => null);
+                    await interaction.editReply(`Updating nickname for ${member.nickname}...`);
                     if (member && member.nickname !== element.username) {
                         await member.setNickname(element.username).catch(err => {
                             console.error(`Could not set nickname for ${element.discordID}: ${err.message}`);
