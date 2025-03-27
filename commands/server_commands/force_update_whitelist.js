@@ -1,5 +1,3 @@
-const { getMinecraftNameByUUID } = require('../../other_functions/helperFunctions.js');
-const { getAllWhitelistData } = require('../../other_functions/whitelistDatabaseFuncs.js');
 const { checkForIgnChanges } = require('../../other_functions/tasks.js')
 const { SlashCommandBuilder } = require('discord.js');
 
