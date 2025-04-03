@@ -118,7 +118,7 @@ const checkStaleTickets = async (client) => {
                     newEmbed = embedMaker({
                         colorHex: 0xD70040,
                         title: `Ticket Closed Due To Expiry`,
-                        description: `Ticket has expired after \`${(configJson.ticketExpiryTimeSeconds /60/60/24)}\` days.`,
+                        description: `Ticket has been closed by <@${client.user.id}>. Reason: Ticket Expired After \`${(configJson.ticketExpiryTimeSeconds /60/60/24)}\` days. If this ticket is still relevant, please make a new one.`,
                         footer: {
                             text: `${guild.name} | ${guild.id}`,
                             iconURL: guild.iconURL({ dynamic: true }) || undefined
