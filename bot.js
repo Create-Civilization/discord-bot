@@ -3,9 +3,11 @@ const path = require('path');
 const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js');
 const { initTicketDatabase } = require('./other_functions/ticketDatabaseFuncs.js');
 const { initWhiteListDatabase } = require('./other_functions/whitelistDatabaseFuncs.js');
+const { initModerationDatabase } = require('./other_functions/moderationDatabaseFuncs.js')
 
 initTicketDatabase();
 initWhiteListDatabase();
+initModerationDatabase();
 
 const configPath = path.join(__dirname, 'config.json');
 

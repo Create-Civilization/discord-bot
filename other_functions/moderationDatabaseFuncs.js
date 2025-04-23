@@ -19,6 +19,7 @@ function initModerationDatabase() {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         adminID TEXT NOT NULL,
         punishedUserID TEXT NOT NULL,
+        punishedUserMinecraft TEXT NOT NULL,
         punishmentType TEXT CHECK(punishmentType IN ('KICK', 'BAN', 'MUTE', 'TEMPBAN', 'WARN')) NOT NULL,
         punishmentReason TEXT,
         punishmentDate INTEGER DEFAULT (strftime('%s', 'now')),
@@ -35,7 +36,7 @@ function initModerationDatabase() {
   return db;
 }
 
-function newPunishment(adminID, punishedUserID, punishmentType, punishmentReason = null, punishmentDurationStamp = null) {
+function newPunishment(adminID, punishedUserID, punishedUserMinecraft, punishmentType, punishmentReason = null, punishmentDurationStamp = null) {
   return new Promise((resolve, reject) => {
 
     const allowedPunishmentTypes = ['KICK', 'BAN', 'MUTE', 'TEMPBAN', 'WARN'];
@@ -44,7 +45,7 @@ function newPunishment(adminID, punishedUserID, punishmentType, punishmentReason
       return reject(new Error("Invalid punishment type. Allowed values are 'KICK', 'BAN', 'MUTE', 'TEMPBAN', 'WARN'."));
     }
 
-    const query = `INSERT INTO punishments (adminID, punishedUserID, punishmentType, punishmentReason, punishmentDate, punishmentExpirationTime) VALUES (?, ?, ?, ?, ?, ?)`;
+    const query = `INSERT INTO punishments (adminID, punishedUserID, punishedUserMinecraft, punishmentType, punishmentReason, punishmentDate, punishmentExpirationTime) VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
     try {
       if ((punishmentType === 'MUTE' || punishmentType === 'TEMPBAN') && punishmentDurationStamp === null) {
@@ -52,7 +53,7 @@ function newPunishment(adminID, punishedUserID, punishmentType, punishmentReason
       }
 
       const stmt = db.prepare(query);
-      const info = stmt.run(adminID, punishedUserID, punishmentType, punishmentReason, Math.floor(Date.now() / 1000), punishmentDurationStamp);
+      const info = stmt.run(adminID, punishedUserID, punishedUserMinecraft, punishmentType, punishmentReason, Math.floor(Date.now() / 1000), punishmentDurationStamp);
 
 
       resolve(info.lastInsertRowid);
@@ -63,22 +64,27 @@ function newPunishment(adminID, punishedUserID, punishmentType, punishmentReason
 }
 
 function deletePunishmentByID(punishmentID) {
-  return new Promise((resolve, reject) => {
-    const query = `DELETE FROM punishments WHERE id = ?`;
-    try {
-      const stmt = db.prepare(query);
-      const info = stmt.run(punishmentID);
-      resolve(info.changes);
-    } catch (err) {
-      reject(err);
-    }
-  });
+  db.prepare(`DELETE FROM punishments WHERE id == ${punishmentID}`).run();
 }
 
 
 function getExpiredPunishments() {
   return new Promise((resolve, reject) => {
     const query = `SELECT * FROM punishments WHERE punishmentExpirationTime <= ?`;
+    try {
+      const stmt = db.prepare(query);
+      const currentTimestamp = Math.floor(Date.now() / 1000);  
+      const rows = stmt.all(currentTimestamp);
+      resolve(rows);
+    } catch (err) {
+      reject(err); 
+    }
+  });
+}
+
+function getExpiredBans() {
+  return new Promise((resolve, reject) => {
+    const query = `SELECT * FROM punishments WHERE punishmentExpirationTime <= ? AND punishmentType == \'TEMPBAN\'`;
     try {
       const stmt = db.prepare(query);
       const currentTimestamp = Math.floor(Date.now() / 1000);  
@@ -104,6 +110,17 @@ function getUsersPunishments(userID) {
   });
 }
 
+async function isBanned(userID) {
+  const punishments = await getUsersPunishments(userID);
+  if (punishments == undefined) return false;
+  for (let punishment of punishments) {
+    if (punishment.punishmentType === 'BAN') {
+      return true;
+    }
+  }
+  return false;
+}
+
 
 function getAdminsPunishments(adminID) {
   return new Promise((resolve, reject) => {
@@ -119,4 +136,4 @@ function getAdminsPunishments(adminID) {
 }
 
 
-module.exports = { initModerationDatabase, newPunishment, getExpiredPunishments, getUsersPunishments, getAdminsPunishments, deletePunishmentByID};
+module.exports = { initModerationDatabase, newPunishment, getExpiredPunishments, getUsersPunishments, getAdminsPunishments, deletePunishmentByID, isBanned, getExpiredBans};

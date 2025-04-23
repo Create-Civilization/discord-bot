@@ -87,9 +87,5 @@ async function getMinecraftNameByDiscordID(id) {
     return user.username;
 }
 
-async function isBanned(id) {
-    const user = await getUserByDiscordID(id);
-    return user.bannedAt > 0;
-}
 
-module.exports = { embedMaker, isMcUsernameReal, getMinecraftNameByUUID, getMinecraftNameByDiscordID, isBanned};
+module.exports = { embedMaker, isMcUsernameReal, getMinecraftNameByUUID, getMinecraftNameByDiscordID};

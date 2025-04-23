@@ -1,8 +1,8 @@
 const configJson = require('../../config.json');
 const { SlashCommandBuilder } = require('discord.js');
 const { sendCommandToServer } = require('../../other_functions/panelAPIFunctions')
-const { getMinecraftNameByDiscordID, embedMaker, isBanned } = require('../../other_functions/helperFunctions');
-const { setBan } = require('../../other_functions/whitelistDatabaseFuncs');
+const { getMinecraftNameByDiscordID, embedMaker } = require('../../other_functions/helperFunctions');
+const { newPunishment, isBanned } = require('../../other_functions/moderationDatabaseFuncs')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -24,7 +24,7 @@ module.exports = {
         await interaction.deferReply({ephemeral: true});
 
         if(allowedRoleIds.some(roleId => interaction.member.roles.cache.has(roleId))){
-            if (isBanned(user)) {
+            if (await isBanned(user)) {
                 interaction.editReply({
                     content: "User already banned",
                     ephemeral: true
@@ -34,9 +34,8 @@ module.exports = {
                 const username = await getMinecraftNameByDiscordID(user);
                 const reason = await interaction.options.get('reason').value;
                 await sendCommandToServer(`ban ${username} ${reason}`)
-                const now = Math.floor(Date.now() / 1000);
-                const banRelease = now + (await interaction.options.get('time').value);
-                setBan(user, now, banRelease)
+                const banRelease = Math.floor(Date.now() / 1000) + (await interaction.options.get('time').value);
+                newPunishment((await interaction.user.id), user, username, 'TEMPBAN', reason, banRelease)
                 const guild = interaction.guild;
 
                 const logEmbed = embedMaker(
