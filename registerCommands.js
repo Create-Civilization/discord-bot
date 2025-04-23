@@ -24,8 +24,7 @@ for (const folder of commandFolders) {
     }
 }
 
-// Construct and prepare an instance of the REST module
-const rest = new REST({ version: '9' }).setToken(token);
+const rest = new REST({ version: '10' }).setToken(token);
 
 // and deploy your commands!
 (async () => {
@@ -34,13 +33,17 @@ const rest = new REST({ version: '9' }).setToken(token);
 
         // The put method is used to fully refresh all commands globally with the current set
         const data = await rest.put(
-            Routes.applicationCommands(clientID),  // Change to applicationCommands for global registration
+            Routes.applicationCommands(clientID),
             { body: commands },
         );
 
         console.log(`Successfully reloaded ${data.length} application (/) commands globally.`);
     } catch (error) {
-        // And of course, make sure you catch and log any errors!
-        console.error(error);
+        // More detailed error logging
+        console.error('Error details:', error);
+        
+        if (error.message && error.message.includes("Couldn't connect")) {
+            console.error('Connection error: Make sure your token is valid and properly formatted in config.json');
+        }
     }
 })();
