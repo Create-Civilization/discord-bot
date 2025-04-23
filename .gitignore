@@ -6,3 +6,4 @@ config.json
 /node_modules
 configExample.json
 *.db
+launch.json

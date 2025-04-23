@@ -18,9 +18,11 @@ const defaultConfig = {
     adminRolesIDS: [], 
     helpTicketChannelID: '',
     whitelistedRoleID: '',
+    bannedID: '',
     serverID: '',
     serverIP: '',
     serverPort: '',
+    serverNo: '',
     logChannelID: '',
     ticketExpiryTimeSeconds: 86400,
 };

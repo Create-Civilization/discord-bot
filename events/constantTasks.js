@@ -1,5 +1,5 @@
 const { Events } = require('discord.js');
-const { updateStatusTask, checkStaleTickets, checkForIgnChanges } = require('../other_functions/tasks.js');
+const { updateStatusTask, checkStaleTickets, checkForIgnChanges, checkForUnbans } = require('../other_functions/tasks.js');
 
 module.exports = {
     name: Events.ClientReady,
@@ -14,6 +14,10 @@ module.exports = {
         setInterval(async () => {
             await checkStaleTickets(client);
         }, 5000);
+
+        setInterval(async () => {
+            await checkForUnbans(client);
+        }, 5000)
 
         setInterval(async () => {
             await checkForIgnChanges(client);
