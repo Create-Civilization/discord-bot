@@ -1,5 +1,5 @@
 const { Client, Collection, GatewayIntentBits, EmbedBuilder, Partials, Embed } = require('discord.js');
-const { deleteEntryByUserID } = require('./whitelistDatabaseFuncs');
+const { deleteEntryByUserID, getUserByDiscordID, getUserByMinecraftUsername } = require('./whitelistDatabaseFuncs');
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -82,6 +82,14 @@ async function getMinecraftNameByUUID(mcUUID){
     }
 }
 
+async function getMinecraftNameByDiscordID(id) {
+    const user = await getUserByDiscordID(id);
+    return user.username;
+}
 
+async function isBanned(id) {
+    const user = await getUserByDiscordID(id);
+    return user.bannedAt > 0;
+}
 
-module.exports = { embedMaker, isMcUsernameReal, getMinecraftNameByUUID};
+module.exports = { embedMaker, isMcUsernameReal, getMinecraftNameByUUID, getMinecraftNameByDiscordID, isBanned};

@@ -31,7 +31,7 @@ module.exports = {
                 await sendCommandToServer(`whitelist add ${mojangAPI.name}`)
                 const member = await guild.members.fetch(interaction.user.id);
                 await member.roles.add(whitelistRole);
-                await member.setNickname(mojangAPI.name)
+                await member.setNickname(mojangAPI.name);
               } catch(err){
                 console.log(`There was an error running addUserToWhitelist ${err}`)
                 return interaction.editReply({

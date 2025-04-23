@@ -1,0 +1,85 @@
+const configJson = require('../../config.json');
+const { SlashCommandBuilder } = require('discord.js');
+const { sendCommandToServer } = require('../../other_functions/panelAPIFunctions')
+const { getMinecraftNameByDiscordID, embedMaker, isBanned } = require('../../other_functions/helperFunctions');
+const { setBan } = require('../../other_functions/whitelistDatabaseFuncs');
+
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName('bi_ban_by_discord')
+        .setDescription('Bans player from server and minecraft for a set amount of time')
+        .addUserOption(option => option.setName('user')
+            .setDescription('The User to ban')
+            .setRequired(true))
+        .addIntegerOption(option => option.setName('time')
+            .setDescription('Time in seconds to ban, <0=perm')
+            .setRequired(true))
+        .addStringOption(option => option.setName('reason')
+            .setDescription("The reason for the ban")
+            .setRequired(true)),
+    async execute(client,interaction) {
+        const allowedRoleIds = configJson.adminRolesIDS; 
+        const user = await interaction.options.get('user').value;
+
+        await interaction.deferReply({ephemeral: true});
+
+        if(allowedRoleIds.some(roleId => interaction.member.roles.cache.has(roleId))){
+            if (isBanned(user)) {
+                interaction.editReply({
+                    content: "User already banned",
+                    ephemeral: true
+                })
+            } else {
+                try{
+                const username = await getMinecraftNameByDiscordID(user);
+                const reason = await interaction.options.get('reason').value;
+                await sendCommandToServer(`ban ${username} ${reason}`)
+                const now = Math.floor(Date.now() / 1000);
+                const banRelease = now + (await interaction.options.get('time').value);
+                setBan(user, now, banRelease)
+                const guild = interaction.guild;
+
+                const logEmbed = embedMaker(
+                    {
+                        colorHex: 0xFF3024,
+                        title: `${username} Banned by ${interaction.member.nickname}`,
+                        description: `Banned user: \"${username}\" | Banned Until: ${new Date(banRelease * 1000).toLocaleString('en-US', {timeZoneName: 'short'})} | Reason: ${reason}`,
+                        footer: {
+                            text: `${guild.name} | ${guild.id}`,
+                            iconURL: guild.iconURL({dynamic: true}) || undefined
+                        },
+                        author: {
+                            name: interaction.user.username,
+                            iconURL: interaction.user.avatarURL({dynamic: true}) || undefined
+                        },
+                    }
+                )
+                const Logchannel = await client.channels.cache.get(configJson.logChannelID);
+
+                try {
+                    await Logchannel.send({embeds: [logEmbed]})
+                } catch(err) {
+                    console.log("There was an error sending embed to log channel in bi_ban_discord")
+                    console.log(err)
+                }
+
+                interaction.editReply({
+                    content: `Successfully banned ${username}`,
+                    ephemeral: true
+                })
+                } catch(err) {
+                    interaction.editReply({
+                        content: err,
+                        ephemeral: true
+                    })
+                }
+            }
+
+        } else{
+            interaction.editReply({
+                content: "You do not the the permission to run this command",
+                ephemeral: true
+            })
+        }
+    }
+}

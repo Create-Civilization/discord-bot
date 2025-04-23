@@ -3,9 +3,9 @@ const https = require('https');
 const configJson = require('../config.json');
 const { getAllTickets, getTicketsOlderThan, deleteTicketByTicketID } = require('./ticketDatabaseFuncs.js');
 const {embedMaker, getMinecraftNameByUUID} = require('./helperFunctions.js')
-const exp = require('constants');
-const { getAllWhitelistData, setUserUsername } = require('./whitelistDatabaseFuncs.js');
+const { getAllWhitelistData, setUserUsername, getExpiredBans, setBan } = require('./whitelistDatabaseFuncs.js');
 const { Console } = require('console');
+const { sendCommandToServer } = require('./panelAPIFunctions.js')
 
 
 
@@ -86,6 +86,19 @@ const updateStatusTask = async (client) => {
     }
 };
 
+const checkForUnbans = async (client) => {
+    try {
+        const expiredBans = await getExpiredBans();
+        for (let i = 0; i < expiredBans.length; i++) {
+            const element = expiredBans[i];
+            sendCommandToServer(`pardon ${element.username}`);
+            await (await (await client.guilds.fetch(configJson.guildID)).members.fetch(element.discordID)).roles.remove(configJson.bannedID).catch(console.error);
+            setBan(element.discordID, 0, 0);
+            console.log(`Unbanned ${element.username}`)};
+        } catch (error) {
+        console.error("Error checking for unbans: " + error)
+    }
+}
 
 const checkStaleTickets = async (client) => {
     try {
@@ -186,4 +199,4 @@ const checkForIgnChanges = async (client) => {
 
 
 
-module.exports = {setBotStatus, fetchServerStats, updateStatusTask, checkStaleTickets, checkForIgnChanges};
+module.exports = {checkForUnbans, setBotStatus, fetchServerStats, updateStatusTask, checkStaleTickets, checkForIgnChanges};

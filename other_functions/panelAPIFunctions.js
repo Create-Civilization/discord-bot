@@ -1,8 +1,17 @@
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
-const { pannelToken, serverID, serverIP, serverPort } = require('../config.json');
+const { pannelToken, serverID, serverNo } = require('../config.json');
 const { sign } = require('crypto');
+const { pterosocket } = require('pterosocket')
+
+const origin = "https://panel.createcivilization.com";
+
+const socket = new pterosocket(origin, pannelToken, serverNo);
+
+socket.on("auth_sucess", ()=>{
+    console.log("Connected to websocket successfully")
+})
 
 async function restartMinecraftServer(){
     const fetch = (await import('node-fetch')).default;
@@ -37,44 +46,49 @@ async function restartMinecraftServer(){
     }
 }
 
-
 async function sendCommandToServer(commandString) {
-    const fetch = (await import('node-fetch')).default;
+    socket.writeCommand(commandString);
+    return await awaitForMessage("Server")
+}
 
-    const apiUrl = `https://panel.createcivilization.com/api/client/servers/${serverID}/command`;
+async function awaitForMessage(expectedString) {
+    let toReturn = formatSystemMessage(await findMessage(expectedString));
 
-    const agent = new https.Agent({
-        rejectUnauthorized: false,
-    });
-
-    try {
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${pannelToken}`,
-                'Accept': 'Application/vnd.pterodactyl.v1+json',
-            },
-            body: JSON.stringify({
-                command: commandString,
-            }),
-            agent,
-        });
-
-        if (!response.ok) {
-            const errorDetails = await response.text();
-            throw new Error(`Error: ${response.status}, Details: ${errorDetails || 'No details provided'}`);
-        }
-
-        const resultText = await response.text();
-        return resultText ? JSON.parse(resultText) : { message: 'Command sent successfully, no response returned.' };
-
-    } catch (error) {
-        console.error('Error sending command to server:', error.message);
-        throw error;
+    if (toReturn.includes("see below for error")) {
+        const extra = formatSystemMessage(await findMessage("[HERE]"));
+        toReturn += "\n" + extra;
     }
+
+    return toReturn;
+}
+
+function findMessage(expectedString, timeout = 0) {
+    return new Promise((resolve, reject) => {
+        if (timeout >= 20) return resolve("No return");
+
+        const listener = (output) => {
+            if (output.includes(expectedString)) {
+                resolve(output);
+            } else {
+                findMessage(expectedString, timeout + 1)
+                    .then(resolve)
+                    .catch(reject);
+            }
+            socket.off("console_output", listener)
+        };
+
+        socket.on("console_output", listener);
+
+        setTimeout(() => {
+            socket.off("console_output", listener);
+            resolve("No return (timed out)");
+        }, 1000);
+    });
+}
+
+function formatSystemMessage(string) {
+    return string.replace(/^.*?\MinecraftServer\]:\s*/, "");
 }
 
 
-
-module.exports = {restartMinecraftServer, sendCommandToServer}
+module.exports = {restartMinecraftServer, sendCommandToServer, formatSystemMessage}

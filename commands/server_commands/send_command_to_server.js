@@ -18,18 +18,18 @@ module.exports = {
         if(allowedRoleIds.some(roleId => interaction.member.roles.cache.has(roleId))){
             try{
             const command = await interaction.options.get('command').value;
-            sendCommandToServer(command)
+            const returnText = await sendCommandToServer(command)
 
             interaction.editReply({
-                content: "It was sent to server if it failed well idk",
+                content: returnText,
                 ephemeral: true
             })
-        } catch(err) {
-            interaction.editReply({
-                content: err,
-                ephemeral: true
-            })
-        }
+            } catch(err) {
+                interaction.editReply({
+                    content: err,
+                    ephemeral: true
+                })
+            }
 
         } else{
             interaction.editReply({
