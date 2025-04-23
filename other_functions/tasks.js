@@ -3,7 +3,8 @@ const https = require('https');
 const configJson = require('../config.json');
 const { getAllTickets, getTicketsOlderThan, deleteTicketByTicketID } = require('./ticketDatabaseFuncs.js');
 const {embedMaker, getMinecraftNameByUUID} = require('./helperFunctions.js')
-const { getAllWhitelistData, setUserUsername, getExpiredBans, setBan } = require('./whitelistDatabaseFuncs.js');
+const { getExpiredBans, deletePunishmentByID } = require('./moderationDatabaseFuncs.js')
+const { getAllWhitelistData, setUserUsername} = require('./whitelistDatabaseFuncs.js');
 const { Console } = require('console');
 const { sendCommandToServer } = require('./panelAPIFunctions.js')
 
@@ -91,10 +92,36 @@ const checkForUnbans = async (client) => {
         const expiredBans = await getExpiredBans();
         for (let i = 0; i < expiredBans.length; i++) {
             const element = expiredBans[i];
-            sendCommandToServer(`pardon ${element.username}`);
-            await (await (await client.guilds.fetch(configJson.guildID)).members.fetch(element.discordID)).roles.remove(configJson.bannedID).catch(console.error);
-            setBan(element.discordID, 0, 0);
-            console.log(`Unbanned ${element.username}`)};
+            await sendCommandToServer(`pardon ${element.punishedUserMinecraft}`);
+            deletePunishmentByID(element.id);
+            const guild = await client.guilds.fetch(configJson.guildID);
+            const username = await guild.members.fetch(element.punishedUserID);
+            const banRelease = element.punishmentExpirationTime;
+            const reason = element.reason;
+            const logEmbed = embedMaker(
+                {
+                    colorHex: 0x32CD32,
+                    title: `Unbanned user ${element.punishedUserMinecraft}`,
+                    description: `Banned user: \"${username}\" | Banned Until: ${new Date(banRelease * 1000).toLocaleString('en-US', {timeZoneName: 'short'})} | Reason: ${reason}`,
+                    footer: {
+                        text: `${guild.name} | ${guild.id}`,
+                        iconURL: guild.iconURL({dynamic: true}) || undefined
+                    },
+                    author: {
+                        name: client.user.username,
+                        iconURL: client.user.avatarURL({dynamic: true}) || undefined
+                    },
+                }
+            )
+            const Logchannel = await client.channels.cache.get(configJson.logChannelID);
+
+            try {
+                await Logchannel.send({embeds: [logEmbed]})
+            } catch(err) {
+                console.log("There was an error sending embed to log channel in bi_ban_discord")
+                console.log(err)
+            }
+        };
         } catch (error) {
         console.error("Error checking for unbans: " + error)
     }

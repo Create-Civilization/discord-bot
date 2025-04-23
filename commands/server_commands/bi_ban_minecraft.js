@@ -1,8 +1,9 @@
 const configJson = require('../../config.json');
 const { SlashCommandBuilder } = require('discord.js');
 const { sendCommandToServer } = require('../../other_functions/panelAPIFunctions')
-const { embedMaker, isBanned } = require('../../other_functions/helperFunctions');
-const { setBan, getUserByMinecraftUsername } = require('../../other_functions/whitelistDatabaseFuncs');
+const { embedMaker } = require('../../other_functions/helperFunctions');
+const { getUserByMinecraftUsername } = require('../../other_functions/whitelistDatabaseFuncs');
+const { newPunishment, isBanned } = require('../../other_functions/moderationDatabaseFuncs')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -34,8 +35,8 @@ module.exports = {
                 try{
                 const reason = await interaction.options.get('reason').value;
                 await sendCommandToServer(`ban ${username} ${reason}`)
-                const now = Math.floor(Date.now() / 1000);
-                const banRelease = now + (await interaction.options.get('time').value);
+                const banRelease = Math.floor(Date.now() / 1000) + (await interaction.options.get('time').value);
+                newPunishment((await interaction.user.id), user, username, 'TEMPBAN', reason, banRelease)
                 setBan(user, now, banRelease)
                 const guild = interaction.guild;
 
