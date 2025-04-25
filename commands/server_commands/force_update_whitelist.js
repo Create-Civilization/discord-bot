@@ -1,4 +1,4 @@
-const { checkForIgnChanges } = require('../../other_functions/tasks.js')
+const { checkForIgnChanges } = require('../../other_functions/tasks.js');
 const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {

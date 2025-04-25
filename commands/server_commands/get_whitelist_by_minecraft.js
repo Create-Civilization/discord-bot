@@ -1,6 +1,5 @@
 const { getUserByMinecraftUsername } = require('../../other_functions/whitelistDatabaseFuncs.js');
-const { embedMaker } = require('../../other_functions/helperFunctions.js');
-const configJson = require('../../config.json');
+const { embedMaker, requireAllowedId, requireWhitelistEntry } = require('../../other_functions/helperFunctions.js');
 const { SlashCommandBuilder } = require('discord.js');
 
 
@@ -12,26 +11,9 @@ module.exports = {
             .setDescription('The user to get')
             .setRequired(true)),
     async execute(client, interaction) {
-        const allowedRoleIds = configJson.adminRolesIDS;
-
-        if(!allowedRoleIds.some(roleId => interaction.member.roles.cache.has(roleId))){
-            return interaction.reply({
-                content: 'You do not have permission to run this',
-                ephemeral: true
-            })
-        }
-
+        requireAllowedId(interaction.member.roles.cache, async () => {
+        requireWhitelistEntry(await getUserByMinecraftUsername(await interaction.options.get('user_to_get').value).discordID, async (dbObject) => {
         await interaction.deferReply({ephemeral: true})
-
-        const userId = await interaction.options.get('user_to_get').value;
-        const dbObject = await getUserByMinecraftUsername(userId)
-
-        if(!dbObject){
-            return interaction.editReply({
-                content: "This user has no whitelist entries",
-                ephemeral: true
-            })
-        }
 
         const guild = interaction.guild;
 
@@ -55,7 +37,7 @@ module.exports = {
             content: 'Here ya go',
             ephemeral: true
         })
-
-        
+        })
+        });
     }
 }

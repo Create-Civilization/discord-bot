@@ -1,5 +1,6 @@
 const { getUserByDiscordID, deleteEntryByUserID } = require('../../other_functions/whitelistDatabaseFuncs.js');
 const { sendCommandToServer } = require('../../other_functions/panelAPIFunctions.js');
+const { requireAllowedId, requireWhitelistEntry } = require('../../other_functions/helperFunctions.js')
 const configJson = require('../../config.json');
 const { SlashCommandBuilder } = require('discord.js');
 
@@ -12,27 +13,10 @@ module.exports = {
             .setDescription('The user to remove')
             .setRequired(true)),
     async execute(client, interaction) {
-        const allowedRoleIds = configJson.adminRolesIDS;
-
-        if(!allowedRoleIds.some(roleId => interaction.member.roles.cache.has(roleId))){
-            return interaction.reply({
-                content: 'You do not have permission to run this',
-                ephemeral: true
-            })
-        } 
-
-        await interaction.deferReply({ephemeral: true})
-
+        requireAllowedId(interaction.member.roles.cache, async () => {
         const userId = await interaction.options.get('user_to_remove').value;
-        const dbObject = await getUserByDiscordID(userId)
-
-        if(!dbObject){
-            return interaction.editReply({
-                content: "This user has no whitelist entries",
-                ephemeral: true
-            })
-        }
-
+        requireWhitelistEntry(userId, async (dbObject) => {
+        await interaction.deferReply({ephemeral: true})
         try{
             deleteEntryByUserID(dbObject.discordID)
         } catch(err){
@@ -44,17 +28,18 @@ module.exports = {
         const guild = interaction.guild;
         const whitelistRole = await guild.roles.cache.get(configJson.whitelistedRoleID)
         const member = await guild.members.fetch(userId);
-        if (await member.roles.cache.has(whitelistRole.id)) {
-            await member.roles.remove(whitelistRole);
+        const roles = member.roles;
+        if (await roles.cache.has(whitelistRole.id)) {
+            await roles.remove(whitelistRole);
         }
 
         sendCommandToServer(`whitelist remove ${dbObject.username}`)
 
         return interaction.editReply({
-            content: 'user hase been removed :)',
+            content: 'User has been removed.',
             ephemeral: true
         })
-
-        
+        })
+        })
     }
 }

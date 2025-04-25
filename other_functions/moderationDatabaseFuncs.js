@@ -114,7 +114,7 @@ async function isBanned(userID) {
   const punishments = await getUsersPunishments(userID);
   if (punishments == undefined) return false;
   for (let punishment of punishments) {
-    if (punishment.punishmentType === 'BAN') {
+    if (punishment.punishmentType === 'TEMPBAN') {
       return true;
     }
   }
@@ -136,4 +136,13 @@ function getAdminsPunishments(adminID) {
 }
 
 
-module.exports = { initModerationDatabase, newPunishment, getExpiredPunishments, getUsersPunishments, getAdminsPunishments, deletePunishmentByID, isBanned, getExpiredBans};
+module.exports = { 
+  initModerationDatabase, 
+  newPunishment, 
+  getExpiredPunishments, 
+  getUsersPunishments, 
+  getAdminsPunishments, 
+  deletePunishmentByID, 
+  isBanned, 
+  getExpiredBans
+};
