@@ -1,5 +1,6 @@
 const { Events } = require('discord.js');
 const configJson = require('../config.json'); 
+const { log, createLogEmbed } = require('../other_functions/helperFunctions');
 
 module.exports = {
     name: Events.GuildMemberRemove,
@@ -9,20 +10,19 @@ module.exports = {
         if(configJson.logChannelID){
             const Logchannel = await client.channels.cache.get(configJson.logChannelID);
             const guild = member.guild;
-            let newEmbed = embedMaker({
-                colorHex: 0xCC0000,
-                title: `User Leave`,
-                description: `${member.user.username} has left the server`,
-                footer: {
-                    text: `${guild.name} | ${guild.id}`,
-                    iconURL: guild.iconURL({dynamic: true}) || undefined
-                }
-              });
-            try{
-                await Logchannel.send({embeds: [newEmbed]});
-            } catch(err){
-                console.error(err)
-            }
+            log(
+                {
+                    embeds: [
+                        createLogEmbed(
+                            false,
+                            `User Leave`,
+                            `${member.user.username} has left the server`,
+                            client
+                        )
+                    ]
+                },
+                client
+            )
         }
 
 

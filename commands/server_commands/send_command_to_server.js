@@ -1,5 +1,5 @@
 const { sendCommandToServer } = require('../../other_functions/panelAPIFunctions.js');
-const configJson = require('../../config.json');
+const { requireAllowedId } = require('../../other_functions/helperFunctions.js')
 const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
@@ -10,13 +10,11 @@ module.exports = {
             .setDescription('The command to send')
             .setRequired(true)),
     async execute(client,interaction) {
-        const allowedRoleIds = configJson.adminRolesIDS; 
-        const channel = interaction.channel;
 
         await interaction.deferReply({ephemeral: true});
 
-        if(allowedRoleIds.some(roleId => interaction.member.roles.cache.has(roleId))){
-            try{
+        requireAllowedId(interaction.member.roles.cache, async () => {
+        try{
             const command = await interaction.options.get('command').value;
             const returnText = await sendCommandToServer(command)
 
@@ -24,18 +22,12 @@ module.exports = {
                 content: returnText,
                 ephemeral: true
             })
-            } catch(err) {
-                interaction.editReply({
-                    content: err,
-                    ephemeral: true
-                })
-            }
-
-        } else{
+        } catch(err) {
             interaction.editReply({
-                content: "You do not the the permission to run this command",
+                content: err,
                 ephemeral: true
             })
         }
+        })
     }
 }

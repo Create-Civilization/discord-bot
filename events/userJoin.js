@@ -1,6 +1,7 @@
 const { Events } = require('discord.js');
-const { embedMaker } = require('../other_functions/helperFunctions.js');
+const { embedMaker, log, createLogEmbed } = require('../other_functions/helperFunctions.js');
 const configJson = require('../config.json'); 
+const { isBanned } = require('../other_functions/moderationDatabaseFuncs.js');
 
 module.exports = {
     name: Events.GuildMemberAdd,
@@ -43,20 +44,20 @@ module.exports = {
             }
 
         } else {
-            let newEmbed = embedMaker({
-                colorHex: 0x32CD32,
-                title: `${member.user.username} joined`,
-                description: 'Welcome to the server!',
-                footer: {
-                    text: `${guild.name} | ${guild.id}`,
-                    iconURL: guild.iconURL({ dynamic: true }) || null
-                }
-            });
-
-            try {
-                await Logchannel.send({ embeds: [newEmbed] });
-            } catch (err) {
-                console.error(err);
+            log(
+                {
+                    embeds: [
+                        createLogEmbed(
+                            true,
+                            `${member.user.username} joined`,
+                            'Welcome to the server!'
+                        )
+                    ]
+                },
+                client
+            )
+            if (isBanned(member.id)) {
+                await member.roles.add(configJson.bannedID);
             }
         }
     }
