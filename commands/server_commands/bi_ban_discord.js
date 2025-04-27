@@ -49,6 +49,7 @@ module.exports = {
                 })
             } else {
                 await member.roles.add(configJson.bannedID);
+                await member.roles.remove(configJson.whitelistedRoleID);
             }} catch (err) {
                 console.error(err);
             }

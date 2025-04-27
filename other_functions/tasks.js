@@ -99,6 +99,7 @@ const checkForUnbans = async (client) => {
             const banRelease = element.punishmentExpirationTime;
             const reason = element.punishmentReason;
             await member.roles.remove(configJson.bannedID);
+            await member.roles.add(configJson.whitelistedRoleID);
 
             log(
                 {
