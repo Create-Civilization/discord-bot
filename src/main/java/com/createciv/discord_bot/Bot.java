@@ -1,7 +1,9 @@
 package com.createciv.discord_bot;
 
 import com.createciv.discord_bot.classes.SlashCommand;
+import com.createciv.discord_bot.listener.message.TicketCreator;
 import com.createciv.discord_bot.listener.modal.WhitelistListener;
+import com.createciv.discord_bot.util.database.DatabaseRegistry;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import net.dv8tion.jda.api.JDA;
@@ -25,11 +27,18 @@ public class Bot extends ListenerAdapter {
 
     public static void main(String[] args){
         LOGGER.info("Initiating bot..");
+
+        DatabaseRegistry.init();
+
         JDA api = JDABuilder.createDefault(BOT_TOKEN)
                 .addEventListeners(new Bot())
+                //Orion, idk how you did the register shit for commSands. Please do that with listeners. :)
                 .addEventListeners(new WhitelistListener())
+                .addEventListeners(new TicketCreator())
                 .build();
     }
+
+    //Check if the databases exist
 
     private void registerSlashCommands(ReadyEvent event) {
         CommandListUpdateAction commands = event.getJDA().updateCommands();

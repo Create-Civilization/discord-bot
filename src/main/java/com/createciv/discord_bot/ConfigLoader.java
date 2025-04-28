@@ -19,7 +19,7 @@ public class ConfigLoader {
     public static final String SERVER_IP;
     public static final String SERVER_PORT;
     public static final String LOG_CHANNEL_ID;
-    public static final int TICKET_EXPIRY_TIME_SECONDS;
+    public static final long TICKET_EXPIRY_TIME_SECONDS;
     public static final String PETRO_PANEL_TOKEN;
     public static final List<String> ADMIN_ROLE_IDS;
 
@@ -77,7 +77,7 @@ public class ConfigLoader {
         LOG_CHANNEL_ID = properties.getProperty("LOG_CHANNEL_ID");
         HELP_TICKET_CHANNEL_ID = properties.getProperty("HELP_TICKET_CHANNEL_ID");
         WHITELIST_ROLE_ID = properties.getProperty("WHITELIST_ROLE_ID");
-        TICKET_EXPIRY_TIME_SECONDS = Integer.parseInt(properties.getProperty("TICKET_EXPIRY_TIME_SECONDS", "604800"));
+        TICKET_EXPIRY_TIME_SECONDS = Long.parseLong(properties.getProperty("TICKET_EXPIRY_TIME_SECONDS", "604800"));
 
         String adminRolesString = properties.getProperty("ADMIN_ROLE_IDS", "");
         if (adminRolesString.isEmpty()) {

@@ -21,6 +21,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.5.6")
     implementation("io.github.classgraph:classgraph:4.8.106")
     implementation ("com.google.code.gson:gson:2.10.1")
+    implementation("org.xerial:sqlite-jdbc:3.45.1.0")
 }
 
 tasks.withType<JavaCompile> {
