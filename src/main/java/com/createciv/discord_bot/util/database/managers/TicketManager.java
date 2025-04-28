@@ -4,10 +4,7 @@ import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.util.database.DatabaseManager;
 import com.createciv.discord_bot.util.database.types.TicketEntry;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -96,6 +93,19 @@ public class TicketManager extends DatabaseManager {
 
         return ticket;
 
+    }
+
+    public void updateTicketActivity(int ticketID) throws SQLException{
+        connect();
+        String sql = "UPDATE tickets SET lastActivity = ? WHERE id = ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        long timestampSeconds = timestamp.getTime() / 1000;
+        statement.setLong(1, timestampSeconds);
+        statement.setInt(2, ticketID);
+        statement.executeUpdate();
+        statement.close();
+        disconnect();
     }
 
     /**
