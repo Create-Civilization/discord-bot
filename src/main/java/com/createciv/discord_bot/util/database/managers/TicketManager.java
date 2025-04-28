@@ -1,6 +1,7 @@
 package com.createciv.discord_bot.util.database.managers;
 
 import com.createciv.discord_bot.ConfigLoader;
+import com.createciv.discord_bot.util.database.DatabaseEntry;
 import com.createciv.discord_bot.util.database.DatabaseManager;
 import com.createciv.discord_bot.util.database.types.TicketEntry;
 
@@ -19,34 +20,32 @@ public class TicketManager extends DatabaseManager {
         connect();
         Statement statement = connection.createStatement();
 
-        statement.execute("CREATE TABLE IF NOT EXISTS tickets (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "authorID TEXT NOT NULL, " +
-                "threadChannelID TEXT NOT NULL, " +
-                "embedMessageID TEXT NOT NULL, " +
-                "lastActivity INTEGER DEFAULT (strftime('%s', 'now'))" +
-                ")");
+        statement.execute(
+            "CREATE TABLE IF NOT EXISTS tickets (" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "authorID TEXT NOT NULL, " +
+            "threadChannelID TEXT NOT NULL, " +
+            "embedMessageID TEXT NOT NULL, " +
+            "lastActivity INTEGER DEFAULT (strftime('%s', 'now'))" +
+            ")"
+        );
 
         statement.close();
         disconnect();
 
     }
 
-    /**
-     *
-     * @param authorID Ticket creators discord ID
-     * @param threadID ID of Tickets Thread
-     * @param embedMessageID embedMessageUD
-     */
-    public void createTicket(String authorID, String threadID, String embedMessageID) throws SQLException{
+    @Override
+    public void add(DatabaseEntry databaseEntry) throws SQLException{
+        TicketEntry ticketEntry = (TicketEntry) databaseEntry;
         connect();
 
         String sql = "INSERT INTO tickets (authorID, threadChannelID, embedMessageID) VALUES (?,?,?)";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
-        preparedStatement.setString(1, authorID);
-        preparedStatement.setString(2, threadID);
-        preparedStatement.setString(3, embedMessageID);
+        preparedStatement.setString(1, ticketEntry.authorID);
+        preparedStatement.setString(2, ticketEntry.threadChannelID);
+        preparedStatement.setString(3, ticketEntry.embedMessageID);
 
         preparedStatement.executeUpdate();
         preparedStatement.close();
@@ -78,13 +77,7 @@ public class TicketManager extends DatabaseManager {
         TicketEntry ticket = null;
 
         if(resultSet.next()) {
-            int ID = resultSet.getInt("id");
-            String authorID = resultSet.getString("authorID");
-            String threadChannelID = resultSet.getString("threadChannelID");
-            String embedMessageID = resultSet.getString("embedMessageID");
-            int lastActivity = resultSet.getInt("lastActivity");
-
-            ticket = new TicketEntry(ID, authorID, threadChannelID, embedMessageID, lastActivity);
+            ticket = TicketEntry.fromResultSet(resultSet);
         }
 
         resultSet.close();
@@ -131,11 +124,11 @@ public class TicketManager extends DatabaseManager {
         String sql = "UPDATE tickets SET authorID = ?, threadChannelID = ?, embedMessageID = ?, lastActivity = ? WHERE id = ?";
         PreparedStatement statement = connection.prepareStatement(sql);
 
-        statement.setString(1, ticket.getAuthorID());
-        statement.setString(2, ticket.getThreadChannelID());
-        statement.setString(3, ticket.getEmbedMessageID());
-        statement.setLong(4, ticket.getLastActive());
-        statement.setInt(5, ticket.getID());
+        statement.setString(1, ticket.authorID);
+        statement.setString(2, ticket.threadChannelID);
+        statement.setString(3, ticket.embedMessageID);
+        statement.setLong(4, ticket.lastActive);
+        statement.setInt(5, ticket.id);
 
         statement.executeUpdate();
         statement.close();
@@ -164,7 +157,8 @@ public class TicketManager extends DatabaseManager {
                     resultSet.getString("authorID"),
                     resultSet.getString("threadChannelID"),
                     resultSet.getString("embedMessageID"),
-                    resultSet.getLong("lastActivity"));
+                    resultSet.getLong("lastActivity")
+            );
 
             expiredTickets.add(ticket);
         }

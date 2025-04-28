@@ -8,7 +8,7 @@ import java.sql.SQLException;
 public abstract class DatabaseManager {
     protected Connection connection;
     protected final String dbPath;
-    protected final String dbDirectory = "data";
+    protected final String dbDirectory = "storage";
     protected final String fileName;
 
     public DatabaseManager(String dbName){
@@ -20,6 +20,12 @@ public abstract class DatabaseManager {
         this.fileName = dbName + ".db";
         this.dbPath = "jdbc:sqlite:" + dbDirectory + "/" + this.fileName;
     }
+
+    /**
+     * Saves a DatabaseEntry into the sql database
+     * @param databaseEntry database entry to store
+     */
+    public abstract void add(DatabaseEntry databaseEntry) throws SQLException;
 
     public boolean exists(){
         File dbFile = new File(dbDirectory + "/" + fileName);

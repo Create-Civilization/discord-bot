@@ -1,15 +1,14 @@
-package com.createciv.discord_bot.commands.server_commands;
+package com.createciv.discord_bot.commands.server_commands.whitelist;
 
 import com.createciv.discord_bot.classes.SlashCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 
+@SuppressWarnings("unused")
 public class Whitelist extends SlashCommand {
-
 
     public Whitelist() {
         super("whitelist", "Add or remove a user from the whitelist");

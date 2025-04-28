@@ -11,7 +11,6 @@ import java.util.Properties;
 
 public class ConfigLoader {
     public static final String BOT_TOKEN;
-    public static final String CLIENT_ID;
     public static final String GUILD_ID;
     public static final String HELP_TICKET_CHANNEL_ID;
     public static final String WHITELIST_ROLE_ID;
@@ -33,7 +32,6 @@ public class ConfigLoader {
             //Setup Config.
             //Bot Token
             properties.setProperty("BOT_TOKEN", "");
-            properties.setProperty("CLIENT_ID", "");
             properties.setProperty("GUILD_ID", "");
             properties.setProperty("PETRO_PANEL_TOKEN", "");
             properties.setProperty("SERVER_ID", "");
@@ -44,8 +42,6 @@ public class ConfigLoader {
             properties.setProperty("WHITELIST_ROLE_ID", "");
             properties.setProperty("TICKET_EXPIRY_TIME_SECONDS", "");
             properties.setProperty("ADMIN_ROLE_IDS", "");
-
-
 
             configFile.getParentFile().mkdirs();
             try (FileOutputStream fos = new FileOutputStream(configFile)) {
@@ -68,7 +64,6 @@ public class ConfigLoader {
 
 
         BOT_TOKEN = properties.getProperty("BOT_TOKEN");
-        CLIENT_ID = properties.getProperty("CLIENT_ID");
         GUILD_ID = properties.getProperty("GUILD_ID");
         PETRO_PANEL_TOKEN = properties.getProperty("PETRO_PANEL_TOKEN");
         SERVER_ID = properties.getProperty("SERVER_ID");

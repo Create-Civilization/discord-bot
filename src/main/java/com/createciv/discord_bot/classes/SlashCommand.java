@@ -3,30 +3,29 @@ package com.createciv.discord_bot.classes;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public abstract class SlashCommand {
+public abstract class SlashCommand extends Registry {
     private String name;
     private String description;
     private final List<Option> options = new ArrayList<>();
 
-    public static final Map<String, SlashCommand> COMMAND_REGISTRY = new HashMap<>();
+    public static final Map<String, SlashCommand> REGISTRY = new HashMap<>();
 
     public SlashCommand(String name, String description) {
         this.name = name;
         this.description = description;
-        registerCommand(this);
     }
 
     public abstract void execute(SlashCommandInteractionEvent interactionEvent);
 
-    public static void registerCommand(SlashCommand command) {
-        COMMAND_REGISTRY.put(command.getName(), command);
+    public static void register(SlashCommand slashCommand) {
+        REGISTRY.put(slashCommand.getIdentifier(), slashCommand);
     }
 
-    public String getName() {
+    public String getIdentifier() {
         return name;
     }
 

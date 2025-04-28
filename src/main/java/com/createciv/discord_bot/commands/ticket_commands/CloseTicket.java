@@ -9,15 +9,12 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.Channel;
-import net.dv8tion.jda.api.entities.channel.ChannelType;
-import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 
 import java.awt.*;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class CloseTicket extends SlashCommand {
@@ -76,7 +73,7 @@ public class CloseTicket extends SlashCommand {
 
             closeTicket(interactionEvent, manager, ticket, guild, reason, anonymous);
 
-            ThreadChannel threadChannel = channel.getJDA().getThreadChannelById(ticket.getThreadChannelID());
+            ThreadChannel threadChannel = channel.getJDA().getThreadChannelById(ticket.threadChannelID);
             if(threadChannel != null) {
                 try {
                     threadChannel.getManager().setLocked(true).queue();
@@ -85,7 +82,7 @@ public class CloseTicket extends SlashCommand {
                     Bot.LOGGER.error("Failed to lock or archive thread: {}", e.getMessage(), e);
                 }
             } else {
-                Bot.LOGGER.error("Failed to find thread channel with ID: {}", ticket.getThreadChannelID());
+                Bot.LOGGER.error("Failed to find thread channel with ID: {}", ticket.threadChannelID);
             }
 
             interactionEvent.reply("Ticket Closed").setEphemeral(true).queue();
@@ -99,7 +96,7 @@ public class CloseTicket extends SlashCommand {
 
     private void closeTicket(SlashCommandInteractionEvent interactionEvent, TicketManager manager, TicketEntry ticket, Guild guild, String reason, Boolean anonymousMode) {
         try {
-            manager.deleteTicket(ticket.getID());
+            manager.deleteTicket(ticket.id);
         } catch (SQLException e) {
             Bot.LOGGER.error("Failed to delete ticket: {}", e.getMessage(), e);
             interactionEvent.reply("Failed to delete ticket SQL error, please check logs").setEphemeral(true).queue();
@@ -122,7 +119,7 @@ public class CloseTicket extends SlashCommand {
                 throw new IllegalStateException("Could not find configured help ticket channel with ID: " + ConfigLoader.HELP_TICKET_CHANNEL_ID);
             }
 
-            helpTicketChannel.editMessageEmbedsById(ticket.getEmbedMessageID(), embed)
+            helpTicketChannel.editMessageEmbedsById(ticket.embedMessageID, embed)
                     .queue(null, error -> Bot.LOGGER.error("Failed to edit embed message: {}", error.getMessage(), error));
 
             embed = new EmbedBuilder()
@@ -139,19 +136,19 @@ public class CloseTicket extends SlashCommand {
             MessageEmbed finalEmbed = embed;
 
             //Yes I did use AI for this. Sue me
-            jda.retrieveUserById(ticket.getAuthorID())
+            jda.retrieveUserById(ticket.authorID)
                     .queue(user -> {
                                 user.openPrivateChannel()
                                         .queue(privateChannel -> {
                                                     privateChannel.sendMessageEmbeds(finalEmbed)
                                                             .queue(
                                                                     null,
-                                                                    error -> Bot.LOGGER.error("Failed to send DM to user: {}", ticket.getAuthorID(), error)
+                                                                    error -> Bot.LOGGER.error("Failed to send DM to user: {}", ticket.authorID, error)
                                                             );
                                                 },
-                                                error -> Bot.LOGGER.error("Failed to open private channel with user: {}", ticket.getAuthorID(), error));
+                                                error -> Bot.LOGGER.error("Failed to open private channel with user: {}", ticket.authorID, error));
                             },
-                            error -> Bot.LOGGER.error("Failed to retrieve user: {}", ticket.getAuthorID(), error));
+                            error -> Bot.LOGGER.error("Failed to retrieve user: {}", ticket.authorID, error));
 
         } catch (Exception e) {
             Bot.LOGGER.error("Error in closeTicket method: {}", e.getMessage(), e);

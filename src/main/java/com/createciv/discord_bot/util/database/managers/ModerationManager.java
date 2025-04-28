@@ -1,5 +1,6 @@
 package com.createciv.discord_bot.util.database.managers;
 
+import com.createciv.discord_bot.util.database.DatabaseEntry;
 import com.createciv.discord_bot.util.database.DatabaseManager;
 
 import java.sql.SQLException;
@@ -8,6 +9,11 @@ import java.sql.Statement;
 public class ModerationManager extends DatabaseManager {
     public ModerationManager() {
         super("moderation");
+    }
+
+    @Override
+    public void add(DatabaseEntry databaseEntry) throws SQLException {
+
     }
 
     @Override

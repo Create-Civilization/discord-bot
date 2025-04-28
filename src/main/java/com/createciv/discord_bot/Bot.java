@@ -8,6 +8,7 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -16,6 +17,8 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,31 +27,55 @@ import static com.createciv.discord_bot.ConfigLoader.BOT_TOKEN;
 
 public class Bot extends ListenerAdapter {
     public static final Logger LOGGER = LoggerFactory.getLogger("BOT_LOG");
+    public static JDA API;
+    public static SelfUser BOT;
+
+    // Markers
+    private static final Marker REGISTRATION_MARKER = MarkerFactory.getMarker("REGISTRATION");
 
     public static void main(String[] args){
         LOGGER.info("Initiating bot..");
 
         DatabaseRegistry.init();
 
-        JDA api = JDABuilder.createDefault(BOT_TOKEN)
+        API = JDABuilder.createDefault(BOT_TOKEN)
                 .addEventListeners(new Bot())
-                //Orion, idk how you did the register shit for commSands. Please do that with listeners. :)
                 .addEventListeners(new WhitelistListener())
                 .addEventListeners(new TicketCreator())
                 .build();
+
+        BOT = API.getSelfUser();
+    }
+
+    @Override
+    public void onReady(ReadyEvent event) {
+        this.registerSlashCommands(event);
+        this.registerModals(event);
+        LOGGER.info("Bot successfully initiated.");
+    }
+
+    @Override
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        SlashCommand command = SlashCommand.REGISTRY.get(event.getName());
+        if (command != null) {
+            command.execute(event);
+        } else {
+            event.reply("Unknown command").queue();
+        }
     }
 
     //Check if the databases exist
 
-    private void registerSlashCommands(ReadyEvent event) {
-        CommandListUpdateAction commands = event.getJDA().updateCommands();
+    private void registerSlashCommands(ReadyEvent readyEvent) {
+        LOGGER.info(REGISTRATION_MARKER, "Registering commands..");
+        CommandListUpdateAction commands = readyEvent.getJDA().updateCommands();
 
         // Use reflection to register all commands
         List<Class<? extends SlashCommand>> subclasses = getSubclasses(SlashCommand.class);
         for (Class<? extends SlashCommand> subclass : subclasses) {
             try {
                 SlashCommand commandInstance = subclass.getDeclaredConstructor().newInstance();
-                SlashCommand.registerCommand(commandInstance);
+                SlashCommand.register(commandInstance);
 
                 LOGGER.info("Successfully collected slash command: {}", subclass.getSimpleName());
 
@@ -57,8 +84,8 @@ public class Bot extends ListenerAdapter {
             }
         }
 
-        SlashCommand.COMMAND_REGISTRY.forEach((name, command) -> {
-            SlashCommandData commandData = Commands.slash(command.getName(), command.getDescription());
+        SlashCommand.REGISTRY.forEach((name, command) -> {
+            SlashCommandData commandData = Commands.slash(command.getIdentifier(), command.getDescription());
             for (SlashCommand.Option option : command.getOptions()) {
                 commandData.addOption(option.getOptionType(),option.getName(),option.getDescription(), option.isRequired());
             }
@@ -69,34 +96,28 @@ public class Bot extends ListenerAdapter {
         });
 
         commands.queue();
+
+        LOGGER.info(REGISTRATION_MARKER, "Commands registered successfully.");
     }
 
-    @Override
-    public void onReady(ReadyEvent event) {
-        this.registerSlashCommands(event);
-        LOGGER.info("Bot successfully initiated.");
+    private void registerModals(ReadyEvent readyEvent) {
+        LOGGER.info(REGISTRATION_MARKER, "Registering modals..");
+
+
+
+        LOGGER.info(REGISTRATION_MARKER, "Modals registered successfully.");
     }
 
-    @Override
-    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        SlashCommand command = SlashCommand.COMMAND_REGISTRY.get(event.getName());
-        if (command != null) {
-            command.execute(event);
-        } else {
-            event.reply("Unknown command").queue();
-        }
-    }
-
-    public static List<Class<? extends SlashCommand>> getSubclasses(Class<SlashCommand> abstractClass) {
-        List<Class<? extends SlashCommand>> subclasses = new ArrayList<>();
+    public static <T> List<Class<? extends T>> getSubclasses(Class<T> abstractClass) {
+        List<Class<? extends T>> subclasses = new ArrayList<>();
         try (ScanResult scanResult = new ClassGraph()
                 .enableAllInfo()  // Enable all scanning features
                 .scan()) {
 
-            // Scan all classes and find those that extend SlashCommand
+            // Scan all classes and find those that extend T
             scanResult.getSubclasses(abstractClass.getName()).forEach(classInfo -> {
                 try {
-                    Class<? extends SlashCommand> cls = (Class<? extends SlashCommand>) Class.forName(classInfo.getName());
+                    Class<? extends T> cls = (Class<? extends T>) Class.forName(classInfo.getName());
                     if (abstractClass.isAssignableFrom(cls)) {
                         subclasses.add(cls);
                     }

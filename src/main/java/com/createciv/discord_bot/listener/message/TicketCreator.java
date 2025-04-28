@@ -10,7 +10,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
@@ -34,7 +33,7 @@ public class TicketCreator extends ListenerAdapter {
             Bot.LOGGER.error("Failed to make ticket as no GuildID is set in config");
             return;
         }
-        if(event.getMessage().getChannelType() == ChannelType.PRIVATE && !event.getMessage().getAuthor().getId().equals(ConfigLoader.CLIENT_ID)){
+        if(event.getMessage().getChannelType() == ChannelType.PRIVATE && !event.getMessage().getAuthor().isBot()){
             try {
                 processTicketRequest(event);
             } catch (Exception e){
@@ -119,7 +118,7 @@ public class TicketCreator extends ListenerAdapter {
         }
 
         try {
-            manager.createTicket(author.getId(), threadChannel.getId(), threadStartMsg.getId());
+            manager.add(new TicketEntry(author.getId(), threadChannel.getId(), threadStartMsg.getId()));
         } catch (SQLException e) {
             Bot.LOGGER.error("Database error creating ticket: {}", e.getMessage(), e);
             threadChannel.delete().queue();
@@ -162,9 +161,9 @@ public class TicketCreator extends ListenerAdapter {
     private void handleExistingTicket(MessageReceivedEvent event, TicketEntry ticket, Message message, User author, Guild guild){
         ThreadChannel channel;
         try {
-            channel = guild.getThreadChannelById(ticket.getThreadChannelID());
+            channel = guild.getThreadChannelById(ticket.threadChannelID);
             if(channel == null){
-                throw new IllegalStateException("Thread channel not found for existing ticket ID: " + ticket.getThreadChannelID());
+                throw new IllegalStateException("Thread channel not found for existing ticket ID: " + ticket.threadChannelID);
             }
         } catch (Exception e) {
             Bot.LOGGER.error("Failed to get thread channel: {}", e.getMessage(), e);

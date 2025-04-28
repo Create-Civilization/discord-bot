@@ -70,7 +70,7 @@ public class ReplyToTicket extends SlashCommand {
             JDA jda = interactionEvent.getJDA();
             String message = interactionEvent.getOption("message").getAsString();
             boolean anonymous = interactionEvent.getOption("anonymous") != null && interactionEvent.getOption("anonymous").getAsBoolean();
-            ThreadChannel threadChannel = channel.getJDA().getThreadChannelById(ticket.getThreadChannelID());
+            ThreadChannel threadChannel = channel.getJDA().getThreadChannelById(ticket.threadChannelID);
 
 
             MessageEmbed embed = new EmbedBuilder()
@@ -84,23 +84,23 @@ public class ReplyToTicket extends SlashCommand {
                     .build();
 
             MessageEmbed finalEmbed = embed;
-            jda.retrieveUserById(ticket.getAuthorID())
+            jda.retrieveUserById(ticket.authorID)
                     .queue(user -> {
                                 user.openPrivateChannel()
                                         .queue(privateChannel -> {
                                                     privateChannel.sendMessageEmbeds(finalEmbed)
                                                             .queue(
                                                                     null,
-                                                                    error -> Bot.LOGGER.error("Failed to send DM to user: {}", ticket.getAuthorID(), error)
+                                                                    error -> Bot.LOGGER.error("Failed to send DM to user: {}", ticket.authorID, error)
                                                             );
                                                 },
-                                                error -> Bot.LOGGER.error("Failed to open private channel with user: {}", ticket.getAuthorID(), error));
+                                                error -> Bot.LOGGER.error("Failed to open private channel with user: {}", ticket.authorID, error));
                             },
-                            error -> Bot.LOGGER.error("Failed to retrieve user: {}", ticket.getAuthorID(), error));
+                            error -> Bot.LOGGER.error("Failed to retrieve user: {}", ticket.authorID, error));
 
 
             try {
-                manager.updateTicketActivity(ticket.getID());
+                manager.updateTicketActivity(ticket.id);
             } catch (SQLException e){
                 Bot.LOGGER.error("Failed to update ticket activity: {}", e.getMessage(), e);
                 throw new RuntimeException("Failed to update ticket activity: "+ e.getMessage());

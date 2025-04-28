@@ -1,8 +1,9 @@
-package com.createciv.discord_bot.commands;
+package com.createciv.discord_bot.commands.extra;
 
 import com.createciv.discord_bot.classes.SlashCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
+@SuppressWarnings("unused")
 public class Ping extends SlashCommand {
 
     public Ping() {

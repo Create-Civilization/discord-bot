@@ -1,22 +1,27 @@
 package com.createciv.discord_bot.listener.modal;
 
-import com.createciv.discord_bot.Bot;
+import com.createciv.discord_bot.util.ModerationUtil;
 import com.createciv.discord_bot.util.MojangAPI;
-import com.google.gson.Gson;
+import com.createciv.discord_bot.util.database.DatabaseRegistry;
+import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import com.google.gson.JsonObject;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import java.sql.SQLException;
+import java.util.Objects;
 import java.util.UUID;
+
+import static com.createciv.discord_bot.Bot.LOGGER;
 
 public class WhitelistListener extends ListenerAdapter {
 
     @Override
     public void onModalInteraction(ModalInteractionEvent event) {
         if(event.getModalId().equals("whitelist")){
-            String username = event.getValue("username").getAsString();
-            String reason = event.getValue("reason").getAsString();
-            String referral = event.getValue("referral").getAsString();
+            String username = Objects.requireNonNull(event.getValue("username")).getAsString();
+            String reason = Objects.requireNonNull(event.getValue("reason")).getAsString();
+            String referral = Objects.requireNonNull(event.getValue("referral")).getAsString();
 
             MojangAPI mojangAPI = new MojangAPI();
             JsonObject response = mojangAPI.getUUID(username);
@@ -38,9 +43,15 @@ public class WhitelistListener extends ListenerAdapter {
                 );
                 UUID formatedUUID = UUID.fromString(formattedUuid);
 
-                //Do database stuff here.
+                try {
+                    DatabaseRegistry.getWhitelistManager().add(new WhitelistEntry(formatedUUID, event.getUser().getId(), username, reason));
+                } catch (SQLException e) {
+                    LOGGER.error("An error occured when whitelisting", e);
+                    throw new RuntimeException(e);
+                }
 
-                event.reply(formatedUUID.toString()).setEphemeral(true).queue();
+                event.reply("You have been successfully whitelisted").setEphemeral(true).queue();
+                ModerationUtil.log(new ModerationUtil.LogEmbed(username + " has been added to the whitelist", event.getUser().getName() + " has whitelisted as " + username + "\nReason: " + reason + "\nReferral: " + referral, true));
                 return;
             }
 
