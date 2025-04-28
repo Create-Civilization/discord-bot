@@ -1,6 +1,7 @@
 package com.createciv.discord_bot;
 
 import com.createciv.discord_bot.classes.SlashCommand;
+import com.createciv.discord_bot.listener.modal.WhitelistListener;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import net.dv8tion.jda.api.JDA;
@@ -26,6 +27,7 @@ public class Bot extends ListenerAdapter {
         LOGGER.info("Initiating bot..");
         JDA api = JDABuilder.createDefault(BOT_TOKEN)
                 .addEventListeners(new Bot())
+                .addEventListeners(new WhitelistListener())
                 .build();
     }
 

@@ -20,6 +20,7 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:1.7.32")
     implementation("ch.qos.logback:logback-classic:1.5.6")
     implementation("io.github.classgraph:classgraph:4.8.106")
+    implementation ("com.google.code.gson:gson:2.10.1")
 }
 
 tasks.withType<JavaCompile> {
