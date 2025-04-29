@@ -31,6 +31,11 @@ public class TicketEntry extends DatabaseEntry {
     }
 
     public static TicketEntry fromResultSet(ResultSet resultSet) throws SQLException {
-        return new TicketEntry(resultSet.getInt("id"), resultSet.getString("authorID"), resultSet.getString("threadChannelID"), resultSet.getString("embedMessageID"), resultSet.getInt("lastActivity"));
+        return new TicketEntry(
+                resultSet.getInt("id"),
+                resultSet.getString("authorID"),
+                resultSet.getString("threadChannelID"),
+                resultSet.getString("embedMessageID"),
+                resultSet.getInt("lastActivity"));
     }
 }

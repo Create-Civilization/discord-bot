@@ -12,6 +12,9 @@ val jdaVersion = "5.5.0"
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://repo.mattmalec.com/repository/releases")
+    }
 }
 
 dependencies {
@@ -22,6 +25,7 @@ dependencies {
     implementation("io.github.classgraph:classgraph:4.8.106")
     implementation ("com.google.code.gson:gson:2.10.1")
     implementation("org.xerial:sqlite-jdbc:3.45.1.0")
+    implementation("com.mattmalec:Pterodactyl4J:2.BETA_100")
 }
 
 tasks.withType<JavaCompile> {
