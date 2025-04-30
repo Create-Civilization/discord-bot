@@ -14,22 +14,25 @@ public class WhitelistEntry extends DatabaseEntry {
     public String discordID;
     public String username;
     public String reason;
+    public String referral;
     public Timestamp createdAt;
 
-    public WhitelistEntry(UUID playerUUID, String discordID, String username, String reason) {
+    public WhitelistEntry(UUID playerUUID, String discordID, String username, String reason, String referral) {
         this.playerUUID = playerUUID;
         this.discordID = discordID;
         this.username = username;
         this.reason = reason;
+        this.referral = referral;
         this.createdAt = Timestamp.from(Instant.now());
     }
 
-    public WhitelistEntry(int id, UUID playerUUID, String discordID, String username, String reason, Timestamp timestamp) {
+    public WhitelistEntry(int id, UUID playerUUID, String discordID, String username, String reason, String referral, Timestamp timestamp) {
         this.id = id;
         this.playerUUID = playerUUID;
         this.discordID = discordID;
         this.username = username;
         this.reason = reason;
+        this.referral = referral;
         this.createdAt = timestamp;
     }
 
@@ -40,6 +43,7 @@ public class WhitelistEntry extends DatabaseEntry {
                 resultSet.getString("discordID"),
                 resultSet.getString("username"),
                 resultSet.getString("reason"),
+                resultSet.getString("referral"),
                 resultSet.getTimestamp("createdAt")
             );
     }

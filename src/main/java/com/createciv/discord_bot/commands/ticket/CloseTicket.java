@@ -1,8 +1,9 @@
-package com.createciv.discord_bot.commands.ticket_commands;
+package com.createciv.discord_bot.commands.ticket;
 
 import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.SlashCommand;
+import com.createciv.discord_bot.util.LoggingUtil;
 import com.createciv.discord_bot.util.database.managers.TicketManager;
 import com.createciv.discord_bot.util.database.types.TicketEntry;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -87,10 +88,10 @@ public class CloseTicket extends SlashCommand {
 
             interactionEvent.reply("Ticket Closed").setEphemeral(true).queue();
         } catch (Exception e) {
-            Bot.LOGGER.error("Unexpected error in close ticket command: {}", e.getMessage(), e);
             if(!interactionEvent.isAcknowledged()) {
                 interactionEvent.reply("An unexpected error occurred while processing your command").setEphemeral(true).queue();
             }
+            throw new RuntimeException("Unexpected error in close ticket command: " + e.getMessage());
         }
     }
 
@@ -151,7 +152,7 @@ public class CloseTicket extends SlashCommand {
                             error -> Bot.LOGGER.error("Failed to retrieve user: {}", ticket.authorID, error));
 
         } catch (Exception e) {
-            Bot.LOGGER.error("Error in closeTicket method: {}", e.getMessage(), e);
+            new LoggingUtil().logError(e);
         }
     }
 
@@ -161,6 +162,7 @@ public class CloseTicket extends SlashCommand {
             ticket = manager.getTicket(channel.getId(), "threadChannelID");
         } catch (SQLException e) {
             Bot.LOGGER.error("Failed to get ticket in close ticket commands: {}", e.getMessage(), e);
+            new LoggingUtil().logError(e);
             return null;
         }
         return ticket;

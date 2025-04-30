@@ -1,4 +1,4 @@
-package com.createciv.discord_bot.commands.server_commands.whitelist;
+package com.createciv.discord_bot.commands.server.whitelist;
 
 import com.createciv.discord_bot.classes.SlashCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -27,11 +27,13 @@ public class Whitelist extends SlashCommand {
         TextInput reason = TextInput.create("reason", "Why would you like to join?", TextInputStyle.PARAGRAPH)
                 .setRequired(true)
                 .setPlaceholder("Tell us why you wanted to join")
+                .setMaxLength(800)
                 .build();
 
         TextInput referral = TextInput.create("referral", "How did you find us?", TextInputStyle.PARAGRAPH)
                 .setRequired(false)
                 .setPlaceholder("Please tell us where you found out about Create: Civilization")
+                .setMaxLength(800)
                 .build();
 
 

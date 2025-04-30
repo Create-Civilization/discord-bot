@@ -1,7 +1,7 @@
-package com.createciv.discord_bot.commands.server_commands.whitelist;
+package com.createciv.discord_bot.commands.server.whitelist;
 
 import com.createciv.discord_bot.classes.SlashCommand;
-import com.createciv.discord_bot.util.ModerationUtil;
+import com.createciv.discord_bot.util.LoggingUtil;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
 import com.createciv.discord_bot.util.database.managers.WhitelistManager;
 import com.createciv.discord_bot.util.database.types.WhitelistEntry;
@@ -32,11 +32,11 @@ public class RemoveWhitelist extends SlashCommand {
             whitelistManager.removeWithDiscordID(userID);
             interactionEvent.reply("You have successfully been removed from the whitelist").setEphemeral(true).queue();
 
-            ModerationUtil.log( new ModerationUtil.LogEmbed(whitelistEntry.username + " has removed themselves from the whitelist", "", false));
+            new LoggingUtil().logRemoveWhitelist(whitelistEntry, interactionEvent.getUser());
 
         } catch (SQLException e) {
             LOGGER.error("Error in RemoveWhitelist command", e);
-            throw new RuntimeException(e);
+            new LoggingUtil().logError(e);
         }
     }
 }

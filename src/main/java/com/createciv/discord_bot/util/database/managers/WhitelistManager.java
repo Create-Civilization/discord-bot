@@ -25,6 +25,7 @@ public class WhitelistManager extends DatabaseManager {
                 "discordID TEXT NOT NULL UNIQUE, " +
                 "username TEXT NOT NULL, " +
                 "reason TEXT NOT NULL, " +
+                "referral TEXT," +
                 "createdAt INTEGER DEFAULT (strftime('%s', 'now')) " +
                 ")");
 
@@ -37,14 +38,15 @@ public class WhitelistManager extends DatabaseManager {
         WhitelistEntry whitelistEntry = (WhitelistEntry) databaseEntry;
         connect();
 
-        String sql = "INSERT INTO whitelistData (playerUUID, discordID, username, reason, createdAt) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO whitelistData (playerUUID, discordID, username, reason, referral, createdAt) VALUES (?, ?, ?, ?, ?, ?)";
         PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
         preparedStatement.setString(1, whitelistEntry.playerUUID.toString());
         preparedStatement.setString(2, whitelistEntry.discordID);
         preparedStatement.setString(3, whitelistEntry.username);
         preparedStatement.setString(4, whitelistEntry.reason);
-        preparedStatement.setTimestamp(5, whitelistEntry.createdAt);
+        preparedStatement.setString(5, whitelistEntry.referral);
+        preparedStatement.setTimestamp(6, whitelistEntry.createdAt);
 
         preparedStatement.executeUpdate();
 

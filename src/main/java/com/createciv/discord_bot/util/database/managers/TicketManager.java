@@ -169,4 +169,21 @@ public class TicketManager extends DatabaseManager {
 
         return expiredTickets;
     }
+
+    public List<TicketEntry> getAllTickets() throws SQLException{
+        connect();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM tickets");
+        List<TicketEntry> allTickets = new ArrayList<>();
+        while (resultSet.next()){
+            TicketEntry ticket = TicketEntry.fromResultSet(resultSet);
+            allTickets.add(ticket);
+        }
+
+        resultSet.close();
+        statement.close();
+        disconnect();
+
+        return allTickets;
+    }
 }

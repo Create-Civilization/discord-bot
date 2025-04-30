@@ -1,4 +1,4 @@
-package com.createciv.discord_bot.commands.ticket_commands;
+package com.createciv.discord_bot.commands.ticket;
 
 import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.ConfigLoader;

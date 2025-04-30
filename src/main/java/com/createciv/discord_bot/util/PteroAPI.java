@@ -7,11 +7,11 @@ import com.mattmalec.pterodactyl4j.client.entities.PteroClient;
 
 public class PteroAPI {
 
-    String pannelURL = ConfigLoader.PANEL_URL;
-    String pannelToken = ConfigLoader.PETRO_PANEL_TOKEN;
+    String panelURL = ConfigLoader.PANEL_URL;
+    String panelToken = ConfigLoader.PETRO_PANEL_TOKEN;
 
     public void startServer(String serverID){
-        PteroClient api = PteroBuilder.createClient(pannelURL, pannelToken);
+        PteroClient api = PteroBuilder.createClient(panelURL, panelToken);
         api.retrieveServerByIdentifier(serverID)
                 .flatMap(ClientServer::start).execute();
     }
