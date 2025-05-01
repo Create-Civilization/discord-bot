@@ -1,9 +1,11 @@
 package com.createciv.discord_bot;
 
+import com.createciv.discord_bot.classes.ScheduledTask;
 import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.listener.logging.JoinAndLeave;
 import com.createciv.discord_bot.listener.message.TicketCreator;
 import com.createciv.discord_bot.listener.modal.WhitelistListener;
+import com.createciv.discord_bot.schedualedTasks.TaskRegistry;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
@@ -53,6 +55,8 @@ public class Bot extends ListenerAdapter {
     public void onReady(ReadyEvent event) {
         this.registerSlashCommands(event);
         this.registerModals(event);
+        this.registerScheduledTasks();
+        TaskRegistry.init();
         LOGGER.info("Bot successfully initiated.");
     }
 
@@ -101,6 +105,24 @@ public class Bot extends ListenerAdapter {
 
         LOGGER.info(REGISTRATION_MARKER, "Commands registered successfully.");
     }
+
+    private void registerScheduledTasks() {
+        LOGGER.info(REGISTRATION_MARKER, "Registering scheduled tasks...");
+
+        List<Class<? extends ScheduledTask>> subclasses = getSubclasses(ScheduledTask.class);
+        for (Class<? extends ScheduledTask> subclass : subclasses) {
+            try {
+                ScheduledTask taskInstance = subclass.getDeclaredConstructor().newInstance();
+                ScheduledTask.register(taskInstance);
+                LOGGER.info("Successfully registered task: {}", subclass.getSimpleName());
+            } catch (Exception e) {
+                LOGGER.error("Failed to register scheduled task: {}", subclass.getSimpleName(), e);
+            }
+        }
+
+        LOGGER.info(REGISTRATION_MARKER, "Scheduled tasks registered successfully.");
+    }
+
 
     private void registerModals(ReadyEvent readyEvent) {
         LOGGER.info(REGISTRATION_MARKER, "Registering modals..");

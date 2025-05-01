@@ -35,11 +35,39 @@ public class MojangAPI {
                 Bot.LOGGER.error("getUUID failed. Status code {}", response.statusCode());
                 return null;
             }
-        } catch (IOException | InterruptedException e){
-            Bot.LOGGER.error(e.getMessage());
+        } catch (Exception e){
             return null;
         }
     }
+
+
+
+    public JsonObject getServerStats(String serverIP){
+        try{
+            Gson gson = new Gson();
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://api.mcsrvstat.us/3/" +  serverIP))
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if(response.statusCode() == 200){
+                return gson.fromJson(response.body(), JsonObject.class);
+            }
+
+            return null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
+
+
+
 
 
 }
