@@ -1,6 +1,9 @@
 package com.createciv.discord_bot.commands.extra;
 
+import com.createciv.discord_bot.Bot;
+import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.SlashCommand;
+import com.createciv.discord_bot.util.PanelConnection;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.util.Random;

@@ -6,6 +6,7 @@ import com.createciv.discord_bot.listener.logging.JoinAndLeave;
 import com.createciv.discord_bot.listener.message.TicketCreator;
 import com.createciv.discord_bot.listener.modal.WhitelistListener;
 import com.createciv.discord_bot.schedualedTasks.TaskRegistry;
+import com.createciv.discord_bot.util.PanelConnection;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
@@ -40,6 +41,7 @@ public class Bot extends ListenerAdapter {
         LOGGER.info("Initiating bot..");
 
         DatabaseRegistry.init();
+        PanelConnection.init();
 
         API = JDABuilder.createDefault(BOT_TOKEN)
                 .addEventListeners(new Bot())
