@@ -1,7 +1,6 @@
 package com.createciv.discord_bot.listener.modal;
 
 import com.createciv.discord_bot.util.LoggingUtil;
-import com.createciv.discord_bot.util.ModerationUtil;
 import com.createciv.discord_bot.util.MojangAPI;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
 import com.createciv.discord_bot.util.database.types.WhitelistEntry;
@@ -26,24 +25,20 @@ public class WhitelistListener extends ListenerAdapter {
                 String referral = Objects.requireNonNull(event.getValue("referral")).getAsString();
 
                 MojangAPI mojangAPI = new MojangAPI();
-                JsonObject response = mojangAPI.getUUID(username);
+                JsonObject response = mojangAPI.getPlayerInfo(username);
                 if (response == null) {
                     event.reply("A severe error occurred. Please try again later").setEphemeral(true).queue();
                     return;
                 }
                 //Check if we got an invalid username
-                if (response.get("errorMessage") != null) {
-                    event.reply(response.get("errorMessage").getAsString()).setEphemeral(true).queue();
+                if (response.get("reason") != null) {
+                    event.reply(response.get("reason").getAsString()).setEphemeral(true).queue();
                     return;
                 }
 
-                if (response.get("id").getAsString() != null) {
-                    //Dont ask me how Regex works. I AIed this.
-                    String formattedUuid = response.get("id").getAsString().replaceFirst(
-                            "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)",
-                            "$1-$2-$3-$4-$5"
-                    );
-                    UUID formatedUUID = UUID.fromString(formattedUuid);
+                if (response.get("uuid").getAsString() != null) {
+
+                    UUID formatedUUID = UUID.fromString(response.get("uuid").getAsString());
                     WhitelistEntry entry = new WhitelistEntry(formatedUUID, event.getUser().getId(), username, reason, referral);
 
                     try {

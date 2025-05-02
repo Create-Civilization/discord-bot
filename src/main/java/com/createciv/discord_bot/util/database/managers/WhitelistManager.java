@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WhitelistManager extends DatabaseManager {
     public WhitelistManager() {
@@ -79,5 +81,36 @@ public class WhitelistManager extends DatabaseManager {
 
         disconnect();
         return toReturn;
+    }
+
+    public List<WhitelistEntry> getAll() throws SQLException {
+        connect();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM whitelistData");
+        List<WhitelistEntry> allWhitelistEntries = new ArrayList<>();
+        while (resultSet.next()) {
+            WhitelistEntry whitelistEntry = WhitelistEntry.fromResultSet(resultSet);
+            allWhitelistEntries.add(whitelistEntry);
+        }
+
+        resultSet.close();
+        statement.close();
+        disconnect();
+
+        return allWhitelistEntries;
+    }
+
+    public void update(WhitelistEntry entry) throws SQLException {
+        connect();
+        String sql = "UPDATE whitelistData SET discordID = ?, username = ?, reason = ?, referral = ? WHERE playerUUID = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, entry.discordID);
+        preparedStatement.setString(2, entry.username);
+        preparedStatement.setString(3, entry.reason);
+        preparedStatement.setString(4, entry.referral);
+        preparedStatement.setString(5, entry.playerUUID.toString());
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
+        disconnect();
     }
 }

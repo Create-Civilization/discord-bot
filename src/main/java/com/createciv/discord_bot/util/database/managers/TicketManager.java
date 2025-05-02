@@ -10,11 +10,40 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * The TicketManager class is responsible for managing operations on tickets stored in a SQLite database.
+ * It provides functionality for creating, retrieving, updating, and deleting ticket entries.
+ * This class extends the DatabaseManager, which provides basic database connection handling.
+ */
 public class TicketManager extends DatabaseManager {
+    /**
+     * Constructs a new instance of the TicketManager class.
+     * <p>
+     * This class extends the DatabaseManager class and is specifically designed
+     * to handle and manage tickets within the database. It is initialized with
+     * the database name "tickets" and is responsible for ticket-related operations,
+     * including creating, retrieving, updating, and deleting ticket records.
+     */
     public TicketManager() {
         super("tickets");
     }
 
+    /**
+     * Initializes the database for storing ticket data.
+     * This method ensures that the required table for managing tickets is created if it does not already exist.
+     *
+     * The table created consists of the following columns:
+     * - `id`: An auto-incrementing primary key for unique identification of tickets.
+     * - `authorID`: The ID of the user who created the ticket. This column is mandatory.
+     * - `threadChannelID`: The ID of the thread channel associated with the ticket. This column is mandatory.
+     * - `embedMessageID`: The ID of the embed message associated with the ticket. This column is mandatory.
+     * - `lastActivity`: An integer timestamp, set to the current Unix time by default, representing the last activity on the ticket.
+     *
+     * During the execution, the method establishes a connection to the database, creates the necessary table if it does not exist,
+     * and closes the connection after completing the operation.
+     *
+     * @throws SQLException if there is an error in establishing a connection, creating the table, or executing the SQL statement.
+     */
     @Override
     public void initDatabase() throws SQLException {
         connect();
@@ -35,6 +64,15 @@ public class TicketManager extends DatabaseManager {
 
     }
 
+    /**
+     * Adds a new ticket entry into the database. This method inserts the fields of the provided
+     * {@code TicketEntry} into the tickets table in the database.
+     *
+     * @param databaseEntry the {@code DatabaseEntry} to be added, which must be an instance of {@code TicketEntry}.
+     *                      It contains the information about a ticket including author ID, thread channel ID,
+     *                      and embed message ID.
+     * @throws SQLException if a database access error occurs or the provided entry cannot be inserted.
+     */
     @Override
     public void add(DatabaseEntry databaseEntry) throws SQLException{
         TicketEntry ticketEntry = (TicketEntry) databaseEntry;
@@ -55,11 +93,13 @@ public class TicketManager extends DatabaseManager {
     }
 
     /**
+     * Retrieves a ticket entry from the database based on the provided ID and type.
      *
-     * @param id id of either author or channel
-     * @param type what to search with either authorID or threadChannelID
-     * @return Ticket
-     * @throws SQLException
+     * @param id   the ID to search for in the database; must correspond to the specified type (e.g., "authorID" or "threadChannelID")
+     * @param type the type of ID to search by; valid values are "authorID" or "threadChannelID"
+     * @return a {@code TicketEntry} object representing the ticket if found, or {@code null} if no ticket matches the criteria
+     * @throws SQLException              if a database access error occurs
+     * @throws IllegalArgumentException if the provided type is not "authorID" or "threadChannelID"
      */
     public TicketEntry getTicket(String id, String type) throws SQLException{
         if(!Objects.equals(type, "authorID") && !Objects.equals(type, "threadChannelID")){
@@ -88,6 +128,12 @@ public class TicketManager extends DatabaseManager {
 
     }
 
+    /**
+     * Updates the last activity timestamp of a specific ticket in the database.
+     *
+     * @param ticketID The ID of the ticket to update.
+     * @throws SQLException If a database access error occurs or the SQL operation fails.
+     */
     public void updateTicketActivity(int ticketID) throws SQLException{
         connect();
         String sql = "UPDATE tickets SET lastActivity = ? WHERE id = ?";
@@ -102,9 +148,10 @@ public class TicketManager extends DatabaseManager {
     }
 
     /**
-     * Deletes ticket by the ticketsID
-     * @param ticketID
-     * @throws SQLException
+     * Deletes a ticket from the database using the specified ticket ID.
+     *
+     * @param ticketID The ID of the ticket to delete.
+     * @throws SQLException If a database access error occurs or the delete operation fails.
      */
     public void deleteTicket(int ticketID) throws SQLException {
         connect();
@@ -115,9 +162,10 @@ public class TicketManager extends DatabaseManager {
     }
 
     /**
-     * Update a ticket in the database.
-     * @param ticket
-     * @throws SQLException
+     * Updates the specified ticket's information in the database.
+     *
+     * @param ticket the TicketEntry object containing the updated information.
+     * @throws SQLException if a database access error occurs.
      */
     public void updateTicket(TicketEntry ticket) throws SQLException{
         connect();
@@ -136,9 +184,12 @@ public class TicketManager extends DatabaseManager {
     }
 
     /**
-     * Returns a list of expired tickets
-     * @return
-     * @throws SQLException
+     * Retrieves a list of expired tickets from the database.
+     * A ticket is considered expired if its last activity timestamp
+     * is older than the current time minus the configured expiry time.
+     *
+     * @return a list of {@code TicketEntry} objects representing expired tickets.
+     * @throws SQLException if an error occurs while interacting with the database.
      */
     public List<TicketEntry> getExpiredTickets() throws SQLException{
         long currentTime = System.currentTimeMillis();
@@ -170,6 +221,15 @@ public class TicketManager extends DatabaseManager {
         return expiredTickets;
     }
 
+    /**
+     * Retrieves a list of all ticket entries from the database.
+     *
+     * This method connects to the database, retrieves all records from the "tickets" table,
+     * and converts them into a list of {@link TicketEntry} objects.
+     *
+     * @return a list of {@link TicketEntry} objects representing all tickets in the database
+     * @throws SQLException if a database access error occurs
+     */
     public List<TicketEntry> getAllTickets() throws SQLException{
         connect();
         Statement statement = connection.createStatement();

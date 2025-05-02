@@ -4,12 +4,10 @@ import com.createciv.discord_bot.Bot;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.HashMap;
 
 public class MojangAPI {
 
@@ -18,12 +16,13 @@ public class MojangAPI {
      * @param username The username you want to get.
      * @return JsonObject
      */
-    public JsonObject getUUID(String username){
+    public JsonObject getPlayerInfo(String username) {
         try {
             Gson gson = new Gson();
             HttpClient client = HttpClient.newHttpClient();
+            //https://api.mojang.com/users/profiles/minecraft/
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://api.mojang.com/users/profiles/minecraft/" + username))
+                    .uri(URI.create("https://api.ashcon.app/mojang/v2/user/" + username))
                     .GET()
                     .build();
 
@@ -41,7 +40,14 @@ public class MojangAPI {
     }
 
 
-
+    /**
+     * Retrieves server statistics for the given Minecraft server IP address.
+     *
+     * @param serverIP The IP address of the Minecraft server for which statistics are to be retrieved.
+     * @return A JsonObject containing server statistics if the server response is successful (HTTP status code 200),
+     * otherwise null.
+     * @throws RuntimeException If an error occurs during the HTTP request process.
+     */
     public JsonObject getServerStats(String serverIP){
         try{
             Gson gson = new Gson();
@@ -59,15 +65,10 @@ public class MojangAPI {
 
             return null;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            new LoggingUtil().logError(e);
         }
+        return null;
     }
-
-
-
-
-
-
 
 
 }

@@ -3,6 +3,7 @@ package com.createciv.discord_bot.commands.ticket;
 import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.SlashCommand;
+import com.createciv.discord_bot.util.database.DatabaseRegistry;
 import com.createciv.discord_bot.util.database.managers.TicketManager;
 import com.createciv.discord_bot.util.database.types.TicketEntry;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -57,7 +58,7 @@ public class ReplyToTicket extends SlashCommand {
                 return;
             }
 
-            TicketManager manager = new TicketManager();
+            TicketManager manager = DatabaseRegistry.getTicketManager();
 
             Channel channel = interactionEvent.getChannel();
             TicketEntry ticket = getChannelsTicket(channel, manager);
