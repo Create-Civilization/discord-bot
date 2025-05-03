@@ -2,6 +2,7 @@ package com.createciv.discord_bot;
 
 import com.createciv.discord_bot.classes.ScheduledTask;
 import com.createciv.discord_bot.classes.SlashCommand;
+import com.createciv.discord_bot.listener.auto_complete.trick.TrickAutoComplete;
 import com.createciv.discord_bot.listener.logging.JoinAndLeave;
 import com.createciv.discord_bot.listener.message.TicketCreator;
 import com.createciv.discord_bot.listener.modal.WhitelistListener;
@@ -48,6 +49,7 @@ public class Bot extends ListenerAdapter {
                 .addEventListeners(new WhitelistListener())
                 .addEventListeners(new TicketCreator())
                 .addEventListeners(new JoinAndLeave())
+                .addEventListeners(new TrickAutoComplete())
                 .build();
 
         BOT = API.getSelfUser();
@@ -95,7 +97,7 @@ public class Bot extends ListenerAdapter {
         SlashCommand.REGISTRY.forEach((name, command) -> {
             SlashCommandData commandData = Commands.slash(command.getIdentifier(), command.getDescription());
             for (SlashCommand.Option option : command.getOptions()) {
-                commandData.addOption(option.getOptionType(),option.getName(),option.getDescription(), option.isRequired());
+                commandData.addOption(option.optionType(), option.name(), option.description(), option.required(), option.autocomplete());
             }
             commands.addCommands(
                     commandData

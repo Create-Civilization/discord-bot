@@ -22,8 +22,8 @@ import java.sql.SQLException;
 public class CloseTicket extends SlashCommand {
     public CloseTicket() {
         super("close", "Close the current thread");
-        addOption(new Option(OptionType.STRING, "reason", "The reason for closing the ticket" ,true));
-        addOption(new Option(OptionType.BOOLEAN, "anonymous", "Do you want to send close message anonymously", false));
+        addOption(new Option(OptionType.STRING, "reason", "The reason for closing the ticket", true, false));
+        addOption(new Option(OptionType.BOOLEAN, "anonymous", "Do you want to send close message anonymously", false, false));
     }
 
     @Override

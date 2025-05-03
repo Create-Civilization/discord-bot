@@ -16,6 +16,10 @@ import static com.createciv.discord_bot.Bot.LOGGER;
 
 public class WhitelistListener extends ListenerAdapter {
 
+
+    //TODO change players nicknames on the server to MC name after the whitelist goes through
+
+
     @Override
     public void onModalInteraction(ModalInteractionEvent event) {
         try {

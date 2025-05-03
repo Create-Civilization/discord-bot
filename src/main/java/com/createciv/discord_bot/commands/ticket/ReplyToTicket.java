@@ -24,8 +24,8 @@ public class ReplyToTicket extends SlashCommand {
 
     public ReplyToTicket() {
         super("reply", "Replies to the current ticket");
-        addOption(new Option(OptionType.STRING, "message", "The message you want to reply with", true));
-        addOption(new Option(OptionType.BOOLEAN, "anonymous", "Do you want to send close message anonymously", false));
+        addOption(new Option(OptionType.STRING, "message", "The message you want to reply with", true, false));
+        addOption(new Option(OptionType.BOOLEAN, "anonymous", "Do you want to send close message anonymously", false, false));
     }
 
     @Override
