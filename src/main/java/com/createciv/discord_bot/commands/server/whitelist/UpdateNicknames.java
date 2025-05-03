@@ -5,41 +5,46 @@ import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
 import com.createciv.discord_bot.util.database.types.WhitelistEntry;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
-public class PurgeWhitelist extends SlashCommand {
+public class UpdateNicknames extends SlashCommand {
 
-    public PurgeWhitelist() {
-        super("purge_whitelist", "purge whitelist of all non members");
+    public UpdateNicknames(String name, String description) {
+        super("update_nicknames", "Update nicknames of all discord members");
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent interactionEvent) {
+        if (!hasPermission(interactionEvent)) return;
+
+        List<WhitelistEntry> whitelistEntries;
         try {
-
-            if (!hasPermission(interactionEvent)) return;
-
-            List<WhitelistEntry> whitelistEntries = DatabaseRegistry.getWhitelistManager().getAll();
-
-            List<Member> members = interactionEvent.getGuild().getMembers();
-
-            for (WhitelistEntry entry : whitelistEntries) {
-                if (!members.stream().toList().contains(interactionEvent.getGuild().getMemberById(entry.discordID))) {
-                    DatabaseRegistry.getWhitelistManager().removeWithDiscordID(entry.discordID);
-                    //TODO add un-whitelist here
-
-                }
-            }
-
-
-        } catch (Exception e) {
-            Bot.LOGGER.error("Error occurred in PurgeWhitelist: {}", e.getMessage(), e);
+            whitelistEntries = DatabaseRegistry.getWhitelistManager().getAll();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
+
+        Guild guild = interactionEvent.getGuild();
+        List<Member> members = Objects.requireNonNull(interactionEvent.getGuild()).getMembers();
+
+        for (WhitelistEntry entry : whitelistEntries) {
+            if (members.stream().toList().contains(guild.getMemberById(entry.discordID))) {
+                Member member = guild.getMemberById(entry.discordID);
+                member.modifyNickname(entry.username);
+            }
+        }
+
+
     }
+
 
     private boolean hasPermission(SlashCommandInteractionEvent interactionEvent) {
 
