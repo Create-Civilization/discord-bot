@@ -29,14 +29,14 @@ import java.util.Random;
 
 public class TempBanUser extends SlashCommand {
 
-    private static String BannedRoleID = ConfigLoader.BANNED_ROLE_ID;
+    private static final String BannedRoleID = ConfigLoader.BANNED_ROLE_ID;
 
     public TempBanUser() {
         super("temp_ban_user", "temporarily bans a user from the discord and server");
         addOption(new Option(OptionType.USER, "user", "user to ban", true, false));
+        addOption(new Option(OptionType.STRING, "reason", "reason for banning", true, true));
         addOption(new Option(OptionType.INTEGER, "length", "how long to ban user", true, false));
         addOption(new Option(OptionType.STRING, "timespan", "timespan to ban", true, true));
-        addOption(new Option(OptionType.STRING, "reason", "reason for banning", true, true));
 
     }
 
