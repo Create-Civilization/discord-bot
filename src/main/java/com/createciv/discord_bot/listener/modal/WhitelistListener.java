@@ -1,10 +1,12 @@
 package com.createciv.discord_bot.listener.modal;
 
+import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.util.LoggingUtil;
 import com.createciv.discord_bot.util.MojangAPI;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
 import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import com.google.gson.JsonObject;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -51,6 +53,10 @@ public class WhitelistListener extends ListenerAdapter {
                         LOGGER.error("An error occurred when whitelisting", e);
                         throw new RuntimeException(e);
                     }
+
+                    Guild guild = event.getGuild();
+
+                    guild.addRoleToMember(guild.getMember(event.getUser()), guild.getRoleById(ConfigLoader.WHITELIST_ROLE_ID)).queue();
 
                     event.reply("You have been successfully whitelisted").setEphemeral(true).queue();
                     new LoggingUtil().logWhitelists(entry, event.getUser());

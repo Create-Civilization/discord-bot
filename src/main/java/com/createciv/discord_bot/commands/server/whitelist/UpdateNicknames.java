@@ -17,7 +17,7 @@ import java.util.Objects;
 
 public class UpdateNicknames extends SlashCommand {
 
-    public UpdateNicknames(String name, String description) {
+    public UpdateNicknames() {
         super("update_nicknames", "Update nicknames of all discord members");
     }
 

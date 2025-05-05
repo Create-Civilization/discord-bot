@@ -3,59 +3,83 @@ package com.createciv.discord_bot.util;
 import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.ConfigLoader;
 import com.mattmalec.pterodactyl4j.PteroBuilder;
+import com.mattmalec.pterodactyl4j.client.entities.ClientServer;
 import com.mattmalec.pterodactyl4j.client.entities.PteroClient;
+import com.mattmalec.pterodactyl4j.client.managers.WebSocketBuilder;
+import com.mattmalec.pterodactyl4j.client.managers.WebSocketManager;
+import com.mattmalec.pterodactyl4j.client.ws.events.AuthSuccessEvent;
+import com.mattmalec.pterodactyl4j.client.ws.events.output.ConsoleOutputEvent;
+import com.mattmalec.pterodactyl4j.client.ws.events.output.OutputEvent;
+import com.mattmalec.pterodactyl4j.client.ws.hooks.ClientSocketListenerAdapter;
 
-public class PanelConnection {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+public class PanelConnection extends ClientSocketListenerAdapter {
 
     private static String panelURL = ConfigLoader.PANEL_URL;
     private static String token = ConfigLoader.PETRO_PANEL_TOKEN;
+    private static String serverID = ConfigLoader.SERVER_ID;
     private static PteroClient client;
+
+    private static final Map<String, CompletableFuture<Boolean>> trackerFutures = new ConcurrentHashMap<>();
 
     public static void init() {
         client = PteroBuilder.createClient(panelURL, token);
+        client.retrieveServerByIdentifier(serverID)
+                .map(ClientServer::getWebSocketBuilder)
+                .map(builder -> builder.addEventListeners(new PanelConnection()))
+                .executeAsync(WebSocketBuilder::build);
     }
 
 
-    /**
-     * Retrieves the static instance of the PteroClient that is used to interact with the panel.
-     *
-     * @return The singleton instance of the PteroClient, or null if it has not been initialized.
-     */
-    public static PteroClient getClient() {
-        return client;
+    @Override
+    public void onAuthSuccess(AuthSuccessEvent event) {
     }
 
-    /**
-     * Sends a command to a specified server through the PteroClient.
-     * If the Panel connection is not initialized, it logs an error and terminates the operation.
-     * Otherwise, retrieves the server by its identifier and sends the command asynchronously.
-     * Logs success or error messages based on the process outcome.
-     *
-     * @param command  The command to be sent to the server.
-     * @param serverID The identifier of the server to which the command will be sent.
-     */
-    public static void sendCommandToServer(String command, String serverID) {
-        if (client == null) {
-            Bot.LOGGER.error("Panel connection is not initialized!");
-            return;
+
+    @Override
+    public void onOutput(OutputEvent event) {
+        List<String> lines = Arrays.asList(event.getLine().split("\n"));
+
+        for (String line : lines) {
+            for (String tracker : trackerFutures.keySet()) {
+                if (line.contains("trackerID: " + tracker)) {
+                    CompletableFuture<Boolean> future = trackerFutures.get(tracker);
+                    if (future != null && !future.isDone()) {
+                        boolean success = !line.contains("COMMAND FAILED");
+                        future.complete(success);
+                    }
+                    trackerFutures.remove(tracker);
+                }
+            }
         }
+    }
 
-        Bot.LOGGER.info("Sending command '{}' to server: {}", command, serverID);
+    public static CompletableFuture<Boolean> banUser(String username, Long duration, String reason, String trackerID) {
+        Bot.LOGGER.info("Banning user: " + username);
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        String command = "civutil tempban " + username + " " + duration + " " + reason + " " + trackerID;
+        trackerFutures.put(trackerID, future);
+        client.retrieveServerByIdentifier(serverID)
+                .flatMap(server -> server.sendCommand(command))
+                .executeAsync();
+        scheduleFutureTimeout(future, trackerID, 30);
+        return future;
+    }
 
-        client.retrieveServerByIdentifier(serverID).executeAsync(server -> {
-            server.sendCommand(command)
-                    .executeAsync(
-                            success -> {
-                                Bot.LOGGER.info("Command '{}' successfully sent to server {}", command, serverID);
-                            },
-                            error -> {
-                                Bot.LOGGER.error("Error sending command to server: {}", error.getMessage());
-                            }
-                    );
-        }, error -> {
-            Bot.LOGGER.error("Error retrieving server {}: {}", serverID, error.getMessage());
+    private static void scheduleFutureTimeout(CompletableFuture<Boolean> future, String trackerID, int timeoutSeconds) {
+        CompletableFuture.delayedExecutor(timeoutSeconds, TimeUnit.SECONDS).execute(() -> {
+            if (!future.isDone()) {
+                trackerFutures.remove(trackerID);
+                future.completeExceptionally(new TimeoutException("No response received for tracker: " + trackerID));
+            }
         });
     }
-
-
 }

@@ -48,12 +48,12 @@ public class MojangAPI {
      * otherwise null.
      * @throws RuntimeException If an error occurs during the HTTP request process.
      */
-    public JsonObject getServerStats(String serverIP){
+    public JsonObject getServerStats(String serverIP, String port) {
         try{
             Gson gson = new Gson();
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://api.mcsrvstat.us/3/" +  serverIP))
+                    .uri(URI.create("https://api.mcsrvstat.us/3/" + serverIP + ":" + port))
                     .GET()
                     .build();
 

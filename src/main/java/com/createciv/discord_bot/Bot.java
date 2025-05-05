@@ -2,6 +2,7 @@ package com.createciv.discord_bot;
 
 import com.createciv.discord_bot.classes.ScheduledTask;
 import com.createciv.discord_bot.classes.SlashCommand;
+import com.createciv.discord_bot.listener.auto_complete.moderation.ModerationAutoComplete;
 import com.createciv.discord_bot.listener.auto_complete.trick.TrickAutoComplete;
 import com.createciv.discord_bot.listener.logging.JoinAndLeave;
 import com.createciv.discord_bot.listener.message.TicketCreator;
@@ -42,7 +43,6 @@ public class Bot extends ListenerAdapter {
         LOGGER.info("Initiating bot..");
 
         DatabaseRegistry.init();
-        PanelConnection.init();
 
         API = JDABuilder.createDefault(BOT_TOKEN)
                 .addEventListeners(new Bot())
@@ -50,6 +50,7 @@ public class Bot extends ListenerAdapter {
                 .addEventListeners(new TicketCreator())
                 .addEventListeners(new JoinAndLeave())
                 .addEventListeners(new TrickAutoComplete())
+                .addEventListeners(new ModerationAutoComplete())
                 .build();
 
         BOT = API.getSelfUser();
@@ -58,10 +59,10 @@ public class Bot extends ListenerAdapter {
     @Override
     public void onReady(ReadyEvent event) {
         this.registerSlashCommands(event);
-        this.registerModals(event);
         this.registerScheduledTasks();
         TaskRegistry.init();
         LOGGER.info("Bot successfully initiated.");
+        PanelConnection.init();
     }
 
     @Override
@@ -128,7 +129,7 @@ public class Bot extends ListenerAdapter {
     }
 
 
-    private void registerModals(ReadyEvent readyEvent) {
+    private void registerEventListeners(ReadyEvent readyEvent) {
         LOGGER.info(REGISTRATION_MARKER, "Registering modals..");
 
 

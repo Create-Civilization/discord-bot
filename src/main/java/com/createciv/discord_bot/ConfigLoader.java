@@ -21,6 +21,7 @@ public class ConfigLoader {
     public static final long TICKET_EXPIRY_TIME_SECONDS;
     public static final String PETRO_PANEL_TOKEN;
     public static final List<String> ADMIN_ROLE_IDS;
+    public static final String BANNED_ROLE_ID;
 
     public static final String PANEL_URL;
 
@@ -45,6 +46,7 @@ public class ConfigLoader {
             properties.setProperty("TICKET_EXPIRY_TIME_SECONDS", "");
             properties.setProperty("ADMIN_ROLE_IDS", "");
             properties.setProperty("PANEL_URL", "");
+            properties.setProperty("BANNED_ROLE_ID", "");
 
             configFile.getParentFile().mkdirs();
             try (FileOutputStream fos = new FileOutputStream(configFile)) {
@@ -77,6 +79,7 @@ public class ConfigLoader {
         WHITELIST_ROLE_ID = properties.getProperty("WHITELIST_ROLE_ID");
         TICKET_EXPIRY_TIME_SECONDS = Long.parseLong(properties.getProperty("TICKET_EXPIRY_TIME_SECONDS", "604800"));
         PANEL_URL = properties.getProperty("PANEL_URL");
+        BANNED_ROLE_ID = properties.getProperty("BANNED_ROLE_ID");
 
         String adminRolesString = properties.getProperty("ADMIN_ROLE_IDS", "");
         if (adminRolesString.isEmpty()) {

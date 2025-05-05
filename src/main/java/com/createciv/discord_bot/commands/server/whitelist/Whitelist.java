@@ -1,5 +1,6 @@
 package com.createciv.discord_bot.commands.server.whitelist;
 
+import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
 import com.createciv.discord_bot.util.database.managers.WhitelistManager;
@@ -33,6 +34,12 @@ public class Whitelist extends SlashCommand {
 
         if (entry != null) {
             interactionEvent.reply("You are already whitelisted.").setEphemeral(true).queue();
+            return;
+        }
+
+        if (ConfigLoader.WHITELIST_ROLE_ID == null) {
+            interactionEvent.reply("Whitelist role is not configured. Please configure it to use this command")
+                    .setEphemeral(true).queue();
             return;
         }
 

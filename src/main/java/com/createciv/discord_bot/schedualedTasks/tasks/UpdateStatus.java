@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 
 public class UpdateStatus extends ScheduledTask {
 
+    public static boolean serverIsLive = false;
+
     public UpdateStatus() {
         super("update_bot_status", TimeUnit.SECONDS, 30);
     }
@@ -20,14 +22,16 @@ public class UpdateStatus extends ScheduledTask {
     @Override
     public void execute() {
 
-        JsonObject serverInfo = new MojangAPI().getServerStats(ConfigLoader.SERVER_IP);
+        JsonObject serverInfo = new MojangAPI().getServerStats(ConfigLoader.SERVER_IP, ConfigLoader.SERVER_PORT);
 
         if (serverInfo == null) {
+            serverIsLive = false;
             updateBotStatus("Server is offline", false);
         } else {
             JsonObject playerInfo = serverInfo.get("players").getAsJsonObject();
             int playerCount = playerInfo.get("online").getAsInt();
             int maxPlayerCount = playerInfo.get("max").getAsInt();
+            serverIsLive = true;
             updateBotStatus(playerCount + "/" + maxPlayerCount + " players", true);
         }
 

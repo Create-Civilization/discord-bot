@@ -51,7 +51,7 @@ public class WhitelistManager extends DatabaseManager {
         preparedStatement.setTimestamp(6, whitelistEntry.createdAt);
 
         preparedStatement.executeUpdate();
-
+        preparedStatement.close();
         disconnect();
     }
 

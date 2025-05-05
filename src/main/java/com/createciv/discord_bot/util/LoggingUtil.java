@@ -21,8 +21,8 @@ import java.awt.*;
  */
 public class LoggingUtil {
 
-    private String logChannelID = ConfigLoader.LOG_CHANNEL_ID;
-    private TextChannel logChannel = Bot.API.getTextChannelById(logChannelID);
+    private static String logChannelID = ConfigLoader.LOG_CHANNEL_ID;
+    private static TextChannel logChannel = Bot.API.getTextChannelById(logChannelID);
     private Guild guild = logChannel.getGuild();
 
     public TextChannel getLogChannel(){
@@ -84,7 +84,7 @@ public class LoggingUtil {
      *
      * @param e The exception to log, which provides the details to include in the log message.
      */
-    public void logError(Exception e){
+    public static void logError(Exception e) {
         if(logChannel == null) { Bot.LOGGER.error("Attempted to log exception. No log channel found"); return;}
         StringBuilder description = new StringBuilder();
         description.append("`").append(e.toString()).append("`\n");
