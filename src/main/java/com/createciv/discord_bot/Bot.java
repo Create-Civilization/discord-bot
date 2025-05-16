@@ -2,7 +2,7 @@ package com.createciv.discord_bot;
 
 import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.listener.logging.JoinAndLeave;
-import com.createciv.discord_bot.listener.message.TicketCreator;
+import com.createciv.discord_bot.listener.message.TicketMessageHandler;
 import com.createciv.discord_bot.listener.modal.WhitelistListener;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
 import io.github.classgraph.ClassGraph;
@@ -42,7 +42,7 @@ public class Bot extends ListenerAdapter {
         API = JDABuilder.createDefault(BOT_TOKEN)
                 .addEventListeners(new Bot())
                 .addEventListeners(new WhitelistListener())
-                .addEventListeners(new TicketCreator())
+                .addEventListeners(new TicketMessageHandler())
                 .addEventListeners(new JoinAndLeave())
                 .build();
 

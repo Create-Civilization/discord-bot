@@ -18,12 +18,15 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 import java.awt.*;
+import java.io.File;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.List;
 
-public class TicketCreator extends ListenerAdapter {
+public class TicketMessageHandler extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         try {
@@ -158,15 +161,20 @@ public class TicketCreator extends ListenerAdapter {
 
             message.addReaction(Emoji.fromUnicode("U+2705")).queue();
 
-            embed = new EmbedBuilder()
+            EmbedBuilder embedBuild = new EmbedBuilder()
                     .setColor(Color.decode("#32CD32"))
                     .setTitle("Message Received")
                     .setDescription(message.getContentRaw())
                     .setFooter(guild.getName() + " on " + getFormattedDateTime(), guild.getIconUrl())
-                    .setAuthor(author.getName(), author.getAvatarUrl())
-                    .build();
+                    .setAuthor(author.getName(), author.getAvatarUrl());
 
-            threadChannel.sendMessageEmbeds(embed).queue();
+            if(!message.getAttachments().isEmpty()){
+                for(Message.Attachment attachment : message.getAttachments()){
+                    embedBuild.addField(attachment.getFileName(), attachment.getProxyUrl(), false);
+                }
+            }
+
+            threadChannel.sendMessageEmbeds(embedBuild.build()).queue();
         } catch (Exception e){
             new LoggingUtil().logError(e);
         }
@@ -186,15 +194,19 @@ public class TicketCreator extends ListenerAdapter {
                 return;
             }
 
-            MessageEmbed embed = new EmbedBuilder()
+            EmbedBuilder embed = new EmbedBuilder()
                     .setColor(Color.decode("#32CD32"))
                     .setDescription(message.getContentRaw())
                     .setFooter(guild.getName() + " on " + getFormattedDateTime(), guild.getIconUrl())
-                    .setAuthor(author.getName(), null, author.getAvatarUrl())
-                    .build();
+                    .setAuthor(author.getName(), null, author.getAvatarUrl());
+
+            if(!message.getAttachments().isEmpty()){
+                for(Message.Attachment attachment : message.getAttachments()){
+                embed.addField(attachment.getFileName(), attachment.getProxyUrl(), false);}
+            }
 
             try {
-                channel.sendMessageEmbeds(embed).queue();
+                channel.sendMessageEmbeds(embed.build()).queue();
                 message.addReaction(Emoji.fromUnicode("U+2705")).queue();
             } catch (Exception e) {
                 Bot.LOGGER.error("Failed to forward message to thread: {}", e.getMessage(), e);
