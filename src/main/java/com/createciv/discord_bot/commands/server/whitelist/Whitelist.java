@@ -1,11 +1,18 @@
 package com.createciv.discord_bot.commands.server.whitelist;
 
+import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.SlashCommand;
+import com.createciv.discord_bot.util.database.DatabaseRegistry;
+import com.createciv.discord_bot.util.database.managers.WhitelistManager;
+import com.createciv.discord_bot.util.database.types.TicketEntry;
+import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
+
+import java.sql.SQLException;
 
 @SuppressWarnings("unused")
 public class Whitelist extends SlashCommand {
@@ -16,6 +23,27 @@ public class Whitelist extends SlashCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent interactionEvent) {
+
+        WhitelistManager manager = DatabaseRegistry.getWhitelistManager();
+        WhitelistEntry entry;
+        try {
+            entry = manager.getWithDiscordID(interactionEvent.getUser().getId());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (entry != null) {
+            interactionEvent.reply("You are already whitelisted.").setEphemeral(true).queue();
+            return;
+        }
+
+        if (ConfigLoader.WHITELIST_ROLE_ID == null) {
+            interactionEvent.reply("Whitelist role is not configured. Please configure it to use this command")
+                    .setEphemeral(true).queue();
+            return;
+        }
+
+
         TextInput username = TextInput.create("username", "Minecraft Username", TextInputStyle.SHORT)
                 .setPlaceholder("Type your username here")
                 .setRequired(true)

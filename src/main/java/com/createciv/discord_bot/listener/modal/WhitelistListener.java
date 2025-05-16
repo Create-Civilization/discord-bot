@@ -1,11 +1,12 @@
 package com.createciv.discord_bot.listener.modal;
 
+import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.util.LoggingUtil;
-import com.createciv.discord_bot.util.ModerationUtil;
 import com.createciv.discord_bot.util.MojangAPI;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
 import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import com.google.gson.JsonObject;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -17,6 +18,10 @@ import static com.createciv.discord_bot.Bot.LOGGER;
 
 public class WhitelistListener extends ListenerAdapter {
 
+
+    //TODO change players nicknames on the server to MC name after the whitelist goes through
+
+
     @Override
     public void onModalInteraction(ModalInteractionEvent event) {
         try {
@@ -26,24 +31,20 @@ public class WhitelistListener extends ListenerAdapter {
                 String referral = Objects.requireNonNull(event.getValue("referral")).getAsString();
 
                 MojangAPI mojangAPI = new MojangAPI();
-                JsonObject response = mojangAPI.getUUID(username);
+                JsonObject response = mojangAPI.getPlayerInfo(username);
                 if (response == null) {
                     event.reply("A severe error occurred. Please try again later").setEphemeral(true).queue();
                     return;
                 }
                 //Check if we got an invalid username
-                if (response.get("errorMessage") != null) {
-                    event.reply(response.get("errorMessage").getAsString()).setEphemeral(true).queue();
+                if (response.get("reason") != null) {
+                    event.reply(response.get("reason").getAsString()).setEphemeral(true).queue();
                     return;
                 }
 
-                if (response.get("id").getAsString() != null) {
-                    //Dont ask me how Regex works. I AIed this.
-                    String formattedUuid = response.get("id").getAsString().replaceFirst(
-                            "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)",
-                            "$1-$2-$3-$4-$5"
-                    );
-                    UUID formatedUUID = UUID.fromString(formattedUuid);
+                if (response.get("uuid").getAsString() != null) {
+
+                    UUID formatedUUID = UUID.fromString(response.get("uuid").getAsString());
                     WhitelistEntry entry = new WhitelistEntry(formatedUUID, event.getUser().getId(), username, reason, referral);
 
                     try {
@@ -52,6 +53,10 @@ public class WhitelistListener extends ListenerAdapter {
                         LOGGER.error("An error occurred when whitelisting", e);
                         throw new RuntimeException(e);
                     }
+
+                    Guild guild = event.getGuild();
+
+                    guild.addRoleToMember(guild.getMember(event.getUser()), guild.getRoleById(ConfigLoader.WHITELIST_ROLE_ID)).queue();
 
                     event.reply("You have been successfully whitelisted").setEphemeral(true).queue();
                     new LoggingUtil().logWhitelists(entry, event.getUser());

@@ -11,10 +11,18 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.awt.*;
 
+/**
+ * Utility class for handling logging operations, including logging whitelist events, exceptions,
+ * and user actions such as joining or leaving the server. The logs are primarily sent to a
+ * pre-configured Discord text channel.
+ * <p>
+ * This class fetches configuration values from a configuration loader, such as the log channel ID,
+ * and utilizes the Discord API to send embedded messages to the appropriate guild and text channel.
+ */
 public class LoggingUtil {
 
-    private String logChannelID = ConfigLoader.LOG_CHANNEL_ID;
-    private TextChannel logChannel = Bot.API.getTextChannelById(logChannelID);
+    private static String logChannelID = ConfigLoader.LOG_CHANNEL_ID;
+    private static TextChannel logChannel = Bot.API.getTextChannelById(logChannelID);
     private Guild guild = logChannel.getGuild();
 
     public TextChannel getLogChannel(){
@@ -22,10 +30,12 @@ public class LoggingUtil {
     }
 
     /**
-     * Logs whitelist entries
+     * Logs a whitelist entry to the configured log channel. Creates and sends an embed message
+     * with details about the whitelist entry and the interacting user.
      *
-     * @param entry whitelist info to be logged
-     * @param interactingUser the user who created the whitelist entry
+     * @param entry The whitelist entry to log, containing details such as the Minecraft username,
+     *              UUID, Discord ID, reason for joining, and referral.
+     * @param interactingUser The user who initiated the whitelist action.
      */
     public void logWhitelists(WhitelistEntry entry, User interactingUser){
         if(logChannel == null) { Bot.LOGGER.error("Attempted to log whitelist. No log channel found"); return;}
@@ -46,6 +56,14 @@ public class LoggingUtil {
         logChannel.sendMessageEmbeds(embed).queue();
     }
 
+    /**
+     * Logs the removal of a whitelist entry to the configured log channel. Creates and sends an embed
+     * message containing details about the removed whitelist entry and the user who initiated the action.
+     *
+     * @param entry The whitelist entry being removed, containing details such as the Minecraft username,
+     *              UUID, Discord ID, and other metadata.
+     * @param interactingUser The user who initiated the removal of the whitelist entry.
+     */
     public void logRemoveWhitelist(WhitelistEntry entry, User interactingUser){
         if(logChannel == null) {Bot.LOGGER.error("Attempted to log whitelist removal. No log channel found"); return;}
         MessageEmbed embed = new EmbedBuilder()
@@ -60,11 +78,13 @@ public class LoggingUtil {
 
 
     /**
-     * Logs an exception to the configured log channel.
+     * Logs an exception to the configured log channel. Creates and sends an embed message
+     * containing details about the exception, including the exception message and a portion
+     * of the stack trace. Logs the exception to the bot's logger as well.
      *
-     * @param e the exception to be logged
+     * @param e The exception to log, which provides the details to include in the log message.
      */
-    public void logError(Exception e){
+    public static void logError(Exception e) {
         if(logChannel == null) { Bot.LOGGER.error("Attempted to log exception. No log channel found"); return;}
         StringBuilder description = new StringBuilder();
         description.append("`").append(e.toString()).append("`\n");
@@ -85,6 +105,13 @@ public class LoggingUtil {
     }
 
 
+    /**
+     * Logs a user joining the server by sending an embed message to the configured log channel.
+     * The embed includes the user's global name, a welcome message, and footer details about the guild.
+     * If no log channel is configured, an error message is logged.
+     *
+     * @param user The user who joined the server.
+     */
     public void logUserJoin(User user){
         if(logChannel == null) {Bot.LOGGER.error("Attempted to log user join. No log channel found"); return;}
 
@@ -98,6 +125,12 @@ public class LoggingUtil {
         logChannel.sendMessageEmbeds(embed).queue();
     }
 
+    /**
+     * Logs the removal of a user from the server to the configured log channel. An embed message is
+     * created and sent to the log channel detailing the user's departure.
+     *
+     * @param user The user who left the server.
+     */
     public void logUserRemove(User user){
         if(logChannel == null) {Bot.LOGGER.error("Attempted to log user remove. No log channel found"); return;}
 

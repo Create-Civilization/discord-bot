@@ -49,33 +49,7 @@ public abstract class SlashCommand extends Registry {
         this.description = description;
     }
 
-    public static class Option {
-        private final OptionType optionType;
-        private final String name;
-        private final String description;
-        private final boolean required;
-
-        public Option(OptionType optionType, String name, String description, boolean required) {
-            this.optionType = optionType;
-            this.name = name;
-            this.description = description;
-            this.required = required;
-        }
-
-        public OptionType getOptionType() {
-            return optionType;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public boolean isRequired() {
-            return required;
-        }
+    public record Option(OptionType optionType, String name, String description, boolean required,
+                         boolean autocomplete) {
     }
 }

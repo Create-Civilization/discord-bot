@@ -3,6 +3,7 @@ package com.createciv.discord_bot.commands.ticket;
 import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.SlashCommand;
+import com.createciv.discord_bot.util.database.DatabaseRegistry;
 import com.createciv.discord_bot.util.database.managers.TicketManager;
 import com.createciv.discord_bot.util.database.types.TicketEntry;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -23,8 +24,8 @@ public class ReplyToTicket extends SlashCommand {
 
     public ReplyToTicket() {
         super("reply", "Replies to the current ticket");
-        addOption(new Option(OptionType.STRING, "message", "The message you want to reply with", true));
-        addOption(new Option(OptionType.BOOLEAN, "anonymous", "Do you want to send close message anonymously", false));
+        addOption(new Option(OptionType.STRING, "message", "The message you want to reply with", true, false));
+        addOption(new Option(OptionType.BOOLEAN, "anonymous", "Do you want to send close message anonymously", false, false));
     }
 
     @Override
@@ -57,7 +58,7 @@ public class ReplyToTicket extends SlashCommand {
                 return;
             }
 
-            TicketManager manager = new TicketManager();
+            TicketManager manager = DatabaseRegistry.getTicketManager();
 
             Channel channel = interactionEvent.getChannel();
             TicketEntry ticket = getChannelsTicket(channel, manager);
