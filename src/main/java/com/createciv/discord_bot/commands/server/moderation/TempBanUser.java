@@ -24,6 +24,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
@@ -111,16 +112,17 @@ public class TempBanUser extends SlashCommand {
         }
 
         if (whitelistEntry != null) {
-            guild.removeRoleFromMember(punishedUser, guild.getRoleById(ConfigLoader.WHITELIST_ROLE_ID)).queue();
+            guild.removeRoleFromMember(punishedUser, Objects.requireNonNull(guild.getRoleById(ConfigLoader.WHITELIST_ROLE_ID))).queue();
         }
 
         //Give user role
+        assert role != null;
         guild.addRoleToMember(punishedUser, role).queue();
 
 
         ModerationManager manager = DatabaseRegistry.getModerationManager();
 
-        if (UpdateStatus.serverIsLive) {
+        if (Bot.SERVER_ONLINE) {
             PanelConnection.banUser(username, timestamp, reason, getRandomString())
                     .thenAccept(success -> {
                         if (success) {

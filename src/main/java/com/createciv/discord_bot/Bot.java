@@ -35,6 +35,7 @@ public class Bot extends ListenerAdapter {
     public static final Logger LOGGER = LoggerFactory.getLogger("BOT_LOG");
     public static JDA API;
     public static SelfUser BOT;
+    public static boolean SERVER_ONLINE = false;
 
     // Markers
     private static final Marker REGISTRATION_MARKER = MarkerFactory.getMarker("REGISTRATION");
