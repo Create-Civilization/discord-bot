@@ -5,7 +5,7 @@ import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.listener.auto_complete.moderation.ModerationAutoComplete;
 import com.createciv.discord_bot.listener.auto_complete.trick.TrickAutoComplete;
 import com.createciv.discord_bot.listener.logging.JoinAndLeave;
-import com.createciv.discord_bot.listener.message.TicketCreator;
+import com.createciv.discord_bot.listener.message.TicketMessageHandler;
 import com.createciv.discord_bot.listener.modal.WhitelistListener;
 import com.createciv.discord_bot.schedualedTasks.TaskRegistry;
 import com.createciv.discord_bot.util.PanelConnection;
@@ -48,7 +48,7 @@ public class Bot extends ListenerAdapter {
         API = JDABuilder.createDefault(BOT_TOKEN)
                 .addEventListeners(new Bot())
                 .addEventListeners(new WhitelistListener())
-                .addEventListeners(new TicketCreator())
+                .addEventListeners(new TicketMessageHandler())
                 .addEventListeners(new JoinAndLeave())
                 .addEventListeners(new TrickAutoComplete())
                 .addEventListeners(new ModerationAutoComplete())
