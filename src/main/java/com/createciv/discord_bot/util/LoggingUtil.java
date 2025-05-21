@@ -124,6 +124,17 @@ public class LoggingUtil {
 
         logChannel.sendMessageEmbeds(embed).queue();
     }
+    public static void logUserKick(User user, String description){
+        if(logChannel == null) {Bot.LOGGER.error("Attempted to log user kick. No log channel found"); return;}
+        MessageEmbed embed = new EmbedBuilder()
+                .setColor(Color.RED)
+                .setTitle(user.getGlobalName() + " kicked")
+                .setDescription(description)
+                .setFooter(logChannel.getGuild().getName() + " | " + logChannel.getGuild().getId(), logChannel.getGuild().getIconUrl())
+                .build();
+
+        logChannel.sendMessageEmbeds(embed).queue();
+    }
 
     /**
      * Logs the removal of a user from the server to the configured log channel. An embed message is

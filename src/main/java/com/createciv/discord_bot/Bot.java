@@ -7,6 +7,7 @@ import com.createciv.discord_bot.listener.auto_complete.trick.TrickAutoComplete;
 import com.createciv.discord_bot.listener.logging.JoinAndLeave;
 import com.createciv.discord_bot.listener.message.TicketMessageHandler;
 import com.createciv.discord_bot.listener.modal.WhitelistListener;
+import com.createciv.discord_bot.listener.onJoin.creationDateChecker;
 import com.createciv.discord_bot.schedualedTasks.TaskRegistry;
 import com.createciv.discord_bot.util.PanelConnection;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
@@ -20,6 +21,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,13 +47,14 @@ public class Bot extends ListenerAdapter {
 
         DatabaseRegistry.init();
 
-        API = JDABuilder.createDefault(BOT_TOKEN)
+        API = JDABuilder.createDefault(BOT_TOKEN).enableIntents(GatewayIntent.GUILD_MEMBERS)
                 .addEventListeners(new Bot())
                 .addEventListeners(new WhitelistListener())
                 .addEventListeners(new TicketMessageHandler())
                 .addEventListeners(new JoinAndLeave())
                 .addEventListeners(new TrickAutoComplete())
                 .addEventListeners(new ModerationAutoComplete())
+                .addEventListeners(new creationDateChecker())
                 .build();
 
         BOT = API.getSelfUser();

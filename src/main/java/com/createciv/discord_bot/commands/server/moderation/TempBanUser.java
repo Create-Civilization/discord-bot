@@ -43,19 +43,15 @@ public class TempBanUser extends SlashCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent interactionEvent) {
-
         if (!hasPermission(interactionEvent)) {
             interactionEvent.reply("You do not have permission to run this command").setEphemeral(true).queue();
             return;
         }
-
         if (BannedRoleID == null) {
             interactionEvent.reply("Banned role is not configured. Please configure it to use this command")
                     .setEphemeral(true).queue();
             return;
         }
-
-
         interactionEvent.deferReply(true).queue();
 
         String reason = "\"" + interactionEvent.getOption("reason").getAsString() + "\"";

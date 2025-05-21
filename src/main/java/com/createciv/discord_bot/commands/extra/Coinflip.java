@@ -18,6 +18,6 @@ public class Coinflip extends SlashCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent interactionEvent) {
-        interactionEvent.reply(random.nextBoolean() ? "Heads!" : "Tails!").queue();
+        interactionEvent.reply(random.nextBoolean() ? "Heads!!!!" : "Tails!!!!!").queue();
     }
 }
