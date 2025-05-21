@@ -26,6 +26,7 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.10.1")
     implementation("org.xerial:sqlite-jdbc:3.45.1.0")
     implementation("com.mattmalec:Pterodactyl4J:2.BETA_100")
+    implementation("junit:junit:4.13.1")
 }
 
 tasks.withType<JavaCompile> {

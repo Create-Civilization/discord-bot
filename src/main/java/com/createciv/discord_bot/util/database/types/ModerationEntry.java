@@ -1,58 +1,70 @@
 package com.createciv.discord_bot.util.database.types;
 
 import com.createciv.discord_bot.util.database.DatabaseEntry;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class ModerationEntry extends DatabaseEntry {
-    public int id = 0;
-    public String adminID;
-    public String playerID;
-    public UUID playerUUID;
-    public String punishmentTypes;
-    public String reason;
-    public Timestamp createdAt;
-    public Timestamp expiresAt;
-    public boolean executedOnServer = false;
+    public int id;
+    public JsonArray discordIDs;
+    public JsonArray uuids;
+    public List<PunishmentEntry> punishments;
 
-    public ModerationEntry(String adminID, String playerID, UUID playerUUID, String punishmentTypes, String reason, Timestamp expiresAt, boolean executedOnServer) {
-        this.adminID = adminID;
-        this.playerID = playerID;
-        this.playerUUID = playerUUID;
-        this.punishmentTypes = punishmentTypes;
-        this.reason = reason;
-        this.createdAt = Timestamp.from(Instant.now());
-        this.expiresAt = expiresAt;
-        this.executedOnServer = executedOnServer;
-    }
+    public ModerationEntry(int id, String discordIDs, String uuids, String punishments) {
+        //Make DiscordIDs into JSON
+        JsonArray discordIDsArray = JsonParser.parseString(discordIDs).getAsJsonArray();
+        //Make uuids string to JSON
+        JsonArray uuidsArray = JsonParser.parseString(uuids).getAsJsonArray();
+        //Make it an array, so I can loop over it.
+        JsonArray punishmentArray = JsonParser.parseString(punishments).getAsJsonArray();
 
-    public ModerationEntry(int id, String adminID, String playerID, UUID playerUUID, String punishmentTypes, String reason, Timestamp createdAt, Timestamp expiresAt, boolean executedOnServer) {
+        List<PunishmentEntry> punishmentList = new ArrayList<>();
+
+        for (JsonElement punishmentElement : punishmentArray) {
+            JsonObject punishmentObject = punishmentElement.getAsJsonObject();
+            punishmentList.add(new PunishmentEntry(punishmentObject));
+        }
+
         this.id = id;
-        this.adminID = adminID;
-        this.playerID = playerID;
-        this.playerUUID = playerUUID;
-        this.punishmentTypes = punishmentTypes;
-        this.reason = reason;
-        this.createdAt = createdAt;
-        this.expiresAt = expiresAt;
-        this.executedOnServer = executedOnServer;
+        this.discordIDs = discordIDsArray;
+        this.uuids = uuidsArray;
+        this.punishments = punishmentList;
     }
 
     public static ModerationEntry fromResultSet(ResultSet resultSet) throws SQLException {
+
         return new ModerationEntry(
                 resultSet.getInt("id"),
-                resultSet.getString("playerID"),
-                resultSet.getString("adminID"),
-                UUID.fromString(resultSet.getString("punishedUserMinecraftUUID")),
-                resultSet.getString("punishmentType"),
-                resultSet.getString("punishmentReason"),
-                resultSet.getTimestamp("punishmentDate"),
-                resultSet.getTimestamp("punishmentExpirationTime"),
-                resultSet.getBoolean("executedOnServer")
+                resultSet.getString("discordIDs"),
+                resultSet.getString("uuids"),
+                resultSet.getString("punishments")
         );
+    }
+
+    //Geters
+    public int getId() {
+        return id;
+    }
+
+    public JsonArray getDiscordIDs() {
+        return discordIDs;
+    }
+
+    public JsonArray getUuids() {
+        return uuids;
+    }
+
+    public List<PunishmentEntry> getPunishments() {
+        return punishments;
     }
 }
