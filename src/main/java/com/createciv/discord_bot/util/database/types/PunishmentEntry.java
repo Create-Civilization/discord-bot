@@ -1,22 +1,20 @@
 package com.createciv.discord_bot.util.database.types;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.sql.Timestamp;
 
 public class PunishmentEntry {
     private String adminDiscordID;
-    private String PUNISHMENT_TYPE;
+    private String punishmentType;
     private String reason;
     private Timestamp creationTimestamp;
     private Timestamp expirationTimestamp;
 
 
-    public PunishmentEntry(String adminDiscordID, String PUNISHMENT_TYPE, String reason, Timestamp creationTimestamp, Timestamp expirationTimestamp) {
+    public PunishmentEntry(String adminDiscordID, String punishmentType, String reason, Timestamp creationTimestamp, Timestamp expirationTimestamp) {
         this.adminDiscordID = adminDiscordID;
-        this.PUNISHMENT_TYPE = PUNISHMENT_TYPE;
+        this.punishmentType = punishmentType;
         this.reason = reason;
         this.creationTimestamp = creationTimestamp;
         this.expirationTimestamp = expirationTimestamp;
@@ -31,7 +29,7 @@ public class PunishmentEntry {
         Timestamp expirationTimestamp = new Timestamp(expirationLong);
 
         this.adminDiscordID = punishment.get("adminDiscordID").getAsString();
-        this.PUNISHMENT_TYPE = punishment.get("punishment_type").getAsString();
+        this.punishmentType = punishment.get("punishment_type").getAsString();
         this.reason = punishment.get("reason").getAsString();
         this.creationTimestamp = creationTimestamp;
         this.expirationTimestamp = expirationTimestamp;
@@ -44,7 +42,7 @@ public class PunishmentEntry {
     public JsonObject toJson() {
         JsonObject punishment = new JsonObject();
         punishment.addProperty("adminDiscordID", adminDiscordID);
-        punishment.addProperty("punishment_type", PUNISHMENT_TYPE);
+        punishment.addProperty("punishment_type", punishmentType);
         punishment.addProperty("reason", reason);
         punishment.addProperty("creationTimestamp", creationTimestamp.getTime());
         punishment.addProperty("expirationTimestamp", expirationTimestamp.getTime());
@@ -57,8 +55,8 @@ public class PunishmentEntry {
         return adminDiscordID;
     }
 
-    public String getPUNISHMENT_TYPE() {
-        return PUNISHMENT_TYPE;
+    public String getPunishmentType() {
+        return punishmentType;
     }
 
     public String getReason() {

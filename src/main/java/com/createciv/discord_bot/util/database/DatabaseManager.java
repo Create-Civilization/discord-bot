@@ -21,6 +21,8 @@ public abstract class DatabaseManager {
         this.dbPath = "jdbc:sqlite:" + dbDirectory + "/" + this.fileName;
     }
 
+    public abstract void initDatabase() throws SQLException;
+
     /**
      * Saves a DatabaseEntry into the sql database
      * @param databaseEntry database entry to store
@@ -41,6 +43,4 @@ public abstract class DatabaseManager {
             connection.close();
         }
     }
-
-    public abstract void initDatabase() throws SQLException;
 }

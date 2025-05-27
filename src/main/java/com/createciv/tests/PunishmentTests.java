@@ -61,7 +61,7 @@ public class PunishmentTests {
 
         ModerationEntry moderationEntry = new ModerationEntry(1, discordIDs.toString(), uuids.toString(), punishments.toString());
 
-        List<PunishmentEntry> punishmentList = moderationEntry.getPunishments();
+        List<PunishmentEntry> punishmentList = moderationEntry.getActivePunishments();
 
         for (PunishmentEntry punishment : punishmentList) {
             System.out.println(punishment.toString());
