@@ -18,7 +18,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 
 import java.awt.*;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
+
+import static com.createciv.discord_bot.listener.message.TicketMessageHandler.getFormatedTimeString;
 
 public class ReplyToTicket extends SlashCommand {
 
@@ -132,17 +133,7 @@ public class ReplyToTicket extends SlashCommand {
     }
 
     public String getFormattedDateTime() {
-        LocalDateTime now = LocalDateTime.now();
-        String formattedDate = (now.getMonthValue()) + "/" + now.getDayOfMonth() + "/" + now.getYear();
-        int hours = now.getHour();
-        String ampm = hours >= 12 ? "PM" : "AM";
-        hours = hours % 12;
-        if (hours == 0) hours = 12;
-
-        String minutes = String.format("%02d", now.getMinute());
-
-        String formattedTime = hours + ":" + minutes + " " + ampm;
-        return formattedDate + " at " + formattedTime;
+        return getFormatedTimeString();
     }
 
     private TicketEntry getChannelsTicket(Channel channel, TicketManager manager){

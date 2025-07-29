@@ -18,13 +18,11 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.io.File;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class TicketMessageHandler extends ListenerAdapter {
     @Override
@@ -234,6 +232,11 @@ public class TicketMessageHandler extends ListenerAdapter {
     }
 
     public String getFormattedDateTime() {
+        return getFormatedTimeString();
+    }
+
+    @NotNull
+    public static String getFormatedTimeString() {
         LocalDateTime now = LocalDateTime.now();
         String formattedDate = (now.getMonthValue()) + "/" + now.getDayOfMonth() + "/" + now.getYear();
         int hours = now.getHour();
