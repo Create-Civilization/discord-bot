@@ -4,8 +4,6 @@ import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.util.LoggingUtil;
 import com.createciv.discord_bot.util.MojangAPI;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
-import com.createciv.discord_bot.util.database.managers.WhitelistManager;
-import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import com.google.gson.JsonObject;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;

@@ -1,50 +1,31 @@
 package com.createciv.discord_bot.util.database.types;
 
-import com.createciv.discord_bot.util.database.DatabaseEntry;
+import com.createciv.discord_bot.util.database.TableEntry;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.UUID;
 
-public class WhitelistEntry extends DatabaseEntry {
-    int id = 0;
-    public UUID playerUUID;
-    public String discordID;
-    public String username;
-    public String reason;
-    public String referral;
-    public Timestamp createdAt;
+public class WhitelistEntry extends TableEntry {
 
-    public WhitelistEntry(UUID playerUUID, String discordID, String username, String reason, String referral) {
+    private String playerUUID;
+    private String discordID;
+
+
+    public WhitelistEntry(String playerUUID, String discordID) {
         this.playerUUID = playerUUID;
         this.discordID = discordID;
-        this.username = username;
-        this.reason = reason;
-        this.referral = referral;
-        this.createdAt = Timestamp.from(Instant.now());
     }
 
-    public WhitelistEntry(int id, UUID playerUUID, String discordID, String username, String reason, String referral, Timestamp timestamp) {
-        this.id = id;
-        this.playerUUID = playerUUID;
-        this.discordID = discordID;
-        this.username = username;
-        this.reason = reason;
-        this.referral = referral;
-        this.createdAt = timestamp;
+    public String getPlayerUUID() {
+        return playerUUID;
+    }
+    public String getDiscordID() {
+        return discordID;
     }
 
-    public static WhitelistEntry fromResultSet(ResultSet resultSet) throws SQLException {
-        return new WhitelistEntry(
-                resultSet.getInt("id"),
-                UUID.fromString(resultSet.getString("playerUUID")),
-                resultSet.getString("discordID"),
-                resultSet.getString("username"),
-                resultSet.getString("reason"),
-                resultSet.getString("referral"),
-                resultSet.getTimestamp("createdAt")
-            );
+
+    @Override
+    public TableEntry fromResultSet(ResultSet resultSet) throws SQLException {
+        return null;
     }
 }

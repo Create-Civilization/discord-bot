@@ -3,8 +3,6 @@ package com.createciv.discord_bot.commands.server.whitelist;
 import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.util.LoggingUtil;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
-import com.createciv.discord_bot.util.database.managers.WhitelistManager;
-import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.sql.SQLException;

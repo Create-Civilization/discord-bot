@@ -4,23 +4,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public abstract class TableManager {
+public abstract class TableManager<T extends TableEntry> {
     protected Connection connection;
 
-    protected final String dbPath;
-    protected final String dbDirectory = "storage";
+    protected final String dbPath = "jdbc:sqlite:storage/createcivilization.db";
 
-    public TableManager(String dbPaths){
-        dbPath = "jdbc:sqlite:storage/createcivilization.db";
-    }
+    public abstract void initTable() throws SQLException;
 
-    public abstract void initDatabase() throws SQLException;
-
-    /**
-     * Saves a DatabaseEntry into the sql database
-     * @param databaseEntry database entry to store
-     */
-    public abstract void add(DatabaseEntry databaseEntry) throws SQLException;
+    public abstract void add(T tableEntry) throws SQLException;
 
     public void connect() throws SQLException {
         connection = DriverManager.getConnection(dbPath);

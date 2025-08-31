@@ -4,8 +4,6 @@ import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
-import com.createciv.discord_bot.util.database.managers.WhitelistManager;
-import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;

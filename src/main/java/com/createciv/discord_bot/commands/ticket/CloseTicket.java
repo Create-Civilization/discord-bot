@@ -5,8 +5,6 @@ import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.util.LoggingUtil;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
-import com.createciv.discord_bot.util.database.managers.TicketManager;
-import com.createciv.discord_bot.util.database.types.TicketEntry;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;

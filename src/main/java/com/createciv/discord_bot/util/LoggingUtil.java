@@ -2,7 +2,6 @@ package com.createciv.discord_bot.util;
 
 import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.ConfigLoader;
-import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;

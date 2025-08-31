@@ -78,8 +78,6 @@ public class Bot extends ListenerAdapter {
         }
     }
 
-    //Check if the databases exist
-
     private void registerSlashCommands(ReadyEvent readyEvent) {
         LOGGER.info(REGISTRATION_MARKER, "Registering commands..");
         CommandListUpdateAction commands = readyEvent.getJDA().updateCommands();

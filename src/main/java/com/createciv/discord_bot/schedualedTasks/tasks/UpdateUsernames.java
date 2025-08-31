@@ -4,10 +4,6 @@ import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.classes.ScheduledTask;
 import com.createciv.discord_bot.util.MojangAPI;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
-import com.createciv.discord_bot.util.database.managers.TicketManager;
-import com.createciv.discord_bot.util.database.managers.WhitelistManager;
-import com.createciv.discord_bot.util.database.types.TicketEntry;
-import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import com.google.gson.JsonObject;
 
 import java.sql.SQLException;
