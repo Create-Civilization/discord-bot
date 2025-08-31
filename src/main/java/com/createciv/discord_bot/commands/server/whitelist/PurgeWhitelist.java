@@ -4,6 +4,7 @@ import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
+import com.createciv.discord_bot.util.database.managers.WhitelistManager;
 import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -23,13 +24,15 @@ public class PurgeWhitelist extends SlashCommand {
 
             if (!hasPermission(interactionEvent)) return;
 
-            List<WhitelistEntry> whitelistEntries = DatabaseRegistry.getWhitelistManager().getAll();
+            WhitelistManager manager = (WhitelistManager) DatabaseRegistry.getTableManager("whitelist");
+
+            List<WhitelistEntry> whitelistEntries = manager.getAll();
 
             List<Member> members = interactionEvent.getGuild().getMembers();
 
             for (WhitelistEntry entry : whitelistEntries) {
                 if (!members.stream().toList().contains(interactionEvent.getGuild().getMemberById(entry.discordID))) {
-                    DatabaseRegistry.getWhitelistManager().removeWithDiscordID(entry.discordID);
+                    manager.removeWithDiscordID(entry.discordID);
                     //TODO add un-whitelist here
 
                 }

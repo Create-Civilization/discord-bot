@@ -44,7 +44,7 @@ public class OpenTickets extends SlashCommand {
                 return;
             }
 
-            TicketManager manager = DatabaseRegistry.getTicketManager();
+            TicketManager manager = (TicketManager) DatabaseRegistry.getTableManager("tickets");
             List<TicketEntry> tickets;
             try {
                 tickets = manager.getAllTickets();

@@ -32,7 +32,7 @@ public class CheckExpiredTickets extends ScheduledTask {
 
         List<TicketEntry> ticketEntries;
         try {
-            TicketManager manager = DatabaseRegistry.getTicketManager();
+            TicketManager manager = (TicketManager) DatabaseRegistry.getTableManager("tickets");
             ticketEntries = manager.getExpiredTickets();
         } catch (SQLException e) {
             throw new RuntimeException(e);

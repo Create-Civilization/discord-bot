@@ -4,6 +4,7 @@ import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
+import com.createciv.discord_bot.util.database.managers.WhitelistManager;
 import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -24,10 +25,10 @@ public class UpdateNicknames extends SlashCommand {
     @Override
     public void execute(SlashCommandInteractionEvent interactionEvent) {
         if (!hasPermission(interactionEvent)) return;
-
         List<WhitelistEntry> whitelistEntries;
+        WhitelistManager whitelistManager  = (WhitelistManager) DatabaseRegistry.getTableManager("whitelist");
         try {
-            whitelistEntries = DatabaseRegistry.getWhitelistManager().getAll();
+            whitelistEntries = whitelistManager.getAll();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

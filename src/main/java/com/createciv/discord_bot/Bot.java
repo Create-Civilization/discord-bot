@@ -2,7 +2,6 @@ package com.createciv.discord_bot;
 
 import com.createciv.discord_bot.classes.ScheduledTask;
 import com.createciv.discord_bot.classes.SlashCommand;
-import com.createciv.discord_bot.listener.auto_complete.moderation.ModerationAutoComplete;
 import com.createciv.discord_bot.listener.auto_complete.trick.TrickAutoComplete;
 import com.createciv.discord_bot.listener.logging.JoinAndLeave;
 import com.createciv.discord_bot.listener.message.TicketMessageHandler;
@@ -53,7 +52,7 @@ public class Bot extends ListenerAdapter {
                 .addEventListeners(new TicketMessageHandler())
                 .addEventListeners(new JoinAndLeave())
                 .addEventListeners(new TrickAutoComplete())
-                .addEventListeners(new ModerationAutoComplete())
+                //.addEventListeners(new ModerationAutoComplete())
                 .addEventListeners(new creationDateChecker())
                 .build();
 

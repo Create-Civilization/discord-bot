@@ -4,6 +4,7 @@ import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.util.LoggingUtil;
 import com.createciv.discord_bot.util.MojangAPI;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
+import com.createciv.discord_bot.util.database.managers.WhitelistManager;
 import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import com.google.gson.JsonObject;
 import net.dv8tion.jda.api.entities.Guild;
@@ -48,7 +49,8 @@ public class WhitelistListener extends ListenerAdapter {
                     WhitelistEntry entry = new WhitelistEntry(formatedUUID, event.getUser().getId(), username, reason, referral);
 
                     try {
-                        DatabaseRegistry.getWhitelistManager().add(entry);
+                        WhitelistManager manager = (WhitelistManager) DatabaseRegistry.getTableManager("whitelist");
+                        manager.add(entry);
                     } catch (SQLException e) {
                         LOGGER.error("An error occurred when whitelisting", e);
                         throw new RuntimeException(e);

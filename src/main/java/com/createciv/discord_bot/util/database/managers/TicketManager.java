@@ -2,7 +2,7 @@ package com.createciv.discord_bot.util.database.managers;
 
 import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.util.database.DatabaseEntry;
-import com.createciv.discord_bot.util.database.DatabaseManager;
+import com.createciv.discord_bot.util.database.TableManager;
 import com.createciv.discord_bot.util.database.types.TicketEntry;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import java.util.Objects;
  * It provides functionality for creating, retrieving, updating, and deleting ticket entries.
  * This class extends the DatabaseManager, which provides basic database connection handling.
  */
-public class TicketManager extends DatabaseManager {
+public class TicketManager extends TableManager {
     /**
      * Constructs a new instance of the TicketManager class.
      * <p>

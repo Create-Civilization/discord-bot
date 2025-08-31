@@ -50,7 +50,7 @@ public class CloseTicket extends SlashCommand {
                 return;
             }
 
-            TicketManager manager = DatabaseRegistry.getTicketManager();
+            TicketManager manager = (TicketManager) DatabaseRegistry.getTableManager("tickets");
             Channel channel = interactionEvent.getChannel();
             TicketEntry ticket = getChannelsTicket(channel, manager);
 

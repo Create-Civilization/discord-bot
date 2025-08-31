@@ -22,7 +22,7 @@ public class RemoveWhitelist extends SlashCommand {
     public void execute(SlashCommandInteractionEvent interactionEvent) {
         try {
             String userID = interactionEvent.getUser().getId();
-            WhitelistManager whitelistManager = DatabaseRegistry.getWhitelistManager();
+            WhitelistManager whitelistManager = (WhitelistManager) DatabaseRegistry.getTableManager("whitelist");
             WhitelistEntry whitelistEntry = whitelistManager.getWithDiscordID(userID);
             if (whitelistEntry == null) {
                 interactionEvent.reply("You are not whitelisted.").setEphemeral(true).queue();

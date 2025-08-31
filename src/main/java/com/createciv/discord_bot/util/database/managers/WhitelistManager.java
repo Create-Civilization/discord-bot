@@ -1,7 +1,7 @@
 package com.createciv.discord_bot.util.database.managers;
 
 import com.createciv.discord_bot.util.database.DatabaseEntry;
-import com.createciv.discord_bot.util.database.DatabaseManager;
+import com.createciv.discord_bot.util.database.TableManager;
 import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 
 import java.sql.PreparedStatement;
@@ -11,7 +11,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WhitelistManager extends DatabaseManager {
+public class WhitelistManager extends TableManager {
     public WhitelistManager() {
         super("whitelist");
     }

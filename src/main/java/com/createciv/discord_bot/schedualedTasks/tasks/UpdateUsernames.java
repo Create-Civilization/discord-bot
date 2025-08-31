@@ -25,7 +25,7 @@ public class UpdateUsernames extends ScheduledTask {
 
         Bot.LOGGER.info("Checking for username updates");
 
-        WhitelistManager manager = DatabaseRegistry.getWhitelistManager();
+        WhitelistManager manager = (WhitelistManager) DatabaseRegistry.getTableManager("whitelist");
 
         List<WhitelistEntry> whitelistEntries;
 

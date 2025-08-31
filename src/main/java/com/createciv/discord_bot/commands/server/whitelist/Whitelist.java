@@ -24,7 +24,7 @@ public class Whitelist extends SlashCommand {
     @Override
     public void execute(SlashCommandInteractionEvent interactionEvent) {
 
-        WhitelistManager manager = DatabaseRegistry.getWhitelistManager();
+        WhitelistManager manager = (WhitelistManager) DatabaseRegistry.getTableManager("whitelist");
         WhitelistEntry entry;
         try {
             entry = manager.getWithDiscordID(interactionEvent.getUser().getId());
