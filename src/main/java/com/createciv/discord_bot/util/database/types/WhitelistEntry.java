@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public class WhitelistEntry extends TableEntry<WhitelistEntry> {
 
-    int id = 0;
+    public int id = 0;
     public UUID playerUUID;
     public String discordID;
     public Timestamp createdAt;
