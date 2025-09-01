@@ -3,6 +3,8 @@ package com.createciv.discord_bot.commands.server.whitelist;
 import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
+import com.createciv.discord_bot.util.database.managers.WhitelistTable;
+import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
@@ -21,22 +23,22 @@ public class Whitelist extends SlashCommand {
     @Override
     public void execute(SlashCommandInteractionEvent interactionEvent) {
 
-        WhitelistManager manager = (WhitelistManager) DatabaseRegistry.getTableManager("whitelist");
+        if (ConfigLoader.WHITELIST_ROLE_ID == null) {
+            interactionEvent.reply("Whitelist role is not configured. Please configure it to use this command")
+                    .setEphemeral(true).queue();
+            return;
+        }
+
+        WhitelistTable manager = (WhitelistTable) DatabaseRegistry.getTableManager("whitelist");
         WhitelistEntry entry;
         try {
-            entry = manager.getWithDiscordID(interactionEvent.getUser().getId());
+            entry = manager.get(interactionEvent.getUser().getId());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
         if (entry != null) {
             interactionEvent.reply("You are already whitelisted.").setEphemeral(true).queue();
-            return;
-        }
-
-        if (ConfigLoader.WHITELIST_ROLE_ID == null) {
-            interactionEvent.reply("Whitelist role is not configured. Please configure it to use this command")
-                    .setEphemeral(true).queue();
             return;
         }
 
@@ -48,22 +50,22 @@ public class Whitelist extends SlashCommand {
                 .setMaxLength(16)
                 .build();
 
-        //Switching this to how they found us / why they wanted to join.
-        TextInput reason = TextInput.create("reason", "Why would you like to join?", TextInputStyle.PARAGRAPH)
-                .setRequired(true)
-                .setPlaceholder("Tell us why you wanted to join")
-                .setMaxLength(800)
-                .build();
-
-        TextInput referral = TextInput.create("referral", "How did you find us?", TextInputStyle.PARAGRAPH)
-                .setRequired(false)
-                .setPlaceholder("Please tell us where you found out about Create: Civilization")
-                .setMaxLength(800)
-                .build();
+//        //Switching this to how they found us / why they wanted to join.
+//        TextInput reason = TextInput.create("reason", "Why would you like to join?", TextInputStyle.PARAGRAPH)
+//                .setRequired(true)
+//                .setPlaceholder("Tell us why you wanted to join")
+//                .setMaxLength(800)
+//                .build();
+//
+//        TextInput referral = TextInput.create("referral", "How did you find us?", TextInputStyle.PARAGRAPH)
+//                .setRequired(false)
+//                .setPlaceholder("Please tell us where you found out about Create: Civilization")
+//                .setMaxLength(800)
+//                .build();
 
 
         Modal modal = Modal.create("whitelist", "Whitelist")
-                .addComponents(ActionRow.of(username), ActionRow.of(reason),ActionRow.of(referral))
+                .addComponents(ActionRow.of(username))
                 .build();
 
         interactionEvent.replyModal(modal).queue();

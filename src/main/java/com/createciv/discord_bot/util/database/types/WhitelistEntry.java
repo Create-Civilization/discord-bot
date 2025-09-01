@@ -4,28 +4,34 @@ import com.createciv.discord_bot.util.database.TableEntry;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.UUID;
 
-public class WhitelistEntry extends TableEntry {
+public class WhitelistEntry extends TableEntry<WhitelistEntry> {
 
-    private String playerUUID;
-    private String discordID;
+    int id = 0;
+    public UUID playerUUID;
+    public String discordID;
+    public Timestamp createdAt;
 
+    public WhitelistEntry(ResultSet resultSet) throws SQLException {
+        id = resultSet.getInt("id");
+        playerUUID = UUID.fromString(resultSet.getString("player_uuid"));
+        createdAt = resultSet.getTimestamp("created_at");
+        discordID = resultSet.getString("discord_id");
+    }
 
-    public WhitelistEntry(String playerUUID, String discordID) {
+    public WhitelistEntry(UUID playerUUID, String discordID) {
         this.playerUUID = playerUUID;
         this.discordID = discordID;
+        this.createdAt = Timestamp.from(Instant.now());
     }
 
-    public String getPlayerUUID() {
-        return playerUUID;
-    }
-    public String getDiscordID() {
-        return discordID;
-    }
-
-
-    @Override
-    public TableEntry fromResultSet(ResultSet resultSet) throws SQLException {
-        return null;
+    public WhitelistEntry(int id, UUID playerUUID, String discordID, Timestamp timestamp) {
+        this.id = id;
+        this.playerUUID = playerUUID;
+        this.discordID = discordID;
+        this.createdAt = timestamp;
     }
 }

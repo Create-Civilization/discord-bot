@@ -4,10 +4,13 @@ import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.util.LoggingUtil;
 import com.createciv.discord_bot.util.MojangAPI;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
+import com.createciv.discord_bot.util.database.managers.WhitelistTable;
+import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import com.google.gson.JsonObject;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.Objects;
@@ -22,12 +25,10 @@ public class WhitelistListener extends ListenerAdapter {
 
 
     @Override
-    public void onModalInteraction(ModalInteractionEvent event) {
+    public void onModalInteraction(@NotNull ModalInteractionEvent event) {
         try {
             if (event.getModalId().equals("whitelist")) {
                 String username = Objects.requireNonNull(event.getValue("username")).getAsString();
-                String reason = Objects.requireNonNull(event.getValue("reason")).getAsString();
-                String referral = Objects.requireNonNull(event.getValue("referral")).getAsString();
 
                 MojangAPI mojangAPI = new MojangAPI();
                 JsonObject response = mojangAPI.getPlayerInfo(username);
@@ -44,10 +45,10 @@ public class WhitelistListener extends ListenerAdapter {
                 if (response.get("uuid").getAsString() != null) {
 
                     UUID formatedUUID = UUID.fromString(response.get("uuid").getAsString());
-                    WhitelistEntry entry = new WhitelistEntry(formatedUUID, event.getUser().getId(), username, reason, referral);
+                    WhitelistEntry entry = new WhitelistEntry(formatedUUID, event.getUser().getId());
 
                     try {
-                        WhitelistManager manager = (WhitelistManager) DatabaseRegistry.getTableManager("whitelist");
+                        WhitelistTable manager = (WhitelistTable) DatabaseRegistry.getTableManager("whitelist");
                         manager.add(entry);
                     } catch (SQLException e) {
                         LOGGER.error("An error occurred when whitelisting", e);
@@ -59,7 +60,8 @@ public class WhitelistListener extends ListenerAdapter {
                     guild.addRoleToMember(guild.getMember(event.getUser()), guild.getRoleById(ConfigLoader.WHITELIST_ROLE_ID)).queue();
 
                     event.reply("You have been successfully whitelisted").setEphemeral(true).queue();
-                    new LoggingUtil().logWhitelists(entry, event.getUser());
+                    //@TODO Fix Logging
+                    //new LoggingUtil().logWhitelists(entry, event.getUser());
                     return;
                 }
 

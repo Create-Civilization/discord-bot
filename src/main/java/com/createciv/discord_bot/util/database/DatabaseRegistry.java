@@ -1,6 +1,7 @@
 package com.createciv.discord_bot.util.database;
 
 import com.createciv.discord_bot.Bot;
+import com.createciv.discord_bot.util.database.managers.WhitelistTable;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -8,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DatabaseRegistry {
-    private static final Map<String, TableManager> managers = new HashMap<>();
+    private static final Map<String, TableManager<?>> managers = new HashMap<>();
 
     public static void init() {
 
@@ -16,15 +17,16 @@ public class DatabaseRegistry {
         if(!dir.exists()){
             dir.mkdirs();
         }
-//        WhitelistManager whitelistManager = new WhitelistManager();
-//        TicketManager ticketManager = new TicketManager();
-//
-//        register("whitelist", whitelistManager);
-//        register("tickets", ticketManager);
 
-        for (Map.Entry<String, TableManager> entry : managers.entrySet()) {
+
+        WhitelistTable whitelistTable = new WhitelistTable();
+
+        register("whitelist", whitelistTable);
+
+
+        for (Map.Entry<String, TableManager<?>> entry : managers.entrySet()) {
             String dbName = entry.getKey();
-            TableManager manager = entry.getValue();
+            TableManager<?> manager = entry.getValue();
 
             try {
                 Bot.LOGGER.info("Initializing {} database...", dbName);
@@ -37,11 +39,11 @@ public class DatabaseRegistry {
 
     }
 
-    private static void register(String name, TableManager manager) {
+    private static void register(String name, TableManager<?> manager) {
         managers.put(name, manager);
     }
 
-    public  static TableManager getTableManager(String name){
+    public static TableManager<?> getTableManager(String name){
         return managers.get(name);
     }
 

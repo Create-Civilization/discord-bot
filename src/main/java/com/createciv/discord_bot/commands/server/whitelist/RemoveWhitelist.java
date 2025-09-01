@@ -3,6 +3,8 @@ package com.createciv.discord_bot.commands.server.whitelist;
 import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.util.LoggingUtil;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
+import com.createciv.discord_bot.util.database.managers.WhitelistTable;
+import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.sql.SQLException;
@@ -20,17 +22,18 @@ public class RemoveWhitelist extends SlashCommand {
     public void execute(SlashCommandInteractionEvent interactionEvent) {
         try {
             String userID = interactionEvent.getUser().getId();
-            WhitelistManager whitelistManager = (WhitelistManager) DatabaseRegistry.getTableManager("whitelist");
-            WhitelistEntry whitelistEntry = whitelistManager.getWithDiscordID(userID);
+            WhitelistTable whitelistTable = (WhitelistTable) DatabaseRegistry.getTableManager("whitelist");
+            WhitelistEntry whitelistEntry = whitelistTable.get(userID);
             if (whitelistEntry == null) {
                 interactionEvent.reply("You are not whitelisted.").setEphemeral(true).queue();
                 return;
             }
 
-            whitelistManager.removeWithDiscordID(userID);
+            whitelistTable.remove(userID);
             interactionEvent.reply("You have successfully been removed from the whitelist").setEphemeral(true).queue();
 
-            new LoggingUtil().logRemoveWhitelist(whitelistEntry, interactionEvent.getUser());
+            //@TODO Fix Logging
+            //new LoggingUtil().logRemoveWhitelist(whitelistEntry, interactionEvent.getUser());
 
         } catch (SQLException e) {
             LOGGER.error("Error in RemoveWhitelist command", e);

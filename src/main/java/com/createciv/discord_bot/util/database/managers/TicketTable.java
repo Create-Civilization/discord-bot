@@ -2,11 +2,12 @@ package com.createciv.discord_bot.util.database.managers;
 
 import com.createciv.discord_bot.util.database.TableEntry;
 import com.createciv.discord_bot.util.database.TableManager;
+import com.createciv.discord_bot.util.database.types.TicketTableEntry;
 
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class TicketTable extends TableManager {
+public class TicketTable extends TableManager<TicketTableEntry> {
 
     @Override
     public void initTable() throws SQLException {
@@ -15,7 +16,7 @@ public class TicketTable extends TableManager {
     }
 
     @Override
-    public void add(TableEntry databaseEntry) throws SQLException {
+    public void add(TicketTableEntry tableEntry) throws SQLException {
 
     }
 }
