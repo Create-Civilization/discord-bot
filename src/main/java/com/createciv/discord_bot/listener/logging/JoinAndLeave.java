@@ -9,11 +9,11 @@ public class JoinAndLeave extends ListenerAdapter {
 
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-        new LoggingUtil().logUserJoin(event.getUser());
+       // new LoggingUtil().logUserJoin(event.getUser());
     }
 
     @Override
     public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
-        new LoggingUtil().logUserRemove(event.getUser());
+       // new LoggingUtil().logUserRemove(event.getUser());
     }
 }

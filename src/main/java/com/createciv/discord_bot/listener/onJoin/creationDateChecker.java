@@ -43,7 +43,7 @@ public class creationDateChecker extends ListenerAdapter {
         guild.kick(member)
                 .reason("Account creation date too new")
                 .queue(
-                        success->LoggingUtil.logUserKick(member.getUser(),"Account creation date too new"),
+     //                   success->LoggingUtil.logUserKick(member.getUser(),"Account creation date too new"),
                         error -> LOGGER.error("An error occurred while kicking a user with an account made too recently")
                 );
     }

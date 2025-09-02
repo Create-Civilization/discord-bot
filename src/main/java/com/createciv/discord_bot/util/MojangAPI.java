@@ -65,7 +65,7 @@ public class MojangAPI {
 
             return null;
         } catch (Exception e) {
-            new LoggingUtil().logError(e);
+         //   new LoggingUtil().logError(e);
         }
         return null;
     }

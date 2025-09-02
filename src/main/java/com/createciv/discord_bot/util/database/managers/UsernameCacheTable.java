@@ -28,19 +28,19 @@ public class UsernameCacheTable extends TableManager<UsernameCacheEntry> {
         disconnect();
 
     }
-
     @Override
     public void add(UsernameCacheEntry tableEntry) throws SQLException {
         connect();
         try (PreparedStatement statement = connection.prepareStatement("INSERT INTO usernameCache (username, playerUUID, expireTime) VALUES (?, ?, ?)")){
             statement.setString(1, tableEntry.username);
             statement.setString(2, tableEntry.playerUUID);
-            statement.setInt(3, tableEntry.expireTime);
+            statement.setTimestamp(3, tableEntry.expireTime);
             statement.execute();
         } finally{
             disconnect();
         }
     }
+
     public void remove(int id) throws SQLException {
         connect();
         try (PreparedStatement statement = connection.prepareStatement("DELETE FROM usernameCache WHERE id = ?")){
@@ -50,6 +50,7 @@ public class UsernameCacheTable extends TableManager<UsernameCacheEntry> {
             disconnect();
         }
     }
+
     public void remove(UUID playerUUID) throws SQLException {
         connect();
         try (PreparedStatement statement = connection.prepareStatement("DELETE FROM usernameCache WHERE playerUUID = ?")){
@@ -83,6 +84,7 @@ public class UsernameCacheTable extends TableManager<UsernameCacheEntry> {
         }
         return null;
     }
+
     public List<UsernameCacheEntry> getExpired() throws SQLException {
         connect();
         List<UsernameCacheEntry> entries = new ArrayList<>();

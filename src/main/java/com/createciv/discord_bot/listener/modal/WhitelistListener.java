@@ -68,7 +68,7 @@ public class WhitelistListener extends ListenerAdapter {
                 event.reply("Unknown error occurred, If this continues please contact a developer").setEphemeral(true).queue();
             }
         } catch (Exception e) {
-            new LoggingUtil().logError(e);
+         //   new LoggingUtil().logError(e);
         }
     }
 }

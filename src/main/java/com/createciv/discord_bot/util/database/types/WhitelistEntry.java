@@ -17,9 +17,9 @@ public class WhitelistEntry extends TableEntry<WhitelistEntry> {
 
     public WhitelistEntry(ResultSet resultSet) throws SQLException {
         id = resultSet.getInt("id");
-        playerUUID = UUID.fromString(resultSet.getString("player_uuid"));
-        createdAt = resultSet.getTimestamp("created_at");
-        discordID = resultSet.getString("discord_id");
+        playerUUID = UUID.fromString(resultSet.getString("playerUUID"));
+        createdAt = resultSet.getTimestamp("createdAt");
+        discordID = resultSet.getString("discordID");
     }
 
     public WhitelistEntry(UUID playerUUID, String discordID) {
