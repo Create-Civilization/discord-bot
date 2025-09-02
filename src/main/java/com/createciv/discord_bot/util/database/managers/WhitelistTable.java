@@ -17,7 +17,7 @@ public class WhitelistTable extends TableManager<WhitelistEntry> {
         connect();
         Statement statement = connection.createStatement();
         statement.execute(
-                "CREATE TABLE IF NO EXISTS whitelists (" +
+                "CREATE TABLE IF NOT EXISTS whitelists (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                         "playerUUID TEXT NOT NULL UNIQUE," +
                         "discordID TEXT NOT NULL, " +
