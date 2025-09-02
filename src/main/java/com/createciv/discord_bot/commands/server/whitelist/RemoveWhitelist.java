@@ -3,7 +3,9 @@ package com.createciv.discord_bot.commands.server.whitelist;
 import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.util.LoggingUtil;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
+import com.createciv.discord_bot.util.database.managers.UsernameCacheTable;
 import com.createciv.discord_bot.util.database.managers.WhitelistTable;
+import com.createciv.discord_bot.util.database.types.UsernameCacheEntry;
 import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
@@ -29,6 +31,11 @@ public class RemoveWhitelist extends SlashCommand {
                 return;
             }
 
+            UsernameCacheTable usernameCacheTable = (UsernameCacheTable) DatabaseRegistry.getTableManager("usernameCache");
+            UsernameCacheEntry usernameCacheEntry = usernameCacheTable.get(whitelistEntry.playerUUID);
+            if (usernameCacheEntry != null) {
+                usernameCacheTable.remove(whitelistEntry.playerUUID);
+            }
             whitelistTable.remove(userID);
             interactionEvent.reply("You have successfully been removed from the whitelist").setEphemeral(true).queue();
 
