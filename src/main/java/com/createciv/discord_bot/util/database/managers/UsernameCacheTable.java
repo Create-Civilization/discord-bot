@@ -33,7 +33,7 @@ public class UsernameCacheTable extends TableManager<UsernameCacheEntry> {
         connect();
         try (PreparedStatement statement = connection.prepareStatement("INSERT INTO usernameCache (username, playerUUID, expireTime) VALUES (?, ?, ?)")){
             statement.setString(1, tableEntry.username);
-            statement.setString(2, tableEntry.playerUUID);
+            statement.setString(2, tableEntry.playerUUID.toString());
             statement.setTimestamp(3, tableEntry.expireTime);
             statement.execute();
         } finally{

@@ -11,18 +11,13 @@ import java.net.http.HttpResponse;
 
 public class MojangAPI {
 
-    /**
-     * Get the UUID of a player
-     * @param username The username you want to get.
-     * @return JsonObject
-     */
-    public JsonObject getPlayerInfo(String username) {
+    public JsonObject getPlayerInfo(String usernameOrUUID) {
         try {
             Gson gson = new Gson();
             HttpClient client = HttpClient.newHttpClient();
             //https://api.mojang.com/users/profiles/minecraft/
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://api.ashcon.app/mojang/v2/user/" + username))
+                    .uri(URI.create("https://api.ashcon.app/mojang/v2/user/" + usernameOrUUID ))
                     .GET()
                     .build();
 
@@ -38,6 +33,7 @@ public class MojangAPI {
             return null;
         }
     }
+
 
 
     /**
