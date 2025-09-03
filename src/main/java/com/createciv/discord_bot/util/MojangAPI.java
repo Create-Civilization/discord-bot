@@ -11,7 +11,7 @@ import java.net.http.HttpResponse;
 
 public class MojangAPI {
 
-    public JsonObject getPlayerInfo(String usernameOrUUID) {
+    public static JsonObject getPlayerInfo(String usernameOrUUID) {
         try {
             Gson gson = new Gson();
             HttpClient client = HttpClient.newHttpClient();
@@ -44,7 +44,7 @@ public class MojangAPI {
      * otherwise null.
      * @throws RuntimeException If an error occurs during the HTTP request process.
      */
-    public JsonObject getServerStats(String serverIP, String port) {
+    public static JsonObject getServerStats(String serverIP, String port) {
         try{
             Gson gson = new Gson();
             HttpClient client = HttpClient.newHttpClient();

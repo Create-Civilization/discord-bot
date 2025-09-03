@@ -19,9 +19,8 @@ public class UsernameCacheTable extends TableManager<UsernameCacheEntry> {
         Statement statement = connection.createStatement();
         statement.execute(
                 "CREATE TABLE IF NOT EXISTS usernameCache (" +
-                        "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "playerUUID TEXT PRIMARY KEY NOT NULL, " +
                         "username TEXT NOT NULL UNIQUE, " +
-                        "playerUUID TEXT NOT NULL UNIQUE, " +
                         "expireTime INTEGER NOT NULL)"
         );
         statement.close();
@@ -35,16 +34,6 @@ public class UsernameCacheTable extends TableManager<UsernameCacheEntry> {
             statement.setString(1, tableEntry.username);
             statement.setString(2, tableEntry.playerUUID.toString());
             statement.setTimestamp(3, tableEntry.expireTime);
-            statement.execute();
-        } finally{
-            disconnect();
-        }
-    }
-
-    public void remove(int id) throws SQLException {
-        connect();
-        try (PreparedStatement statement = connection.prepareStatement("DELETE FROM usernameCache WHERE id = ?")){
-            statement.setInt(1, id);
             statement.execute();
         } finally{
             disconnect();
@@ -98,6 +87,17 @@ public class UsernameCacheTable extends TableManager<UsernameCacheEntry> {
         }
         disconnect();
         return entries;
+    }
+
+    public void updateUsername(UUID key, String username) throws SQLException {
+        connect();
+        try(PreparedStatement statement = connection.prepareStatement("UPDATE usernameCache SET username = ? WHERE playerUUID = ?")){
+            statement.setString(1, username);
+            statement.setString(2, key.toString());
+            statement.execute();
+        } finally{
+            disconnect();
+        }
     }
 
 

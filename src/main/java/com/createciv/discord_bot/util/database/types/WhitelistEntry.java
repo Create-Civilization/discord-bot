@@ -16,7 +16,6 @@ public class WhitelistEntry extends TableEntry<WhitelistEntry> {
     public Timestamp createdAt;
 
     public WhitelistEntry(ResultSet resultSet) throws SQLException {
-        id = resultSet.getInt("id");
         playerUUID = UUID.fromString(resultSet.getString("playerUUID"));
         createdAt = resultSet.getTimestamp("createdAt");
         discordID = resultSet.getString("discordID");
@@ -28,8 +27,7 @@ public class WhitelistEntry extends TableEntry<WhitelistEntry> {
         this.createdAt = Timestamp.from(Instant.now());
     }
 
-    public WhitelistEntry(int id, UUID playerUUID, String discordID, Timestamp timestamp) {
-        this.id = id;
+    public WhitelistEntry(UUID playerUUID, String discordID, Timestamp timestamp) {
         this.playerUUID = playerUUID;
         this.discordID = discordID;
         this.createdAt = timestamp;
