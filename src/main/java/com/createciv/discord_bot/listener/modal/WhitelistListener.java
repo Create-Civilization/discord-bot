@@ -32,8 +32,7 @@ public class WhitelistListener extends ListenerAdapter {
             if (event.getModalId().equals("whitelist")) {
                 String username = Objects.requireNonNull(event.getValue("username")).getAsString();
 
-                MojangAPI mojangAPI = new MojangAPI();
-                JsonObject response = mojangAPI.getPlayerInfo(username);
+                JsonObject response = MojangAPI.getPlayerInfo(username);
                 if (response == null) {
                     event.reply("A severe error occurred. Please try again later").setEphemeral(true).queue();
                     return;

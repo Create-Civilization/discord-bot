@@ -20,8 +20,7 @@ public class UpdateStatus extends ScheduledTask {
     @Override
     public void execute() {
 
-        JsonObject serverInfo = new MojangAPI().getServerStats(ConfigLoader.SERVER_IP, ConfigLoader.SERVER_PORT);
-
+        JsonObject serverInfo = MojangAPI.getServerStats(ConfigLoader.SERVER_IP, ConfigLoader.SERVER_PORT);
         if (serverInfo == null) {
             Bot.SERVER_ONLINE = false;
             updateBotStatus("Server is offline", false);
