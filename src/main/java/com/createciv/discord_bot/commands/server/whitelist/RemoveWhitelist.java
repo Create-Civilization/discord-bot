@@ -44,6 +44,7 @@ public class RemoveWhitelist extends SlashCommand {
 
         } catch (SQLException e) {
             LOGGER.error("Error in RemoveWhitelist command", e);
+            LoggingUtil.error(e);
         }
     }
 }

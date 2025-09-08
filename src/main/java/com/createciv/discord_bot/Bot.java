@@ -7,6 +7,7 @@ import com.createciv.discord_bot.listener.logging.JoinAndLeave;
 import com.createciv.discord_bot.listener.modal.WhitelistListener;
 import com.createciv.discord_bot.listener.onJoin.creationDateChecker;
 import com.createciv.discord_bot.schedualedTasks.TaskRegistry;
+import com.createciv.discord_bot.util.LoggingUtil;
 import com.createciv.discord_bot.util.PanelConnection;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
 import io.github.classgraph.ClassGraph;
@@ -69,11 +70,16 @@ public class Bot extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        SlashCommand command = SlashCommand.REGISTRY.get(event.getName());
-        if (command != null) {
-            command.execute(event);
-        } else {
-            event.reply("Unknown command").queue();
+        try{
+            SlashCommand command = SlashCommand.REGISTRY.get(event.getName());
+            if (command != null) {
+                command.execute(event);
+            } else {
+                event.reply("Unknown command").queue();
+            }
+        } catch (Exception e){
+            LOGGER.error("Error in slash command interaction", e);
+            LoggingUtil.error(e);
         }
     }
 
