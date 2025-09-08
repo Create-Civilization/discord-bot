@@ -20,7 +20,7 @@ public abstract class ScheduledTask {
 
     public static final Map<String, ScheduledTask> REGISTRY = new HashMap<>();
 
-    public abstract void execute();
+    public abstract void execute() throws Exception;
 
     public static void register(ScheduledTask task) {
         REGISTRY.put(task.getName(), task);

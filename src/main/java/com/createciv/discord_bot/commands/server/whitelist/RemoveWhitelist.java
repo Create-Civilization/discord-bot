@@ -9,6 +9,7 @@ import com.createciv.discord_bot.util.database.types.UsernameCacheEntry;
 import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
+import java.awt.*;
 import java.sql.SQLException;
 
 import static com.createciv.discord_bot.Bot.LOGGER;

@@ -51,4 +51,14 @@ public class LoggingUtil {
         logChannel.sendMessageEmbeds(errorEmbed).queue();
     }
 
+    public static void log(Color color, String title, String message){
+        MessageEmbed embed = new EmbedBuilder()
+                .setTitle(title)
+                .setColor(color)
+                .setDescription(message)
+                .build();
+
+        logChannel.sendMessageEmbeds(embed).queue();
+    }
+
 }

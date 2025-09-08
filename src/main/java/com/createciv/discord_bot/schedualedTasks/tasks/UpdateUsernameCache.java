@@ -20,32 +20,28 @@ public class UpdateUsernameCache extends ScheduledTask {
     }
 
     @Override
-    public void execute() {
+    public void execute() throws SQLException {
         UsernameCacheTable table = (UsernameCacheTable) DatabaseRegistry.getTableManager("usernameCache");
-        try {
-            List<UsernameCacheEntry> cacheEntries = table.getExpired();
-            for (UsernameCacheEntry entry : cacheEntries) {
-                JsonObject response = MojangAPI.getPlayerInfo(entry.playerUUID.toString());
-                if (response == null) {
-                    LOGGER.warn("Error getting player info for " + entry.playerUUID.toString());
-                    continue;
-                }
-                //Check if we got an invalid username
-                if (response.get("reason") != null) {
-                    LOGGER.warn(response.get("reason").toString());
-                    continue;
-                }
-
-                String username = response.get("username").getAsString();
-                if(username.equals(entry.username)){
-                    LOGGER.warn("No updated needed for " +  entry.playerUUID.toString());
-                    continue;
-                }
-                LOGGER.info("Updated Username For Player");
-                table.updateUsername(entry.playerUUID, username);
+        List<UsernameCacheEntry> cacheEntries = table.getExpired();
+        for (UsernameCacheEntry entry : cacheEntries) {
+            JsonObject response = MojangAPI.getPlayerInfo(entry.playerUUID.toString());
+            if (response == null) {
+                LOGGER.warn("Error getting player info for " + entry.playerUUID.toString());
+                continue;
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            //Check if we got an invalid username
+            if (response.get("reason") != null) {
+                LOGGER.warn(response.get("reason").toString());
+                continue;
+            }
+
+            String username = response.get("username").getAsString();
+            if(username.equals(entry.username)){
+                LOGGER.warn("No updated needed for " +  entry.playerUUID.toString());
+                continue;
+            }
+            LOGGER.info("Updated Username For Player");
+            table.updateUsername(entry.playerUUID, username);
         }
     }
 }
