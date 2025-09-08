@@ -10,6 +10,10 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+import static com.createciv.discord_bot.Bot.LOGGER;
 
 /**
  * Utility class for handling logging operations, including logging whitelist events, exceptions,
@@ -27,6 +31,24 @@ public class LoggingUtil {
 
     public TextChannel getLogChannel(){
         return logChannel;
+    }
+
+    public static void error(Exception e) {
+
+        StackTraceElement[] stackTrace = e.getStackTrace();
+
+        String traceString = Arrays.stream(stackTrace)
+                .limit(5)
+                .map(StackTraceElement::toString)
+                .collect(Collectors.joining("\n"));
+
+        MessageEmbed errorEmbed = new EmbedBuilder()
+                .setTitle(e.getMessage())
+                .setColor(Color.red)
+                .addField("Stack Trace", "```" + traceString + "..." + "```", true)
+                .build();
+
+        logChannel.sendMessageEmbeds(errorEmbed).queue();
     }
 
 }
