@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.sql.SQLException;
 import java.util.Objects;
 import java.util.UUID;
@@ -65,7 +66,7 @@ public class WhitelistListener extends ListenerAdapter {
 
                     event.reply("You have been successfully whitelisted").setEphemeral(true).queue();
                     //@TODO Fix Logging
-                    //new LoggingUtil().logWhitelists(entry, event.getUser());
+                    LoggingUtil.log(Color.green, "New Whitelist", String.format("%s has been added to the whitelist.", username));
                     return;
                 }
 

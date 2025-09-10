@@ -41,6 +41,7 @@ public class RemoveWhitelist extends SlashCommand {
             interactionEvent.reply("You have successfully been removed from the whitelist").setEphemeral(true).queue();
 
             //@TODO Fix Logging
+            LoggingUtil.log(Color.red, "Whitelist Removed", String.format("%s has been removed from the whitelist", usernameCacheEntry.username));
             //new LoggingUtil().logRemoveWhitelist(whitelistEntry, interactionEvent.getUser());
 
         } catch (SQLException e) {
