@@ -29,51 +29,45 @@ public class WhitelistListener extends ListenerAdapter {
 
     @Override
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {
-        try {
-            if (event.getModalId().equals("whitelist")) {
-                String username = Objects.requireNonNull(event.getValue("username")).getAsString();
+        if (!event.getModalId().equals("whitelist")) {return;}
 
-                JsonObject response = MojangAPI.getPlayerInfo(username);
-                if (response == null) {
-                    event.reply("A severe error occurred. Please try again later").setEphemeral(true).queue();
-                    return;
-                }
-                //Check if we got an invalid username
-                if (response.get("reason") != null) {
-                    event.reply(response.get("reason").getAsString()).setEphemeral(true).queue();
-                    return;
-                }
-
-                if (response.get("uuid").getAsString() != null) {
-
-                    UUID formatedUUID = UUID.fromString(response.get("uuid").getAsString());
-                    WhitelistEntry entry = new WhitelistEntry(formatedUUID, event.getUser().getId());
-                    UsernameCacheEntry cacheEntry = new UsernameCacheEntry(response.get("username").getAsString(), formatedUUID);
-
-                    try {
-                        WhitelistTable manager = (WhitelistTable) DatabaseRegistry.getTableManager("whitelist");
-                        UsernameCacheTable cacheManager = (UsernameCacheTable) DatabaseRegistry.getTableManager("usernameCache");
-                        manager.add(entry);
-                        cacheManager.add(cacheEntry);
-                    } catch (SQLException e) {
-                        LOGGER.error("An error occurred when whitelisting", e);
-                        throw new RuntimeException(e);
-                    }
-
-                    Guild guild = event.getGuild();
-
-                    guild.addRoleToMember(guild.getMember(event.getUser()), guild.getRoleById(ConfigLoader.WHITELIST_ROLE_ID)).queue();
-
-                    event.reply("You have been successfully whitelisted").setEphemeral(true).queue();
-                    //@TODO Fix Logging
-                    LoggingUtil.log(Color.green, "New Whitelist", String.format("%s has been added to the whitelist.", username));
-                    return;
-                }
-
-                event.reply("Unknown error occurred, If this continues please contact a developer").setEphemeral(true).queue();
-            }
-        } catch (Exception e) {
-         //   new LoggingUtil().logError(e);
+        String username = Objects.requireNonNull(event.getValue("username")).getAsString();
+        JsonObject response = MojangAPI.getPlayerInfo(username);
+        if (response == null) {
+            event.reply("A severe error occurred. Please try again later").setEphemeral(true).queue();
+            return;
         }
+        //Check if we got an invalid username
+        if (response.get("reason") != null) {
+            event.reply(response.get("reason").getAsString()).setEphemeral(true).queue();
+            return;
+        }
+
+        if (response.get("uuid").getAsString() != null) {
+
+            UUID formatedUUID = UUID.fromString(response.get("uuid").getAsString());
+            WhitelistEntry entry = new WhitelistEntry(formatedUUID, event.getUser().getId());
+            UsernameCacheEntry cacheEntry = new UsernameCacheEntry(response.get("username").getAsString(), formatedUUID);
+
+            WhitelistTable manager = (WhitelistTable) DatabaseRegistry.getTableManager("whitelist");
+            UsernameCacheTable cacheManager = (UsernameCacheTable) DatabaseRegistry.getTableManager("usernameCache");
+
+            try {
+                manager.add(entry);
+                cacheManager.add(cacheEntry);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+            Guild guild = event.getGuild();
+
+            guild.addRoleToMember(guild.getMember(event.getUser()), guild.getRoleById(ConfigLoader.WHITELIST_ROLE_ID)).queue();
+
+            event.reply("You have been successfully whitelisted").setEphemeral(true).queue();
+            LoggingUtil.log(Color.green, "New Whitelist", String.format("%s has been added to the whitelist.", username));
+            return;
+        }
+
+        event.reply("Unknown error occurred, If this continues please contact a developer").setEphemeral(true).queue();
     }
 }

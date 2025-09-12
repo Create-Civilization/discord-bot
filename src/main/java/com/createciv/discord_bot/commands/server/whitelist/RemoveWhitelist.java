@@ -22,8 +22,7 @@ public class RemoveWhitelist extends SlashCommand {
     }
 
     @Override
-    public void execute(SlashCommandInteractionEvent interactionEvent) {
-        try {
+    public void execute(SlashCommandInteractionEvent interactionEvent) throws SQLException{
             String userID = interactionEvent.getUser().getId();
             WhitelistTable whitelistTable = (WhitelistTable) DatabaseRegistry.getTableManager("whitelist");
             WhitelistEntry whitelistEntry = whitelistTable.get(userID);
@@ -43,10 +42,5 @@ public class RemoveWhitelist extends SlashCommand {
             //@TODO Fix Logging
             LoggingUtil.log(Color.red, "Whitelist Removed", String.format("%s has been removed from the whitelist", usernameCacheEntry.username));
             //new LoggingUtil().logRemoveWhitelist(whitelistEntry, interactionEvent.getUser());
-
-        } catch (SQLException e) {
-            LOGGER.error("Error in RemoveWhitelist command", e);
-            LoggingUtil.error(e);
-        }
     }
 }

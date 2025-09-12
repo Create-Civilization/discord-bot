@@ -2,6 +2,8 @@ package com.createciv.discord_bot.classes;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +21,7 @@ public abstract class SlashCommand extends Registry {
         this.description = description;
     }
 
-    public abstract void execute(SlashCommandInteractionEvent interactionEvent);
+    public abstract void execute(SlashCommandInteractionEvent interactionEvent) throws SQLException;
 
     public static void register(SlashCommand slashCommand) {
         REGISTRY.put(slashCommand.getIdentifier(), slashCommand);
