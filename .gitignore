@@ -9,3 +9,4 @@ configExample.json
 launch.json
 /.idea/vcs.xml
 /.idea/.gitignore
+/storage/config.properties

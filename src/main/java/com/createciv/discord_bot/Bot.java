@@ -146,7 +146,7 @@ public class Bot extends ListenerAdapter {
     public static <T> List<Class<? extends T>> getSubclasses(Class<T> abstractClass) {
         List<Class<? extends T>> subclasses = new ArrayList<>();
         try (ScanResult scanResult = new ClassGraph()
-                .enableAllInfo()  // Enable all scanning features
+                .enableAllInfo()  // Enable all scanning features YEEEEE HAWWWW
                 .scan()) {
 
             // Scan all classes and find those that extend T
