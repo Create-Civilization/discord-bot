@@ -20,6 +20,7 @@ public class WhitelistTable extends TableManager<WhitelistEntry> {
                 "CREATE TABLE IF NOT EXISTS whitelists (" +
                         "playerUUID TEXT PRIMARY KEY NOT NULL," +
                         "discordID TEXT NOT NULL, " +
+                        "referral TEXT NOT NULL, " +
                         "createdAt INTEGER DEFAULT (strftime('%s', 'now')))"
         );
 
@@ -30,9 +31,10 @@ public class WhitelistTable extends TableManager<WhitelistEntry> {
     @Override
     public void add(WhitelistEntry tableEntry) throws SQLException {
         connect();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO whitelists (playerUUID, discordID) VALUES (?, ?)");){
+        try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO whitelists (playerUUID, discordID,referral) VALUES (?, ?, ?)");){
             preparedStatement.setString(1, tableEntry.playerUUID.toString());
             preparedStatement.setString(2, tableEntry.discordID);
+            preparedStatement.setString(3,tableEntry.referralRzn);
             preparedStatement.execute();
         } finally{
             disconnect();
@@ -41,7 +43,7 @@ public class WhitelistTable extends TableManager<WhitelistEntry> {
 
     public void remove(int id) throws SQLException {
         connect();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM whitelists WHERE id = ?;")){
+        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM whitelists WHERE discordID = ?;")){
             preparedStatement.setInt(1, id);
             preparedStatement.execute();
         } finally{
@@ -71,7 +73,7 @@ public class WhitelistTable extends TableManager<WhitelistEntry> {
 
     public WhitelistEntry get(int id) throws SQLException {
         connect();
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM whitelists WHERE id = ?")) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM whitelists WHERE discordID = ?")) {
             preparedStatement.setInt(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {

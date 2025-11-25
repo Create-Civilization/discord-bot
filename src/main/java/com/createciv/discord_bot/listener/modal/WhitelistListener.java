@@ -34,11 +34,13 @@ public class WhitelistListener extends ListenerAdapter {
         if (!event.getModalId().equals("whitelist")) {return;}
 
         String username = Objects.requireNonNull(event.getValue("username")).getAsString();
+        String referred = Objects.requireNonNull(event.getValue("referral")).getAsString();
         JsonObject response = MojangAPI.getPlayerInfo(username);
         if (response == null) {
             event.reply("A severe error occurred. Please try again later").setEphemeral(true).queue();
             return;
         }
+
         //Check if we got an invalid username
         if (response.get("reason") != null) {
             event.reply(response.get("reason").getAsString()).setEphemeral(true).queue();
@@ -46,9 +48,8 @@ public class WhitelistListener extends ListenerAdapter {
         }
 
         if (response.get("uuid").getAsString() != null) {
-
             UUID formatedUUID = UUID.fromString(response.get("uuid").getAsString());
-            WhitelistEntry entry = new WhitelistEntry(formatedUUID, event.getUser().getId());
+            WhitelistEntry entry = new WhitelistEntry(formatedUUID, event.getUser().getId(),referred);
             UsernameCacheEntry cacheEntry = new UsernameCacheEntry(response.get("username").getAsString(), formatedUUID);
 
             WhitelistTable manager = (WhitelistTable) DatabaseRegistry.getTableManager("whitelist");
