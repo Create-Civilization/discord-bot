@@ -12,7 +12,7 @@ public class GuessThatNumber extends SlashCommand {
 
     public GuessThatNumber() {
 
-        super("GuessThatNumber", "Guess a number between 1 and 10");
+        super("guessthatnumber", "Guess a number between 1 and 10");
         addOption(new Option(OptionType.STRING,"number","select a number 1-10",true,false));
     }
 
