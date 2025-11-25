@@ -10,6 +10,8 @@ import com.createciv.discord_bot.util.database.types.UsernameCacheEntry;
 import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import com.google.gson.JsonObject;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -60,8 +62,16 @@ public class WhitelistListener extends ListenerAdapter {
             }
 
             Guild guild = event.getGuild();
-
-            guild.addRoleToMember(guild.getMember(event.getUser()), guild.getRoleById(ConfigLoader.WHITELIST_ROLE_ID)).queue();
+            Member user = event.getMember();
+            Role whitelistedRole = guild.getRoleById(ConfigLoader.WHITELIST_ROLE_ID);
+            try {
+                guild.addRoleToMember(user, whitelistedRole).queue();
+            } catch (Exception e){
+                System.out.println("Guild" + guild);
+                System.out.println("Member" + user);
+                System.out.println("Role" + whitelistedRole);
+                LOGGER.error("Failed to add role to whitelisted user",e);
+            }
 
             event.reply("You have been successfully whitelisted").setEphemeral(true).queue();
             LoggingUtil.log(Color.green, "New Whitelist", String.format("%s has been added to the whitelist.", username));
