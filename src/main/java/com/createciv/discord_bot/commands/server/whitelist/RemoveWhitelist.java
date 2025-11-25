@@ -1,5 +1,6 @@
 package com.createciv.discord_bot.commands.server.whitelist;
 
+import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.util.LoggingUtil;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
@@ -7,6 +8,9 @@ import com.createciv.discord_bot.util.database.managers.UsernameCacheTable;
 import com.createciv.discord_bot.util.database.managers.WhitelistTable;
 import com.createciv.discord_bot.util.database.types.UsernameCacheEntry;
 import com.createciv.discord_bot.util.database.types.WhitelistEntry;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.awt.*;
@@ -30,6 +34,9 @@ public class RemoveWhitelist extends SlashCommand {
                 interactionEvent.reply("You are not whitelisted.").setEphemeral(true).queue();
                 return;
             }
+            Guild guild = interactionEvent.getGuild();
+            Member mem = interactionEvent.getMember();
+            Role whitelistedRole = guild.getRoleById(ConfigLoader.WHITELIST_ROLE_ID);
 
             UsernameCacheTable usernameCacheTable = (UsernameCacheTable) DatabaseRegistry.getTableManager("usernameCache");
             UsernameCacheEntry usernameCacheEntry = usernameCacheTable.get(whitelistEntry.playerUUID);
@@ -37,6 +44,14 @@ public class RemoveWhitelist extends SlashCommand {
                 usernameCacheTable.remove(whitelistEntry.playerUUID);
             }
             whitelistTable.remove(userID);
+            try {
+                guild.removeRoleFromMember(mem,whitelistedRole).queue();
+            } catch (Exception e){
+                System.out.println("Guild" + guild);
+                System.out.println("Member" + mem);
+                System.out.println("Role" + whitelistedRole);
+                LOGGER.error("Failed to add role to whitelisted user",e);
+            }
             interactionEvent.reply("You have successfully been removed from the whitelist").setEphemeral(true).queue();
 
             //@TODO Fix Logging
