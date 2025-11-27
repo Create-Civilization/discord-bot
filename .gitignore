@@ -10,3 +10,5 @@ launch.json
 /.idea/vcs.xml
 /.idea/.gitignore
 /storage/config.properties
+/.idea/
+/.gradle/

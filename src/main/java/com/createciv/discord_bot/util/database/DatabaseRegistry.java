@@ -1,7 +1,6 @@
 package com.createciv.discord_bot.util.database;
 
 import com.createciv.discord_bot.Bot;
-import com.createciv.discord_bot.util.database.managers.UsernameCacheTable;
 import com.createciv.discord_bot.util.database.managers.WhitelistTable;
 
 import java.io.File;
@@ -21,10 +20,8 @@ public class DatabaseRegistry {
 
 
         WhitelistTable whitelistTable = new WhitelistTable();
-        UsernameCacheTable usernameCacheTable = new UsernameCacheTable();
 
         register("whitelist", whitelistTable);
-        register("usernameCache", usernameCacheTable);
 
 
         for (Map.Entry<String, TableManager<?>> entry : managers.entrySet()) {

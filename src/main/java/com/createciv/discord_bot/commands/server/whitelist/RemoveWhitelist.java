@@ -2,18 +2,14 @@ package com.createciv.discord_bot.commands.server.whitelist;
 
 import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.SlashCommand;
-import com.createciv.discord_bot.util.LoggingUtil;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
-import com.createciv.discord_bot.util.database.managers.UsernameCacheTable;
 import com.createciv.discord_bot.util.database.managers.WhitelistTable;
-import com.createciv.discord_bot.util.database.types.UsernameCacheEntry;
 import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-import java.awt.*;
 import java.sql.SQLException;
 
 import static com.createciv.discord_bot.Bot.LOGGER;
@@ -38,11 +34,6 @@ public class RemoveWhitelist extends SlashCommand {
             Member mem = interactionEvent.getMember();
             Role whitelistedRole = guild.getRoleById(ConfigLoader.WHITELIST_ROLE_ID);
 
-            UsernameCacheTable usernameCacheTable = (UsernameCacheTable) DatabaseRegistry.getTableManager("usernameCache");
-            UsernameCacheEntry usernameCacheEntry = usernameCacheTable.get(whitelistEntry.playerUUID);
-            if (usernameCacheEntry != null) {
-                usernameCacheTable.remove(whitelistEntry.playerUUID);
-            }
             whitelistTable.remove(userID);
             try {
                 guild.removeRoleFromMember(mem,whitelistedRole).queue();
@@ -55,7 +46,7 @@ public class RemoveWhitelist extends SlashCommand {
             interactionEvent.reply("You have successfully been removed from the whitelist").setEphemeral(true).queue();
 
             //@TODO Fix Logging
-            LoggingUtil.log(Color.red, "Whitelist Removed", String.format("%s has been removed from the whitelist", usernameCacheEntry.username));
+            //LoggingUtil.log(Color.red, "Whitelist Removed", String.format("%s has been removed from the whitelist", usernameCacheEntry.username));
             //new LoggingUtil().logRemoveWhitelist(whitelistEntry, interactionEvent.getUser());
     }
 }
