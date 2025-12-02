@@ -30,7 +30,16 @@ public class PunishmentTable extends TableManager<PunishmentEntry> {
     @Override
     public void add(PunishmentEntry tableEntry) throws SQLException {
         connect();
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO punishments(id,discordID,playerUUID,punishmentReason,punishmentType,punishmentExpiration,adminID,punishmentLocation) VALUES (?,?,?,?,?,?,?,?,?)");
-
+        PreparedStatement statement = connection.prepareStatement("INSERT INTO punishments(discordID,playerUUID,punishmentReason,punishmentType,punishmentExpiration,adminID,punishmentLocation) VALUES (?,?,?,?,?,?,?,?,?)");
+        statement.setString(1, tableEntry.getDiscordID());
+        statement.setString(2, tableEntry.getPlayerUUID());
+        statement.setString(3, tableEntry.getPunishmentReason());
+        statement.setInt(4, tableEntry.getPunishmentType());
+        statement.setTimestamp(5, tableEntry.getPunishmentExpiration());
+        statement.setString(6, tableEntry.getAdminID());
+        statement.setString(7, tableEntry.getPunishmentLocation());
+        statement.execute();
+        statement.close();
+        disconnect();
     }
 }
