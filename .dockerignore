@@ -1,7 +1,4 @@
-.gradle
-.git
-.gitignore
-.idea
-logs
-.env
-*.env
+build/
+.gradle/
+.idea/
+storage/

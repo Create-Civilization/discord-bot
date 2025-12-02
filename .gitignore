@@ -12,3 +12,4 @@ launch.json
 /storage/config.properties
 /.idea/
 /.gradle/
+/.env

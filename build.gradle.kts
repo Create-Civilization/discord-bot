@@ -4,7 +4,10 @@ plugins {
     id("com.gradleup.shadow") version "8.3.1"
 }
 
-application.mainClass = "com.createciv.discord_bot.Bot"
+application {
+    mainClass.set("com.createciv.discord_bot.Bot")
+}
+
 group = "com.createciv.discord_bot"
 version = "1.0-SNAPSHOT"
 
@@ -23,10 +26,18 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:1.7.32")
     implementation("ch.qos.logback:logback-classic:1.5.13")
     implementation("io.github.classgraph:classgraph:4.8.112")
-    implementation ("com.google.code.gson:gson:2.10.1")
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.xerial:sqlite-jdbc:3.45.1.0")
     implementation("com.mattmalec:Pterodactyl4J:2.BETA_100")
     implementation("junit:junit:4.13.1")
+}
+
+tasks.shadowJar {
+    archiveClassifier.set("")
+    // Explicitly set the main class for shadowJar
+    manifest {
+        attributes["Main-Class"] = "com.createciv.discord_bot.Bot"
+    }
 }
 
 tasks.withType<JavaCompile> {
