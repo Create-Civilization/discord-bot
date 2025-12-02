@@ -26,9 +26,10 @@ public class ConfigLoader {
 
     public static final String PANEL_URL;
 
+
+
     static {
         Properties properties = new Properties();
-
         File configFile = new File("storage/config.properties");
 
         if (!configFile.exists()) {
@@ -67,8 +68,6 @@ public class ConfigLoader {
             Bot.LOGGER.error("Error loading config file",e);
             throw new RuntimeException("Error loading config file", e);
         }
-
-
 
         BOT_TOKEN = properties.getProperty("BOT_TOKEN");
         GUILD_ID = properties.getProperty("GUILD_ID");
