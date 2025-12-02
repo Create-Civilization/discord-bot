@@ -47,7 +47,12 @@ public class WhitelistListener extends ListenerAdapter {
 
         if (response.get("uuid").getAsString() != null) {
             UUID formatedUUID = UUID.fromString(response.get("uuid").getAsString());
-            WhitelistEntry entry = new WhitelistEntry(formatedUUID, event.getUser().getId(),referred);
+
+            WhitelistEntry entry = new WhitelistEntry.Builder()
+                    .playerUUID(formatedUUID)
+                    .discordID(event.getUser().getId())
+                    .referralReason(referred)
+                    .build();
 
             WhitelistTable manager = (WhitelistTable) DatabaseRegistry.getTableManager("whitelist");
 

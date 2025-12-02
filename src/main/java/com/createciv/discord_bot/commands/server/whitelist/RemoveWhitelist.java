@@ -32,10 +32,13 @@ public class RemoveWhitelist extends SlashCommand {
             }
             Guild guild = interactionEvent.getGuild();
             Member mem = interactionEvent.getMember();
-            Role whitelistedRole = guild.getRoleById(ConfigLoader.WHITELIST_ROLE_ID);
+        assert guild != null;
+        Role whitelistedRole = guild.getRoleById(ConfigLoader.WHITELIST_ROLE_ID);
 
             whitelistTable.remove(userID);
             try {
+                assert whitelistedRole != null;
+                assert mem != null;
                 guild.removeRoleFromMember(mem,whitelistedRole).queue();
             } catch (Exception e){
                 System.out.println("Guild" + guild);

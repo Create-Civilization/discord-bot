@@ -1,6 +1,8 @@
 package com.createciv.discord_bot.util.database;
 
 import com.createciv.discord_bot.Bot;
+import com.createciv.discord_bot.util.database.managers.PunishmentTable;
+import com.createciv.discord_bot.util.database.managers.TicketTable;
 import com.createciv.discord_bot.util.database.managers.WhitelistTable;
 
 import java.io.File;
@@ -20,8 +22,12 @@ public class DatabaseRegistry {
 
 
         WhitelistTable whitelistTable = new WhitelistTable();
+        TicketTable ticketTable = new TicketTable();
+        PunishmentTable punishmentTable = new PunishmentTable();
 
         register("whitelist", whitelistTable);
+        register("tickets", ticketTable);
+        register("punishments", punishmentTable);
 
 
         for (Map.Entry<String, TableManager<?>> entry : managers.entrySet()) {

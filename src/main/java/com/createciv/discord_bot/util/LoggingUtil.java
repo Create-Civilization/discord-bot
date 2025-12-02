@@ -15,21 +15,14 @@ import java.util.stream.Collectors;
 
 import static com.createciv.discord_bot.Bot.LOGGER;
 
-/**
- * Utility class for handling logging operations, including logging whitelist events, exceptions,
- * and user actions such as joining or leaving the server. The logs are primarily sent to a
- * pre-configured Discord text channel.
- * <p>
- * This class fetches configuration values from a configuration loader, such as the log channel ID,
- * and utilizes the Discord API to send embedded messages to the appropriate guild and text channel.
- */
+
 public class LoggingUtil {
 
-    private static String logChannelID = ConfigLoader.LOG_CHANNEL_ID;
-    private static TextChannel logChannel = Bot.API.getTextChannelById(logChannelID);
-    private Guild guild = logChannel.getGuild();
+    private static final String logChannelID = ConfigLoader.LOG_CHANNEL_ID;
+    private static final TextChannel logChannel = Bot.API.getTextChannelById(logChannelID);
+    private static final Guild guild = logChannel.getGuild();
 
-    public TextChannel getLogChannel(){
+    public static TextChannel getLogChannel(){
         return logChannel;
     }
 

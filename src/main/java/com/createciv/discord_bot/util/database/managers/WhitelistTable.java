@@ -32,9 +32,9 @@ public class WhitelistTable extends TableManager<WhitelistEntry> {
     public void add(WhitelistEntry tableEntry) throws SQLException {
         connect();
         try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO whitelists (playerUUID, discordID,referral) VALUES (?, ?, ?)");){
-            preparedStatement.setString(1, tableEntry.playerUUID.toString());
-            preparedStatement.setString(2, tableEntry.discordID);
-            preparedStatement.setString(3,tableEntry.referralRzn);
+            preparedStatement.setString(1, tableEntry.getPlayerUUID().toString());
+            preparedStatement.setString(2, tableEntry.getDiscordID());
+            preparedStatement.setString(3,tableEntry.getReferralReason());
             preparedStatement.execute();
         } finally{
             disconnect();
