@@ -1,0 +1,13 @@
+services:
+  bot:
+    build: .
+    container_name: discord-bot
+    environment:
+      - DB_ADDRESS=${DB_ADDRESS}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - BOT_TOKEN=${DISCORD_BOT}
+      - PANEL_TOKEN=${PANEL_TOKEN}
+    restart: unless-stopped

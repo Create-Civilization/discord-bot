@@ -15,6 +15,8 @@ public class ConfigLoader {
     public static final String BOT_TOKEN;
     public static final String PANEL_TOKEN;
     public static final String DB_ADDRESS;
+    public static final String DB_PORT;
+    public static final String DB_NAME;
     public static final String DB_USER;
     public static final String DB_PASSWORD;
 
@@ -39,6 +41,8 @@ public class ConfigLoader {
         BOT_TOKEN = getEnv("BOT_TOKEN");
         PANEL_TOKEN = getEnv("PANEL_TOKEN");
         DB_ADDRESS = getEnv("DB_ADDRESS");
+        DB_PORT = getEnv("DB_PORT");
+        DB_NAME = getEnv("DB_NAME");
         DB_USER = getEnv("DB_USER");
         DB_PASSWORD = getEnv("DB_PASSWORD");
 
@@ -65,7 +69,7 @@ public class ConfigLoader {
 
     private static Properties loadOrCreateConfig() {
         Properties properties = new Properties();
-        File configFile = new File("storage/config.properties");
+        File configFile = new File("config.properties");
 
         if (!configFile.exists()) {
             createDefaultConfig(configFile, properties);
@@ -97,7 +101,6 @@ public class ConfigLoader {
 
         properties.setProperty("TICKET_EXPIRY_TIME_SECONDS", "604800");
 
-        configFile.getParentFile().mkdirs();
         try (FileOutputStream fos = new FileOutputStream(configFile)) {
             properties.store(fos, "Bot Configuration - Fill in all values");
             Bot.LOGGER.info("Default config created at {}", configFile.getAbsolutePath());

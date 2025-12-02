@@ -14,12 +14,12 @@ public class PunishmentTable extends TableManager<PunishmentEntry> {
         Statement statement = connection.createStatement();
         statement.execute(
                 "CREATE TABLE IF NOT EXISTS punishments (" +
-                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY," +
                         "discordID TEXT," +
                         "playerUUID TEXT," +
                         "punishmentReason TEXT NOT NULL, " +
                         "punishmentType INTEGER NOT NULL, " + //0 Mute //1 Kick //2 TempBan
-                        "punishmentExpiration INTEGER NOT NULL, " +
+                        "punishmentExpiration BIGINT NOT NULL, " +
                         "adminID TEXT NOT NULL, " +
                         "punishmentLocation TEXT NOT NULL) "
         );

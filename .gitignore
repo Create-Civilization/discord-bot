@@ -13,3 +13,4 @@ launch.json
 /.idea/
 /.gradle/
 /.env
+postgres_data/
