@@ -35,9 +35,13 @@ public abstract class TableManager<T extends TableEntry> {
         connection = DriverManager.getConnection(DatabaseRegistry.getDbAddress(), ConfigLoader.DB_USER, ConfigLoader.DB_PASSWORD);
     }
 
-    public void disconnect() throws SQLException{
-        if(connection != null && !connection.isClosed()){
-            connection.close();
+    public void disconnect(){
+        try{
+            if(connection != null && !connection.isClosed()){
+                connection.close();
+            }
+        } catch (SQLException e){
+
         }
     }
 }

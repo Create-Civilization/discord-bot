@@ -138,9 +138,6 @@ public class Bot extends ListenerAdapter {
 
     private void registerEventListeners(ReadyEvent readyEvent) {
         LOGGER.info(REGISTRATION_MARKER, "Registering modals..");
-
-
-
         LOGGER.info(REGISTRATION_MARKER, "Modals registered successfully.");
     }
 

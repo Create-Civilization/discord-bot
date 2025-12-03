@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 public class DatabaseConnection extends ScheduledTask {
 
-    public DatabaseConnection(String name, TimeUnit timeUnit, int interval) {
+    public DatabaseConnection() {
         super("database_connection", TimeUnit.MINUTES, 1);
     }
 
