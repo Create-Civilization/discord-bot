@@ -12,3 +12,5 @@ launch.json
 /storage/config.properties
 /.idea/
 /.gradle/
+/.env
+postgres_data/

@@ -1,5 +1,6 @@
 package com.createciv.discord_bot.commands.server.whitelist;
 
+import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
@@ -22,6 +23,11 @@ public class Whitelist extends SlashCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent interactionEvent) {
+
+        if(!Bot.DB_HEALTHY) {
+            interactionEvent.reply("Database is not connected, try again later").queue();
+            return;
+        }
 
         if (ConfigLoader.WHITELIST_ROLE_ID == null) {
             interactionEvent.reply("Whitelist role is not configured. Please configure it to use this command")

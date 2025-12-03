@@ -21,7 +21,7 @@ public class WhitelistTable extends TableManager<WhitelistEntry> {
                         "playerUUID TEXT PRIMARY KEY NOT NULL," +
                         "discordID TEXT NOT NULL, " +
                         "referral TEXT NOT NULL, " +
-                        "createdAt INTEGER DEFAULT (strftime('%s', 'now')))"
+                        "createdAt BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW())::BIGINT))"
         );
 
         statement.close();

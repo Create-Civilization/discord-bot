@@ -15,11 +15,11 @@ public class TicketTable extends TableManager<TicketEntry> {
         Statement statement = connection.createStatement();
         statement.execute(
                 "CREATE TABLE IF NOT EXISTS tickets (" +
-                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY," +
                         "authorID TEXT NOT NULL," +
                         "threadChannelID TEXT NOT NULL," +
                         "embedMessageID TEXT NOT NULL," +
-                        "lastActivity INTEGER DEFAULT (strftime('%s', 'now')))"
+                        "lastActivity BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW())::BIGINT))"
         );
         statement.close();
         disconnect();

@@ -6,13 +6,10 @@ import com.mattmalec.pterodactyl4j.PteroBuilder;
 import com.mattmalec.pterodactyl4j.client.entities.ClientServer;
 import com.mattmalec.pterodactyl4j.client.entities.PteroClient;
 import com.mattmalec.pterodactyl4j.client.managers.WebSocketBuilder;
-import com.mattmalec.pterodactyl4j.client.managers.WebSocketManager;
 import com.mattmalec.pterodactyl4j.client.ws.events.AuthSuccessEvent;
-import com.mattmalec.pterodactyl4j.client.ws.events.output.ConsoleOutputEvent;
 import com.mattmalec.pterodactyl4j.client.ws.events.output.OutputEvent;
 import com.mattmalec.pterodactyl4j.client.ws.hooks.ClientSocketListenerAdapter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +21,7 @@ import java.util.concurrent.TimeoutException;
 public class PanelConnection extends ClientSocketListenerAdapter {
 
     private static String panelURL = ConfigLoader.PANEL_URL;
-    private static String token = ConfigLoader.PETRO_PANEL_TOKEN;
+    private static String token = ConfigLoader.PANEL_TOKEN;
     private static String serverID = ConfigLoader.SERVER_ID;
     private static PteroClient client;
 
