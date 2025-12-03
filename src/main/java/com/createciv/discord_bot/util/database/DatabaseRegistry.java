@@ -2,6 +2,7 @@ package com.createciv.discord_bot.util.database;
 
 import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.ConfigLoader;
+import com.createciv.discord_bot.util.LoggingUtil;
 import com.createciv.discord_bot.util.database.managers.PunishmentTable;
 import com.createciv.discord_bot.util.database.managers.TicketTable;
 import com.createciv.discord_bot.util.database.managers.WhitelistTable;
@@ -39,7 +40,7 @@ public class DatabaseRegistry {
                 manager.initTable();
                 Bot.LOGGER.info("Initialized {} successfully", dbName);
             } catch (SQLException e) {
-                Bot.LOGGER.error("Failed to initialized {}", dbName, e);
+                LoggingUtil.error(e);
             }
         }
 
@@ -54,6 +55,25 @@ public class DatabaseRegistry {
 
     public static String getDbAddress() {
         return dbAddress;
+    }
+
+    public static boolean checkDatabaseHealth() {
+        boolean healthy = true;
+
+        for (Map.Entry<String, TableManager<?>> entry : managers.entrySet()) {
+            String dbName = entry.getKey();
+            TableManager<?> manager = entry.getValue();
+
+            try {
+                manager.ensureConnection();
+                Bot.LOGGER.debug("Checking {} database healthy...", dbName);
+            } catch (SQLException e) {
+                Bot.LOGGER.error("Failed to check {} database healthy", dbName, e);
+                healthy = false;
+            }
+        }
+
+        return healthy;
     }
 
 }

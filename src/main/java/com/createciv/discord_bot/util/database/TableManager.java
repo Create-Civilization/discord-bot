@@ -13,6 +13,24 @@ public abstract class TableManager<T extends TableEntry> {
 
     public abstract void add(T tableEntry) throws SQLException;
 
+    public boolean isConnectionGood(){
+        try{
+            if(connection == null || connection.isClosed()){
+                return false;
+            }
+            return connection.isValid(5);
+        } catch (SQLException e){
+            return false;
+        }
+    }
+
+    public void ensureConnection() throws SQLException{
+        if(!isConnectionGood()){
+            disconnect();
+            connect();
+        }
+    }
+
     public void connect() throws SQLException {
         connection = DriverManager.getConnection(DatabaseRegistry.getDbAddress(), ConfigLoader.DB_USER, ConfigLoader.DB_PASSWORD);
     }

@@ -37,14 +37,13 @@ public class Bot extends ListenerAdapter {
     public static JDA API;
     public static SelfUser BOT;
     public static boolean SERVER_ONLINE = false;
+    public static boolean DB_HEALTHY = false;
 
     // Markers
     private static final Marker REGISTRATION_MARKER = MarkerFactory.getMarker("REGISTRATION");
 
     public static void main(String[] args){
         LOGGER.info("Initiating bot..");
-
-        DatabaseRegistry.init();
 
         API = JDABuilder.createDefault(BOT_TOKEN).enableIntents(GatewayIntent.GUILD_MEMBERS)
                 .addEventListeners(new Bot())
@@ -57,6 +56,8 @@ public class Bot extends ListenerAdapter {
                 .build();
 
         BOT = API.getSelfUser();
+
+        DatabaseRegistry.init();
     }
 
     @Override

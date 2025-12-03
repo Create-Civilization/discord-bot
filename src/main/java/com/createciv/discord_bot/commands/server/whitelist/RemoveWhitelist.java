@@ -1,5 +1,6 @@
 package com.createciv.discord_bot.commands.server.whitelist;
 
+import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
@@ -23,6 +24,10 @@ public class RemoveWhitelist extends SlashCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent interactionEvent) throws SQLException{
+            if(!Bot.DB_HEALTHY) {
+                interactionEvent.reply("Database is not connected, try again later").queue();
+                return;
+            }
             String userID = interactionEvent.getUser().getId();
             WhitelistTable whitelistTable = (WhitelistTable) DatabaseRegistry.getTableManager("whitelist");
             WhitelistEntry whitelistEntry = whitelistTable.get(userID);

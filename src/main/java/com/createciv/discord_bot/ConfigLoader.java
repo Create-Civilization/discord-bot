@@ -72,7 +72,7 @@ public class ConfigLoader {
         File configFile = new File("config.properties");
 
         if (!configFile.exists()) {
-            createDefaultConfig(configFile, properties);
+          createDefaultConfig(configFile, properties);
         }
 
         try (FileInputStream fis = new FileInputStream(configFile)) {
@@ -93,12 +93,10 @@ public class ConfigLoader {
         properties.setProperty("WHITELIST_ROLE_ID", "");
         properties.setProperty("BANNED_ROLE_ID", "");
         properties.setProperty("ADMIN_ROLE_IDS", "");
-
         properties.setProperty("SERVER_ID", "");
         properties.setProperty("SERVER_IP", "");
         properties.setProperty("SERVER_PORT", "");
         properties.setProperty("PANEL_URL", "");
-
         properties.setProperty("TICKET_EXPIRY_TIME_SECONDS", "604800");
 
         try (FileOutputStream fos = new FileOutputStream(configFile)) {
