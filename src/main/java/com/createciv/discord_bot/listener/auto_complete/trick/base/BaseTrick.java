@@ -8,9 +8,9 @@ import java.awt.*;
 
 public abstract class BaseTrick {
 
-	private String name;
-	private String title;
-	private String description;
+	private final String name;
+	private final String title;
+	private final String description;
 
 	public BaseTrick(String name, String title, String description) {
 		this.name = name;

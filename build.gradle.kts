@@ -1,7 +1,7 @@
 plugins {
 	application
 	id("java")
-	id("com.gradleup.shadow") version "8.3.1"
+	id("com.gradleup.shadow") version "9.3.0"
 	id("co.uzzu.dotenv.gradle") version "4.0.0"
 }
 
@@ -12,25 +12,27 @@ application {
 group = "com.createciv.discord_bot"
 version = "1.0.0"
 
-val jdaVersion = "5.5.0"
-
-repositories {
-	mavenCentral()
-	maven {
-		url = uri("https://repo.mattmalec.com/repository/releases")
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
 	}
 }
 
+repositories {
+	mavenCentral()
+	maven { url = uri("https://repo.mattmalec.com/repository/releases") }
+}
+
 dependencies {
-	implementation("net.dv8tion:JDA:${jdaVersion}")
-	implementation("org.slf4j:slf4j-api:1.7.32")
-	implementation("org.slf4j:slf4j-simple:1.7.32")
+	implementation("net.dv8tion:JDA:6.1.2")
+	implementation("org.slf4j:slf4j-api:2.0.17")
+	implementation("org.slf4j:slf4j-simple:2.0.17")
 	implementation("ch.qos.logback:logback-classic:1.5.21")
-	implementation("io.github.classgraph:classgraph:4.8.112")
-	implementation("com.google.code.gson:gson:2.10.1")
-	implementation("org.postgresql:postgresql:42.7.7")
-	implementation("com.mattmalec:Pterodactyl4J:2.BETA_100")
-	implementation("junit:junit:4.13.1")
+	implementation("io.github.classgraph:classgraph:4.8.184")
+	implementation("com.google.code.gson:gson:2.13.2")
+	implementation("org.postgresql:postgresql:42.7.8")
+	implementation("com.mattmalec:Pterodactyl4J:2.BETA_142") // https://repo.mattmalec.com/#browse/browse:releases:org
+	implementation("junit:junit:4.13.2")
 }
 
 tasks.shadowJar {
@@ -42,6 +44,7 @@ tasks.shadowJar {
 
 tasks.named<JavaExec>("run") {
 	environment(env.allVariables())
+	jvmArgs("-XX:+UseCompactObjectHeaders")
 }
 
 tasks.withType<JavaCompile> {
