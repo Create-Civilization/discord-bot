@@ -19,7 +19,6 @@ public class UpdateStatus extends ScheduledTask {
 
 	@Override
 	public void execute() {
-
 		JsonObject serverInfo = MojangAPI.getServerStats(ConfigLoader.SERVER_IP, ConfigLoader.SERVER_PORT);
 		if (serverInfo == null) {
 			Bot.SERVER_ONLINE = false;
@@ -31,17 +30,14 @@ public class UpdateStatus extends ScheduledTask {
 			Bot.SERVER_ONLINE = true;
 			updateBotStatus(playerCount + "/" + maxPlayerCount + " players", true);
 		}
-
 	}
 
 	private void updateBotStatus(String status, boolean serverIsLive) {
 		JDA jda = Bot.API;
-
 		if (!serverIsLive) {
 			jda.getPresence().setPresence(OnlineStatus.ONLINE, Activity.customStatus(status));
 			return;
 		}
-
 		jda.getPresence().setPresence(OnlineStatus.ONLINE, Activity.watching(status));
 	}
 }

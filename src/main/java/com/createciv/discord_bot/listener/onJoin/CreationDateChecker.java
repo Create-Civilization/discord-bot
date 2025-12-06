@@ -12,7 +12,7 @@ import java.time.OffsetDateTime;
 
 import static com.createciv.discord_bot.Bot.LOGGER;
 
-public class creationDateChecker extends ListenerAdapter {
+public class CreationDateChecker extends ListenerAdapter {
 
 	@Override
 	public void onGuildMemberJoin(GuildMemberJoinEvent event) {

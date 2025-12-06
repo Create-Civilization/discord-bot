@@ -6,11 +6,11 @@ import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
 import com.createciv.discord_bot.util.database.managers.WhitelistTable;
 import com.createciv.discord_bot.util.database.types.WhitelistEntry;
+import net.dv8tion.jda.api.components.label.Label;
+import net.dv8tion.jda.api.components.textinput.TextInput;
+import net.dv8tion.jda.api.components.textinput.TextInputStyle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
-import net.dv8tion.jda.api.interactions.modals.Modal;
+import net.dv8tion.jda.api.modals.Modal;
 
 import java.sql.SQLException;
 
@@ -29,8 +29,10 @@ public class Whitelist extends SlashCommand {
 		}
 
 		if (ConfigLoader.WHITELIST_ROLE_ID == null) {
-			interactionEvent.reply("Whitelist role is not configured. Please configure it to use this command")
-				.setEphemeral(true).queue();
+			interactionEvent
+				.reply("Whitelist role is not configured. Please configure it to use this command")
+				.setEphemeral(true)
+				.queue();
 			return;
 		}
 
@@ -47,13 +49,15 @@ public class Whitelist extends SlashCommand {
 			return;
 		}
 
-		TextInput username = TextInput.create("username", "Minecraft Username", TextInputStyle.SHORT)
+		TextInput username = TextInput.create("username", TextInputStyle.SHORT)
+			.setValue("Minecraft Username")
 			.setPlaceholder("Type your username here")
 			.setRequired(true)
 			.setMinLength(3)
 			.setMaxLength(16)
 			.build();
-		TextInput referral = TextInput.create("referral", "How did you hear about us?", TextInputStyle.PARAGRAPH)
+		TextInput referral = TextInput.create("referral", TextInputStyle.PARAGRAPH)
+			.setValue("How did you hear about us?")
 			.setPlaceholder("Examples: S1 Player, X user told me, Reddit, etc")
 			.setRequired(true)
 			.setMinLength(3)
@@ -61,8 +65,8 @@ public class Whitelist extends SlashCommand {
 			.build();
 
 		Modal modal = Modal.create("whitelist", "Whitelist")
-			.addComponents(ActionRow.of(username))
-			.addComponents(ActionRow.of(referral))
+			.addComponents(Label.of("Username", username))
+			.addComponents(Label.of("Referral", referral))
 			.build();
 
 		interactionEvent.replyModal(modal).queue();

@@ -10,8 +10,6 @@ import com.mattmalec.pterodactyl4j.client.ws.events.AuthSuccessEvent;
 import com.mattmalec.pterodactyl4j.client.ws.events.output.OutputEvent;
 import com.mattmalec.pterodactyl4j.client.ws.hooks.ClientSocketListenerAdapter;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
