@@ -14,20 +14,19 @@ import java.util.stream.Stream;
 
 public class TrickAutoComplete extends ListenerAdapter {
 
-    public static final BaseTrick[] tricks = {
-            new HelpTicketNoResponse(),
-            new HowWhitelist(),
-            new WorldMap(),
-            new Season2ETA()};
+	public static final BaseTrick[] tricks = {
+		new HelpTicketNoResponse(),
+		new HowWhitelist(),
+		new WorldMap(),
+		new Season2ETA()};
 
-    @Override
-    public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
-        if (event.getName().equals("trick") && event.getFocusedOption().getName().equals("name")) {
-            List<Command.Choice> options = Stream.of(tricks)
-                    .map(word -> new Command.Choice(word.getName(), word.getName()))
-                    .toList();
-
-            event.replyChoices(options).queue();
-        }
-    }
+	@Override
+	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
+		if (event.getName().equals("trick") && event.getFocusedOption().getName().equals("name")) {
+			List<Command.Choice> options = Stream.of(tricks)
+				.map(word -> new Command.Choice(word.getName(), word.getName()))
+				.toList();
+			event.replyChoices(options).queue();
+		}
+	}
 }

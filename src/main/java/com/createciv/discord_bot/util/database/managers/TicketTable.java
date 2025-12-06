@@ -9,34 +9,32 @@ import java.sql.Statement;
 
 public class TicketTable extends TableManager<TicketEntry> {
 
-    @Override
-    public void initTable() throws SQLException {
-        connect();
-        Statement statement = connection.createStatement();
-        statement.execute(
-                "CREATE TABLE IF NOT EXISTS tickets (" +
-                        "id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY," +
-                        "authorID TEXT NOT NULL," +
-                        "threadChannelID TEXT NOT NULL," +
-                        "embedMessageID TEXT NOT NULL," +
-                        "lastActivity BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW())::BIGINT))"
-        );
-        statement.close();
-        disconnect();
-    }
+	@Override
+	public void initTable() throws SQLException {
+		connect();
+		Statement statement = connection.createStatement();
+		statement.execute(
+			"CREATE TABLE IF NOT EXISTS tickets (" +
+				"id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY," +
+				"authorID TEXT NOT NULL," +
+				"threadChannelID TEXT NOT NULL," +
+				"embedMessageID TEXT NOT NULL," +
+				"lastActivity BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW())::BIGINT))"
+		);
+		statement.close();
+		disconnect();
+	}
 
-    @Override
-    public void add(TicketEntry tableEntry) throws SQLException {
-        connect();
-        PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO tickets (authorID, threadChannelID, embedMessageID, lastActivity) VALUES (?, ?, ?, ?)");
-        preparedStatement.setString(1, tableEntry.authorID);
-        preparedStatement.setString(2, tableEntry.threadChannelID);
-        preparedStatement.setString(3, tableEntry.embedMessageID);
-        if(tableEntry.lastActivity != null){
-            preparedStatement.setTimestamp(4, tableEntry.lastActivity);
-        }
-        preparedStatement.execute();
-        preparedStatement.close();
-        disconnect();
-    }
+	@Override
+	public void add(TicketEntry tableEntry) throws SQLException {
+		connect();
+		PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO tickets (authorID, threadChannelID, embedMessageID, lastActivity) VALUES (?, ?, ?, ?)");
+		preparedStatement.setString(1, tableEntry.authorID);
+		preparedStatement.setString(2, tableEntry.threadChannelID);
+		preparedStatement.setString(3, tableEntry.embedMessageID);
+		if (tableEntry.lastActivity != null) preparedStatement.setTimestamp(4, tableEntry.lastActivity);
+		preparedStatement.execute();
+		preparedStatement.close();
+		disconnect();
+	}
 }

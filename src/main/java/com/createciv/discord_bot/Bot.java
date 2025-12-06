@@ -33,132 +33,124 @@ import java.util.List;
 import static com.createciv.discord_bot.ConfigLoader.BOT_TOKEN;
 
 public class Bot extends ListenerAdapter {
-    public static final Logger LOGGER = LoggerFactory.getLogger("BOT_LOG");
-    public static JDA API;
-    public static SelfUser BOT;
-    public static boolean SERVER_ONLINE = false;
-    public static boolean DB_HEALTHY = false;
 
-    // Markers
-    private static final Marker REGISTRATION_MARKER = MarkerFactory.getMarker("REGISTRATION");
+	public static final Logger LOGGER = LoggerFactory.getLogger("BOT_LOG");
+	public static JDA API;
+	public static SelfUser BOT;
+	public static boolean SERVER_ONLINE = false;
+	public static boolean DB_HEALTHY = false;
 
-    public static void main(String[] args){
-        LOGGER.info("Initiating bot..");
+	// Markers
+	private static final Marker REGISTRATION_MARKER = MarkerFactory.getMarker("REGISTRATION");
 
-        API = JDABuilder.createDefault(BOT_TOKEN).enableIntents(GatewayIntent.GUILD_MEMBERS)
-                .addEventListeners(new Bot())
-                .addEventListeners(new WhitelistListener())
-               // .addEventListeners(new TicketMessageHandler())
-                .addEventListeners(new JoinAndLeave())
-                .addEventListeners(new TrickAutoComplete())
-                //.addEventListeners(new ModerationAutoComplete())
-                .addEventListeners(new creationDateChecker())
-                .build();
+	public static void main(String[] args) {
+		LOGGER.info("Initiating bot..");
 
-        BOT = API.getSelfUser();
+		API = JDABuilder.createDefault(BOT_TOKEN).enableIntents(GatewayIntent.GUILD_MEMBERS)
+			.addEventListeners(new Bot())
+			.addEventListeners(new WhitelistListener())
+			// .addEventListeners(new TicketMessageHandler())
+			.addEventListeners(new JoinAndLeave())
+			.addEventListeners(new TrickAutoComplete())
+			//.addEventListeners(new ModerationAutoComplete())
+			.addEventListeners(new creationDateChecker())
+			.build();
 
-        DatabaseRegistry.init();
-    }
+		BOT = API.getSelfUser();
 
-    @Override
-    public void onReady(ReadyEvent event) {
-        this.registerSlashCommands(event);
-        this.registerScheduledTasks();
-        TaskRegistry.init();
-        LOGGER.info("Bot successfully initiated.");
-        PanelConnection.init();
-    }
+		DatabaseRegistry.init();
+	}
 
-    @Override
-    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        try{
-            SlashCommand command = SlashCommand.REGISTRY.get(event.getName());
-            if (command != null) {
-                command.execute(event);
-            } else {
-                event.reply("Unknown command").queue();
-            }
-        } catch (Exception e){
-            LOGGER.error("Error in slash command interaction", e);
-            LoggingUtil.error(e);
-        }
-    }
+	@Override
+	public void onReady(ReadyEvent event) {
+		this.registerSlashCommands(event);
+		this.registerScheduledTasks();
+		TaskRegistry.init();
+		LOGGER.info("Bot successfully initiated.");
+		PanelConnection.init();
+	}
 
-    private void registerSlashCommands(ReadyEvent readyEvent) {
-        LOGGER.info(REGISTRATION_MARKER, "Registering commands..");
-        CommandListUpdateAction commands = readyEvent.getJDA().updateCommands();
+	@Override
+	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+		try {
+			SlashCommand command = SlashCommand.REGISTRY.get(event.getName());
+			if (command != null) command.execute(event);
+			else event.reply("Unknown command").queue();
+		} catch (Exception e) {
+			LOGGER.error("Error in slash command interaction", e);
+			LoggingUtil.error(e);
+		}
+	}
 
-        // Use reflection to register all commands
-        List<Class<? extends SlashCommand>> subclasses = getSubclasses(SlashCommand.class);
-        for (Class<? extends SlashCommand> subclass : subclasses) {
-            try {
-                SlashCommand commandInstance = subclass.getDeclaredConstructor().newInstance();
-                SlashCommand.register(commandInstance);
+	private void registerSlashCommands(ReadyEvent readyEvent) {
+		LOGGER.info(REGISTRATION_MARKER, "Registering commands..");
+		CommandListUpdateAction commands = readyEvent.getJDA().updateCommands();
 
-                LOGGER.info("Successfully collected slash command: {}", subclass.getSimpleName());
+		// Use reflection to register all commands
+		List<Class<? extends SlashCommand>> subclasses = getSubclasses(SlashCommand.class);
+		for (Class<? extends SlashCommand> subclass : subclasses) {
+			try {
+				SlashCommand commandInstance = subclass.getDeclaredConstructor().newInstance();
+				SlashCommand.register(commandInstance);
 
-            } catch (Exception e) {
-                LOGGER.error("Failed to register slash command: {}", subclass.getSimpleName(), e);
-            }
-        }
+				LOGGER.info("Successfully collected slash command: {}", subclass.getSimpleName());
 
-        SlashCommand.REGISTRY.forEach((name, command) -> {
-            SlashCommandData commandData = Commands.slash(command.getIdentifier(), command.getDescription());
-            for (SlashCommand.Option option : command.getOptions()) {
-                commandData.addOption(option.optionType(), option.name(), option.description(), option.required(), option.autocomplete());
-            }
-            commands.addCommands(
-                    commandData
-            );
-            LOGGER.info("Successfully parsed and registered command: {}", name);
-        });
+			} catch (Exception e) {
+				LOGGER.error("Failed to register slash command: {}", subclass.getSimpleName(), e);
+			}
+		}
 
-        commands.queue();
+		SlashCommand.REGISTRY.forEach((name, command) -> {
+			SlashCommandData commandData = Commands.slash(command.getIdentifier(), command.getDescription());
+			for (SlashCommand.Option option : command.getOptions())
+				commandData.addOption(option.optionType(), option.name(), option.description(), option.required(), option.autocomplete());
+			commands.addCommands(commandData);
+			LOGGER.info("Successfully parsed and registered command: {}", name);
+		});
 
-        LOGGER.info(REGISTRATION_MARKER, "Commands registered successfully.");
-    }
+		commands.queue();
 
-    private void registerScheduledTasks() {
-        LOGGER.info(REGISTRATION_MARKER, "Registering scheduled tasks...");
+		LOGGER.info(REGISTRATION_MARKER, "Commands registered successfully.");
+	}
 
-        List<Class<? extends ScheduledTask>> subclasses = getSubclasses(ScheduledTask.class);
-        for (Class<? extends ScheduledTask> subclass : subclasses) {
-            try {
-                ScheduledTask taskInstance = subclass.getDeclaredConstructor().newInstance();
-                ScheduledTask.register(taskInstance);
-                LOGGER.info("Successfully registered task: {}", subclass.getSimpleName());
-            } catch (Exception e) {
-                LOGGER.error("Failed to register scheduled task: {}", subclass.getSimpleName(), e);
-            }
-        }
+	private void registerScheduledTasks() {
+		LOGGER.info(REGISTRATION_MARKER, "Registering scheduled tasks...");
 
-        LOGGER.info(REGISTRATION_MARKER, "Scheduled tasks registered successfully.");
-    }
+		List<Class<? extends ScheduledTask>> subclasses = getSubclasses(ScheduledTask.class);
+		for (Class<? extends ScheduledTask> subclass : subclasses) {
+			try {
+				ScheduledTask taskInstance = subclass.getDeclaredConstructor().newInstance();
+				ScheduledTask.register(taskInstance);
+				LOGGER.info("Successfully registered task: {}", subclass.getSimpleName());
+			} catch (Exception e) {
+				LOGGER.error("Failed to register scheduled task: {}", subclass.getSimpleName(), e);
+			}
+		}
 
+		LOGGER.info(REGISTRATION_MARKER, "Scheduled tasks registered successfully.");
+	}
 
-    private void registerEventListeners(ReadyEvent readyEvent) {
-        LOGGER.info(REGISTRATION_MARKER, "Registering modals..");
-        LOGGER.info(REGISTRATION_MARKER, "Modals registered successfully.");
-    }
+	private void registerEventListeners(ReadyEvent readyEvent) {
+		LOGGER.info(REGISTRATION_MARKER, "Registering modals..");
+		LOGGER.info(REGISTRATION_MARKER, "Modals registered successfully.");
+	}
 
-    public static <T> List<Class<? extends T>> getSubclasses(Class<T> abstractClass) {
-        List<Class<? extends T>> subclasses = new ArrayList<>();
-        try (ScanResult scanResult = new ClassGraph()
-                .enableAllInfo()  // Enable all scanning features YEEEEE HAWWWW
-                .scan()) {
+	public static <T> List<Class<? extends T>> getSubclasses(Class<T> abstractClass) {
+		List<Class<? extends T>> subclasses = new ArrayList<>();
+		try (ScanResult scanResult = new ClassGraph()
+			.enableAllInfo()  // Enable all scanning features YEEEEE HAWWWW
+			.scan()) {
 
-            // Scan all classes and find those that extend T
-            scanResult.getSubclasses(abstractClass.getName()).forEach(classInfo -> {
-                try {
-                    Class<? extends T> cls = (Class<? extends T>) Class.forName(classInfo.getName());
-                    if (abstractClass.isAssignableFrom(cls)) {
-                        subclasses.add(cls);
-                    }
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
-        return subclasses;
-    }
+			// Scan all classes and find those that extend T
+			scanResult.getSubclasses(abstractClass.getName()).forEach(classInfo -> {
+				try {
+					Class<? extends T> cls = (Class<? extends T>) Class.forName(classInfo.getName());
+					if (abstractClass.isAssignableFrom(cls)) subclasses.add(cls);
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			});
+		}
+		return subclasses;
+	}
 }

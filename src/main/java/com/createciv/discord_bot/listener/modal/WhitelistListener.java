@@ -23,62 +23,62 @@ import static com.createciv.discord_bot.Bot.LOGGER;
 
 public class WhitelistListener extends ListenerAdapter {
 
+	//TODO change players nicknames on the server to MC name after the whitelist goes through
 
-    //TODO change players nicknames on the server to MC name after the whitelist goes through
+	@Override
+	public void onModalInteraction(@NotNull ModalInteractionEvent event) {
+		if (!event.getModalId().equals("whitelist")) {
+			return;
+		}
 
+		String username = Objects.requireNonNull(event.getValue("username")).getAsString();
+		String referred = Objects.requireNonNull(event.getValue("referral")).getAsString();
+		JsonObject response = MojangAPI.getPlayerInfo(username);
+		if (response == null) {
+			event.reply("A severe error occurred. Please try again later").setEphemeral(true).queue();
+			return;
+		}
 
-    @Override
-    public void onModalInteraction(@NotNull ModalInteractionEvent event) {
-        if (!event.getModalId().equals("whitelist")) {return;}
+		//Check if we got an invalid username
+		if (response.get("reason") != null) {
+			event.reply(response.get("reason").getAsString()).setEphemeral(true).queue();
+			return;
+		}
 
-        String username = Objects.requireNonNull(event.getValue("username")).getAsString();
-        String referred = Objects.requireNonNull(event.getValue("referral")).getAsString();
-        JsonObject response = MojangAPI.getPlayerInfo(username);
-        if (response == null) {
-            event.reply("A severe error occurred. Please try again later").setEphemeral(true).queue();
-            return;
-        }
+		if (response.get("uuid").getAsString() != null) {
+			UUID formatedUUID = UUID.fromString(response.get("uuid").getAsString());
 
-        //Check if we got an invalid username
-        if (response.get("reason") != null) {
-            event.reply(response.get("reason").getAsString()).setEphemeral(true).queue();
-            return;
-        }
+			WhitelistEntry entry = new WhitelistEntry.Builder()
+				.playerUUID(formatedUUID)
+				.discordID(event.getUser().getId())
+				.referralReason(referred)
+				.build();
 
-        if (response.get("uuid").getAsString() != null) {
-            UUID formatedUUID = UUID.fromString(response.get("uuid").getAsString());
+			WhitelistTable manager = (WhitelistTable) DatabaseRegistry.getTableManager("whitelist");
 
-            WhitelistEntry entry = new WhitelistEntry.Builder()
-                    .playerUUID(formatedUUID)
-                    .discordID(event.getUser().getId())
-                    .referralReason(referred)
-                    .build();
+			try {
+				manager.add(entry);
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
 
-            WhitelistTable manager = (WhitelistTable) DatabaseRegistry.getTableManager("whitelist");
+			Guild guild = event.getGuild();
+			Member user = event.getMember();
+			Role whitelistedRole = guild.getRoleById(ConfigLoader.WHITELIST_ROLE_ID);
+			try {
+				guild.addRoleToMember(user, whitelistedRole).queue();
+			} catch (Exception e) {
+				System.out.println("Guild" + guild);
+				System.out.println("Member" + user);
+				System.out.println("Role" + whitelistedRole);
+				LOGGER.error("Failed to add role to whitelisted user", e);
+			}
 
-            try {
-                manager.add(entry);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+			event.reply("You have been successfully whitelisted").setEphemeral(true).queue();
+			LoggingUtil.log(Color.green, "New Whitelist", String.format("%s has been added to the whitelist.", username));
+			return;
+		}
 
-            Guild guild = event.getGuild();
-            Member user = event.getMember();
-            Role whitelistedRole = guild.getRoleById(ConfigLoader.WHITELIST_ROLE_ID);
-            try {
-                guild.addRoleToMember(user, whitelistedRole).queue();
-            } catch (Exception e){
-                System.out.println("Guild" + guild);
-                System.out.println("Member" + user);
-                System.out.println("Role" + whitelistedRole);
-                LOGGER.error("Failed to add role to whitelisted user",e);
-            }
-
-            event.reply("You have been successfully whitelisted").setEphemeral(true).queue();
-            LoggingUtil.log(Color.green, "New Whitelist", String.format("%s has been added to the whitelist.", username));
-            return;
-        }
-
-        event.reply("Unknown error occurred, If this continues please contact a developer").setEphemeral(true).queue();
-    }
+		event.reply("Unknown error occurred, If this continues please contact a developer").setEphemeral(true).queue();
+	}
 }

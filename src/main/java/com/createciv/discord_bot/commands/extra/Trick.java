@@ -12,27 +12,23 @@ import java.util.Optional;
 
 public class Trick extends SlashCommand {
 
-    public Trick() {
-        super("trick", "Some helpful text based tricks");
-        addOption(new Option(OptionType.STRING, "name", "Select the trick to use", true, true));
-    }
+	public Trick() {
+		super("trick", "Some helpful text based tricks");
+		addOption(new Option(OptionType.STRING, "name", "Select the trick to use", true, true));
+	}
 
-    @Override
-    public void execute(SlashCommandInteractionEvent interactionEvent) {
-        String trickName = Objects.requireNonNull(interactionEvent.getOption("name")).getAsString();
+	@Override
+	public void execute(SlashCommandInteractionEvent interactionEvent) {
+		String trickName = Objects.requireNonNull(interactionEvent.getOption("name")).getAsString();
 
-        Optional<BaseTrick> trick = Arrays.stream(TrickAutoComplete.tricks)
-                .filter(name -> name.getName().equalsIgnoreCase(trickName))
-                .findFirst();
+		Optional<BaseTrick> trick = Arrays.stream(TrickAutoComplete.tricks)
+			.filter(name -> name.getName().equalsIgnoreCase(trickName))
+			.findFirst();
 
-
-        if (trick.isEmpty()) {
-            interactionEvent.reply("Invalid trick name").setEphemeral(true).queue();
-            return;
-        }
-        interactionEvent.replyEmbeds(trick.get().getEmbed()).queue();
-
-    }
-
-
+		if (trick.isEmpty()) {
+			interactionEvent.reply("Invalid trick name").setEphemeral(true).queue();
+			return;
+		}
+		interactionEvent.replyEmbeds(trick.get().getEmbed()).queue();
+	}
 }
