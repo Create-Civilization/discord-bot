@@ -94,3 +94,21 @@ tasks.register("devRun") {
 	dependsOn("dockerDbStart")
 	finalizedBy("run")
 }
+
+tasks.register<Exec>("dockerBotStart") {
+	group = "docker"
+	description = "Start only the bot container"
+	commandLine("docker", "compose", "-f", "docker-compose.bot-only.yml", "up", "--build", "-d")
+}
+
+tasks.register<Exec>("dockerBotStop") {
+	group = "docker"
+	description = "Stop only the bot container"
+	commandLine("docker", "compose", "-f", "docker-compose.bot-only.yml", "down")
+}
+
+tasks.register<Exec>("dockerBotLogs") {
+	group = "docker"
+	description = "Show logs for only the bot container"
+	commandLine("docker", "compose", "-f", "docker-compose.bot-only.yml", "logs", "-f")
+}

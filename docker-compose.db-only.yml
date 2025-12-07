@@ -6,8 +6,11 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
+      DB_USER_MC: ${DB_USER_MC}
+      DB_PASSWORD_MC: ${DB_PASSWORD_MC}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./postgres-init/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
     ports:
       - "5432:5432"
     restart: unless-stopped

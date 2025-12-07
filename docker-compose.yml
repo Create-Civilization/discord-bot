@@ -24,8 +24,11 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
+      DB_USER_MC: ${DB_USER_MC}
+      DB_PASSWORD_MC: ${DB_PASSWORD_MC}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
     ports:
       - "${DB_EXTERNAL_PORT}:5432"
     healthcheck:
