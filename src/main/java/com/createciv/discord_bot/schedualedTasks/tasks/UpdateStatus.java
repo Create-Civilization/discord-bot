@@ -13,35 +13,31 @@ import java.util.concurrent.TimeUnit;
 
 public class UpdateStatus extends ScheduledTask {
 
-    public UpdateStatus() {
-        super("update_bot_status", TimeUnit.SECONDS, 30);
-    }
+	public UpdateStatus() {
+		super("update_bot_status", TimeUnit.SECONDS, 30);
+	}
 
-    @Override
-    public void execute() {
+	@Override
+	public void execute() {
+		JsonObject serverInfo = MojangAPI.getServerStats(ConfigLoader.SERVER_IP, ConfigLoader.SERVER_PORT);
+		if (serverInfo == null) {
+			Bot.SERVER_ONLINE = false;
+			updateBotStatus("Server is offline", false);
+		} else {
+			JsonObject playerInfo = serverInfo.get("players").getAsJsonObject();
+			int playerCount = playerInfo.get("online").getAsInt();
+			int maxPlayerCount = playerInfo.get("max").getAsInt();
+			Bot.SERVER_ONLINE = true;
+			updateBotStatus(playerCount + "/" + maxPlayerCount + " players", true);
+		}
+	}
 
-        JsonObject serverInfo = MojangAPI.getServerStats(ConfigLoader.SERVER_IP, ConfigLoader.SERVER_PORT);
-        if (serverInfo == null) {
-            Bot.SERVER_ONLINE = false;
-            updateBotStatus("Server is offline", false);
-        } else {
-            JsonObject playerInfo = serverInfo.get("players").getAsJsonObject();
-            int playerCount = playerInfo.get("online").getAsInt();
-            int maxPlayerCount = playerInfo.get("max").getAsInt();
-            Bot.SERVER_ONLINE = true;
-            updateBotStatus(playerCount + "/" + maxPlayerCount + " players", true);
-        }
-
-    }
-
-    private void updateBotStatus(String status, boolean serverIsLive) {
-        JDA jda = Bot.API;
-
-        if (!serverIsLive) {
-            jda.getPresence().setPresence(OnlineStatus.ONLINE, Activity.customStatus(status));
-            return;
-        }
-
-        jda.getPresence().setPresence(OnlineStatus.ONLINE, Activity.watching(status));
-    }
+	private void updateBotStatus(String status, boolean serverIsLive) {
+		JDA jda = Bot.API;
+		if (!serverIsLive) {
+			jda.getPresence().setPresence(OnlineStatus.ONLINE, Activity.customStatus(status));
+			return;
+		}
+		jda.getPresence().setPresence(OnlineStatus.ONLINE, Activity.watching(status));
+	}
 }

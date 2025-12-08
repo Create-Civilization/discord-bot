@@ -10,48 +10,53 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class SlashCommand extends Registry {
-    private String name;
-    private String description;
-    private final List<Option> options = new ArrayList<>();
 
-    public static final Map<String, SlashCommand> REGISTRY = new HashMap<>();
+	private String name;
+	private String description;
+	private final List<Option> options = new ArrayList<>();
 
-    public SlashCommand(String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
+	public static final Map<String, SlashCommand> REGISTRY = new HashMap<>();
 
-    public abstract void execute(SlashCommandInteractionEvent interactionEvent) throws SQLException;
+	public SlashCommand(String name, String description) {
+		this.name = name;
+		this.description = description;
+	}
 
-    public static void register(SlashCommand slashCommand) {
-        REGISTRY.put(slashCommand.getIdentifier(), slashCommand);
-    }
+	public abstract void execute(SlashCommandInteractionEvent interactionEvent) throws SQLException;
 
-    public String getIdentifier() {
-        return name;
-    }
+	public static void register(SlashCommand slashCommand) {
+		REGISTRY.put(slashCommand.getIdentifier(), slashCommand);
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getIdentifier() {
+		return name;
+	}
 
-    public List<Option> getOptions() {
-        return options;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void addOption(Option option) {
-        this.options.add(option);
-    }
+	public List<Option> getOptions() {
+		return options;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void addOption(Option option) {
+		this.options.add(option);
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public record Option(OptionType optionType, String name, String description, boolean required,
-                         boolean autocomplete) {
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public record Option(
+		OptionType optionType,
+		String name,
+		String description,
+		boolean required,
+		boolean autocomplete
+	) {}
 }

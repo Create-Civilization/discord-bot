@@ -11,60 +11,53 @@ import java.net.http.HttpResponse;
 
 public class MojangAPI {
 
-    public static JsonObject getPlayerInfo(String usernameOrUUID) {
-        try {
-            Gson gson = new Gson();
-            HttpClient client = HttpClient.newHttpClient();
-            //https://api.mojang.com/users/profiles/minecraft/
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://api.ashcon.app/mojang/v2/user/" + usernameOrUUID ))
-                    .GET()
-                    .build();
+	public static JsonObject getPlayerInfo(String usernameOrUUID) {
+		try {
+			Gson gson = new Gson();
+			HttpClient client = HttpClient.newHttpClient();
+			//https://api.mojang.com/users/profiles/minecraft/
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create("https://api.ashcon.app/mojang/v2/user/" + usernameOrUUID))
+				.GET()
+				.build();
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+			HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if(response.statusCode() == 200 || response.statusCode() == 404){
-                return gson.fromJson(response.body(), JsonObject.class);
-            } else {
-                Bot.LOGGER.error("getUUID failed. Status code {}", response.statusCode());
-                return null;
-            }
-        } catch (Exception e){
-            return null;
-        }
-    }
+			if (response.statusCode() == 200 || response.statusCode() == 404) return gson.fromJson(response.body(), JsonObject.class);
+			else {
+				Bot.LOGGER.error("getUUID failed. Status code {}", response.statusCode());
+				return null;
+			}
+		} catch (Exception e) {
+			return null;
+		}
+	}
 
+	/**
+	 * Retrieves server statistics for the given Minecraft server IP address.
+	 *
+	 * @param serverIP The IP address of the Minecraft server for which statistics are to be retrieved.
+	 * @return A JsonObject containing server statistics if the server response is successful (HTTP status code 200),
+	 * otherwise null.
+	 * @throws RuntimeException If an error occurs during the HTTP request process.
+	 */
+	public static JsonObject getServerStats(String serverIP, String port) {
+		try {
+			Gson gson = new Gson();
+			HttpClient client = HttpClient.newHttpClient();
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create("https://api.mcsrvstat.us/3/" + serverIP + ":" + port))
+				.GET()
+				.build();
 
+			HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-    /**
-     * Retrieves server statistics for the given Minecraft server IP address.
-     *
-     * @param serverIP The IP address of the Minecraft server for which statistics are to be retrieved.
-     * @return A JsonObject containing server statistics if the server response is successful (HTTP status code 200),
-     * otherwise null.
-     * @throws RuntimeException If an error occurs during the HTTP request process.
-     */
-    public static JsonObject getServerStats(String serverIP, String port) {
-        try{
-            Gson gson = new Gson();
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://api.mcsrvstat.us/3/" + serverIP + ":" + port))
-                    .GET()
-                    .build();
+			if (response.statusCode() == 200) return gson.fromJson(response.body(), JsonObject.class);
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            if(response.statusCode() == 200){
-                return gson.fromJson(response.body(), JsonObject.class);
-            }
-
-            return null;
-        } catch (Exception e) {
-            LoggingUtil.error(e);
-        }
-        return null;
-    }
-
-
+			return null;
+		} catch (Exception e) {
+			LoggingUtil.error(e);
+		}
+		return null;
+	}
 }

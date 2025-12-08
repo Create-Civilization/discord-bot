@@ -8,6 +8,6 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-      - BOT_TOKEN=${DISCORD_BOT}
+      - BOT_TOKEN=${BOT_TOKEN}
       - PANEL_TOKEN=${PANEL_TOKEN}
     restart: unless-stopped
