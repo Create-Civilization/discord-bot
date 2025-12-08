@@ -50,14 +50,12 @@ public class Whitelist extends SlashCommand {
 		}
 
 		TextInput username = TextInput.create("username", TextInputStyle.SHORT)
-			.setValue("Minecraft Username")
 			.setPlaceholder("Type your username here")
 			.setRequired(true)
 			.setMinLength(3)
 			.setMaxLength(16)
 			.build();
 		TextInput referral = TextInput.create("referral", TextInputStyle.PARAGRAPH)
-			.setValue("How did you hear about us?")
 			.setPlaceholder("Examples: S1 Player, X user told me, Reddit, etc")
 			.setRequired(true)
 			.setMinLength(3)
