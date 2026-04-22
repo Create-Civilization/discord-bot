@@ -3,6 +3,7 @@ package com.createciv.discord_bot.schedualedTasks.tasks;
 import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.ScheduledTask;
+import com.createciv.discord_bot.util.LoggingUtil;
 import com.createciv.discord_bot.util.MojangAPI;
 import com.google.gson.JsonObject;
 import net.dv8tion.jda.api.JDA;
@@ -24,11 +25,16 @@ public class UpdateStatus extends ScheduledTask {
 			Bot.SERVER_ONLINE = false;
 			updateBotStatus("Server is offline", false);
 		} else {
-			JsonObject playerInfo = serverInfo.get("players").getAsJsonObject();
-			int playerCount = playerInfo.get("online").getAsInt();
-			int maxPlayerCount = playerInfo.get("max").getAsInt();
-			Bot.SERVER_ONLINE = true;
-			updateBotStatus(playerCount + "/" + maxPlayerCount + " players", true);
+			if (!serverInfo.get("online").getAsBoolean()){
+				Bot.SERVER_ONLINE = false;
+				updateBotStatus("Server is offline", false);
+			}
+			else{
+				JsonObject playerInfo = serverInfo.get("players").getAsJsonObject();
+				int playerCount = playerInfo.get("online").getAsInt();
+				int maxPlayerCount = playerInfo.get("max").getAsInt();
+				Bot.SERVER_ONLINE = true;
+				updateBotStatus(playerCount + "/" + maxPlayerCount + " players", true);}
 		}
 	}
 
