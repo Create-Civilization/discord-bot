@@ -39,7 +39,7 @@ public class Whitelist extends SlashCommand {
 		WhitelistTable manager = (WhitelistTable) DatabaseRegistry.getTableManager("whitelist");
 		WhitelistEntry entry;
 		try {
-			entry = manager.get(interactionEvent.getUser().getId());
+			entry = manager.getActive(interactionEvent.getUser().getId());
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

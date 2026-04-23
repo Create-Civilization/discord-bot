@@ -30,7 +30,7 @@ public class RemoveWhitelist extends SlashCommand {
 		}
 		String userID = interactionEvent.getUser().getId();
 		WhitelistTable whitelistTable = (WhitelistTable) DatabaseRegistry.getTableManager("whitelist");
-		WhitelistEntry whitelistEntry = whitelistTable.get(userID);
+		WhitelistEntry whitelistEntry = whitelistTable.getActive(userID);
 		if (whitelistEntry == null) {
 			interactionEvent.reply("You are not whitelisted.").setEphemeral(true).queue();
 			return;
