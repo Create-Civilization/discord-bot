@@ -63,7 +63,7 @@ public class Whitelist extends SlashCommand {
 			.build();
 
 		Modal modal = Modal.create("whitelist", "Whitelist")
-			.addComponents(Label.of("Subject", username), Label.of("Body", referral))
+			.addComponents(Label.of("Username", username), Label.of("Referral", referral))
 			.build();
 
 		interactionEvent.replyModal(modal).queue();
