@@ -7,6 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class WhitelistTable extends TableManager<WhitelistEntry> {
@@ -111,48 +113,51 @@ public class WhitelistTable extends TableManager<WhitelistEntry> {
 		}
 		return null;
 	}
-	public WhitelistEntry get(int id) throws SQLException {
+	public List<WhitelistEntry> getAll(int id) throws SQLException {
 		connect();
 		try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM whitelists WHERE discordID = ?")) {
 			preparedStatement.setInt(1, id);
 			try (ResultSet resultSet = preparedStatement.executeQuery()) {
-				if (resultSet.next()) {
-					return new WhitelistEntry(resultSet);
+				List<WhitelistEntry> entries = new ArrayList<>();
+				while (resultSet.next()) {
+					entries.add(new WhitelistEntry(resultSet));
 				}
+				return entries;
 			}
 		} finally {
 			disconnect();
 		}
-		return null;
 	}
 
-	public WhitelistEntry get(UUID playerUUID) throws SQLException {
+	public List<WhitelistEntry> getAll(UUID playerUUID) throws SQLException {
 		connect();
 		try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM whitelists WHERE playerUUID = ?")) {
 			preparedStatement.setString(1, playerUUID.toString());
 			try (ResultSet resultSet = preparedStatement.executeQuery()) {
-				if (resultSet.next()) {
-					return new WhitelistEntry(resultSet);
+				List<WhitelistEntry> entries = new ArrayList<>();
+				while (resultSet.next()) {
+					entries.add(new WhitelistEntry(resultSet));
 				}
+				return entries;
 			}
 		} finally {
 			disconnect();
 		}
-		return null;
 	}
 
-	public WhitelistEntry get(String discordID) throws SQLException {
+	public List<WhitelistEntry> getAll(String discordID) throws SQLException {
 		connect();
 		try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM whitelists WHERE discordID = ?")) {
 			preparedStatement.setString(1, discordID);
 			try (ResultSet resultSet = preparedStatement.executeQuery()) {
-				if (resultSet.next()) {
-					return new WhitelistEntry(resultSet);
+				List<WhitelistEntry> entries = new ArrayList<>();
+				while (resultSet.next()) {
+					entries.add(new WhitelistEntry(resultSet));
 				}
+				return entries;
 			}
 		} finally {
 			disconnect();
 		}
-		return null;
 	}
 }
