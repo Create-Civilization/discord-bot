@@ -9,7 +9,10 @@ import com.createciv.discord_bot.util.database.managers.WhitelistTable;
 import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import com.google.gson.JsonObject;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -25,7 +28,6 @@ import java.util.UUID;
 public class AllWhitelists extends SlashCommand {
 	private static final String logChannelID = ConfigLoader.LOG_CHANNEL_ID;
 	private static final TextChannel logChannel = Bot.API.getTextChannelById(logChannelID);
-
 	public AllWhitelists() {super("getallwhitelists", "see all whitelists for a user");
 		addOption(new Option(OptionType.USER,"discorduser","input a discorduser",false,false));
 		addOption(new Option(OptionType.STRING,"mcuser","input a mc user",false,false));
@@ -79,42 +81,59 @@ public class AllWhitelists extends SlashCommand {
 
 	@Override
 		public void execute(SlashCommandInteractionEvent interactionEvent) throws SQLException {
-		if (!Bot.DB_HEALTHY) {
-			interactionEvent.reply("Database is not connected, try again later").queue();
-			return;
-		}
-		WhitelistTable manager = (WhitelistTable) DatabaseRegistry.getTableManager("whitelist");
-		String discordUserID = interactionEvent.getOption("discorduser",null, OptionMapping::getAsString);
-		String playerID = interactionEvent.getOption("mcuser",null, OptionMapping::getAsString);
-		if (discordUserID != null) {
-			List<WhitelistEntry> entries = manager.getAll(discordUserID);
-			if (entries.isEmpty()){
-				interactionEvent.reply("No associated entries").queue();
+		Guild guild = interactionEvent.getGuild();
+		Member mem = interactionEvent.getMember();
+		assert guild != null;
+		assert mem != null;
+		List<Role> userRoles = mem.getRoles();
+		boolean authorized = false;
+		for (String adminRole : ConfigLoader.ADMIN_ROLE_IDS){
+			if (userRoles.contains(guild.getRoleById(adminRole))){
+				authorized = true;
+				break;
+			}}
+		if (authorized) {
+			if (!Bot.DB_HEALTHY) {
+				interactionEvent.reply("Database is not connected, try again later").queue();
 				return;
 			}
-			MessageEmbed embed = getAllMinecraftFormatter(discordUserID, entries);
-			logChannel.sendMessageEmbeds(embed).queue();
-			interactionEvent.reply("History Fetched").queue();
-		} else if (playerID != null) {
-			JsonObject response = MojangAPI.getPlayerInfo(playerID);
-			if (response == null){
-				interactionEvent.reply("error occured, possibly invalid user").queue();
-			}
-			else if ((response.get("uuid").getAsString() != null) && response.get("username").getAsString()!= null ){
-				String mcuser = response.get("username").getAsString();
-				UUID formatedUUID = UUID.fromString(response.get("uuid").getAsString());
-				List<WhitelistEntry> entries = manager.getAll(formatedUUID);
-				if (entries.isEmpty()){
+			WhitelistTable manager = (WhitelistTable) DatabaseRegistry.getTableManager("whitelist");
+			String discordUserID = interactionEvent.getOption("discorduser", null, OptionMapping::getAsString);
+			String playerID = interactionEvent.getOption("mcuser", null, OptionMapping::getAsString);
+			if (discordUserID != null) {
+				List<WhitelistEntry> entries = manager.getAll(discordUserID);
+				if (entries.isEmpty()) {
 					interactionEvent.reply("No associated entries").queue();
 					return;
 				}
-				MessageEmbed embed = getAllDiscordFormatter(mcuser, entries);
+				MessageEmbed embed = getAllMinecraftFormatter(discordUserID, entries);
+				assert logChannel != null;
 				logChannel.sendMessageEmbeds(embed).queue();
-				interactionEvent.reply("History Fetched").queue();}
-			else{
-			interactionEvent.reply("No player exists").queue();}
-		} else {
-			interactionEvent.reply("Input either a discord user or a minecraft user").queue();
+				interactionEvent.reply("History Fetched").queue();
+			} else if (playerID != null) {
+				JsonObject response = MojangAPI.getPlayerInfo(playerID);
+				if (response == null) {
+					interactionEvent.reply("error occured, possibly invalid user").queue();
+				} else if ((response.get("uuid").getAsString() != null) && response.get("username").getAsString() != null) {
+					String mcuser = response.get("username").getAsString();
+					UUID formatedUUID = UUID.fromString(response.get("uuid").getAsString());
+					List<WhitelistEntry> entries = manager.getAll(formatedUUID);
+					if (entries.isEmpty()) {
+						interactionEvent.reply("No associated entries").queue();
+						return;
+					}
+					MessageEmbed embed = getAllDiscordFormatter(mcuser, entries);
+					assert logChannel != null;
+					logChannel.sendMessageEmbeds(embed).queue();
+					interactionEvent.reply("History Fetched").queue();
+				} else {
+					interactionEvent.reply("No player exists").queue();
+				}
+			} else {
+				interactionEvent.reply("Input either a discord user or a minecraft user").queue();
+			}
+		}else {
+			interactionEvent.reply("Not Authorized").setEphemeral(true).queue();
 		}
 	}
 
