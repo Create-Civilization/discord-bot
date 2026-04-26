@@ -3,6 +3,7 @@ package com.createciv.discord_bot;
 import com.createciv.discord_bot.classes.ScheduledTask;
 import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.listener.auto_complete.trick.TrickAutoComplete;
+import com.createciv.discord_bot.listener.helpticket.HelpTicketCreationListener;
 import com.createciv.discord_bot.listener.logging.JoinAndLeave;
 import com.createciv.discord_bot.listener.modal.WhitelistListener;
 import com.createciv.discord_bot.listener.onJoin.CreationDateChecker;
@@ -54,6 +55,7 @@ public class Bot extends ListenerAdapter {
 			.addEventListeners(new TrickAutoComplete())
 			//.addEventListeners(new ModerationAutoComplete())
 			.addEventListeners(new CreationDateChecker())
+			.addEventListeners(new HelpTicketCreationListener())
 			.build();
 
 		BOT = API.getSelfUser();

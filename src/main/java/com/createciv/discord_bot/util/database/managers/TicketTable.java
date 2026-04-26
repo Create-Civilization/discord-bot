@@ -2,8 +2,10 @@ package com.createciv.discord_bot.util.database.managers;
 
 import com.createciv.discord_bot.util.database.TableManager;
 import com.createciv.discord_bot.util.database.types.TicketEntry;
+import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -19,7 +21,7 @@ public class TicketTable extends TableManager<TicketEntry> {
 				"authorID TEXT NOT NULL," +
 				"threadChannelID TEXT NOT NULL," +
 				"embedMessageID TEXT NOT NULL," +
-				"lastActivity BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW())::BIGINT))"
+				"lastActivity TIMESTAMP DEFAULT NOW()"
 		);
 		statement.close();
 		disconnect();
@@ -36,5 +38,18 @@ public class TicketTable extends TableManager<TicketEntry> {
 		preparedStatement.execute();
 		preparedStatement.close();
 		disconnect();
+	}
+	public TicketEntry get(String authorID) throws SQLException {
+		connect();
+		PreparedStatement preparedStatement = connection.prepareStatement("SELECT * from tickets WHERE authorID = ?");
+		preparedStatement.setString(1,authorID);
+		try (ResultSet resultSet = preparedStatement.executeQuery()){
+			if (resultSet.next()){
+				return new TicketEntry(resultSet);
+			}
+		} finally {
+		disconnect();
+	}
+		return null;
 	}
 }

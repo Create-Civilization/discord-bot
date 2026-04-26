@@ -81,6 +81,7 @@ public class AllWhitelists extends SlashCommand {
 
 	@Override
 		public void execute(SlashCommandInteractionEvent interactionEvent) throws SQLException {
+		//check if user is allowed to use command
 		Guild guild = interactionEvent.getGuild();
 		Member mem = interactionEvent.getMember();
 		assert guild != null;
@@ -97,6 +98,7 @@ public class AllWhitelists extends SlashCommand {
 				interactionEvent.reply("Database is not connected, try again later").queue();
 				return;
 			}
+			//determine whether to make a discord embed or mc user embed
 			WhitelistTable manager = (WhitelistTable) DatabaseRegistry.getTableManager("whitelist");
 			String discordUserID = interactionEvent.getOption("discorduser", null, OptionMapping::getAsString);
 			String playerID = interactionEvent.getOption("mcuser", null, OptionMapping::getAsString);

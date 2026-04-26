@@ -14,7 +14,6 @@ public class TicketEntry extends TableEntry<TicketEntry> {
 	public String threadChannelID;
 	public String embedMessageID;
 	public Timestamp lastActivity;
-	public Boolean active;
 
 	public TicketEntry(ResultSet resultSet) throws SQLException {
 		id = resultSet.getInt("id");
@@ -22,30 +21,21 @@ public class TicketEntry extends TableEntry<TicketEntry> {
 		threadChannelID = resultSet.getString("threadChannelID");
 		embedMessageID = resultSet.getString("embedMessageID");
 		lastActivity = resultSet.getTimestamp("lastActivity");
-		active = resultSet.getBoolean("active");
 	}
 	public TicketEntry(Builder builder){
 		embedMessageID = builder.embedMessageID;
 		threadChannelID= builder.threadChannelID;
 		authorID = builder.authorID;
 		lastActivity = builder.lastActivity;
-		active = builder.active;
-		id = builder.id;
 	}
 
 
 	public static class Builder {
-		private Boolean active;
 		private String authorID;
 		private Integer id;
 		private String threadChannelID;
 		private String embedMessageID;
 		private Timestamp lastActivity;
-
-		public Builder active(Boolean active) {
-			this.active = active;
-			return this;
-		}
 
 		public Builder lastActivity(Timestamp lastActivity) {
 			this.lastActivity = lastActivity;
