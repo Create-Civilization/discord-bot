@@ -3,7 +3,6 @@ package com.createciv.discord_bot.util;
 import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.ConfigLoader;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
@@ -13,12 +12,8 @@ import java.util.stream.Collectors;
 
 public class LoggingUtil {
 
-	private static final String logChannelID = ConfigLoader.LOG_CHANNEL_ID;
-	private static final TextChannel logChannel = Bot.API.getTextChannelById(logChannelID);
-	private static final Guild guild = logChannel.getGuild();
-
 	public static TextChannel getLogChannel() {
-		return logChannel;
+		return Bot.API.getTextChannelById(ConfigLoader.LOG_CHANNEL_ID);
 	}
 
 	public static void error(Exception e) {
@@ -35,7 +30,7 @@ public class LoggingUtil {
 			.addField("Stack Trace", "```" + traceString + "..." + "```", true)
 			.build();
 
-		logChannel.sendMessageEmbeds(errorEmbed).queue();
+		getLogChannel().sendMessageEmbeds(errorEmbed).queue();
 	}
 
 	public static void log(Color color, String title, String message) {
@@ -45,6 +40,6 @@ public class LoggingUtil {
 			.setDescription(message)
 			.build();
 
-		logChannel.sendMessageEmbeds(embed).queue();
+		getLogChannel().sendMessageEmbeds(embed).queue();
 	}
 }
