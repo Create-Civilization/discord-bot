@@ -21,7 +21,8 @@ public class TicketTable extends TableManager<TicketEntry> {
 				"authorID TEXT NOT NULL," +
 				"threadChannelID TEXT NOT NULL," +
 				"embedMessageID TEXT NOT NULL," +
-				"lastActivity TIMESTAMP DEFAULT NOW()" + ")"
+				"lastActivity TIMESTAMP DEFAULT NOW()" +
+				")"
 		);
 		statement.close();
 		disconnect();
