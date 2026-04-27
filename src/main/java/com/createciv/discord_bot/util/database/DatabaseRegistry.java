@@ -39,6 +39,7 @@ public class DatabaseRegistry {
 				manager.initTable();
 				Bot.LOGGER.info("Initialized {} successfully", dbName);
 			} catch (SQLException e) {
+				//throw new SQLException(e);
 				LoggingUtil.error(e);
 			}
 		}
