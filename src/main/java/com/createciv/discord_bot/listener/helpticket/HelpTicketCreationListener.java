@@ -2,6 +2,7 @@ package com.createciv.discord_bot.listener.helpticket;
 
 import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.ConfigLoader;
+import com.createciv.discord_bot.util.EmbedUtil;
 import com.createciv.discord_bot.util.LoggingUtil;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
 import com.createciv.discord_bot.util.database.managers.TicketTable;
@@ -28,37 +29,30 @@ public class HelpTicketCreationListener extends ListenerAdapter {
 	@Override
 	public void onMessageReceived(MessageReceivedEvent msg){
 		if (msg.isFromType(ChannelType.PRIVATE)){
+			JDA jda = msg.getJDA();
+			Guild guild = jda.getGuildById(ConfigLoader.GUILD_ID);
+			String mssg = msg.getMessage().getContentRaw();
+			if (guild ==null) {return;}
+			User sender = msg.getAuthor();
 			String authorID = msg.getAuthor().getId();
 			TicketTable manager = (TicketTable) DatabaseRegistry.getTableManager("tickets");
 			try {
 				TicketEntry ticket = manager.get(authorID);
 				if (ticket != null){ //handle existing ticket
-					JDA jda = msg.getJDA();
-					Guild guild = jda.getGuildById(ConfigLoader.GUILD_ID);
-					if (guild ==null) {return;}
 					ThreadChannel threadChannel = guild.getThreadChannelById(ticket.threadChannelID);
-					//threadChannel.sendMessageEmbeds()
+					MessageEmbed messageToSend = EmbedUtil.InternalTextTicketMessage(sender,mssg,"Message Received");
+					assert threadChannel != null;
+					threadChannel.sendMessageEmbeds(messageToSend).complete();
 				}
 				else { //create ticket - start by making embed msg and thread
-					JDA jda = msg.getJDA();
-					User sender = msg.getAuthor();
-					String senderID = sender.getId();
-					String username = sender.getName();
-					Guild guild = jda.getGuildById(ConfigLoader.GUILD_ID);
-					if (guild == null) {return;}
-					MessageEmbed startingEmbed = new EmbedBuilder()
-						.setTitle("Help Ticket for " + username)
-						.setDescription("open ticket")
-						.setColor(Color.decode("#809ae8"))
-						.setFooter(username + " | " + senderID, sender.getAvatarUrl())
-						.build();
+					MessageEmbed startingEmbed = EmbedUtil.StarterTicketChannelEmbed(sender);
 					TextChannel helpTicketChannel = guild.getTextChannelById(ConfigLoader.HELP_TICKET_CHANNEL_ID);
 					if (helpTicketChannel == null) {return;}
 					Message starter = helpTicketChannel.sendMessageEmbeds(startingEmbed).complete();
 					ThreadChannel thread = helpTicketChannel.createThreadChannel("threadchan",starter.getId()).complete();
 					String threadID = thread.getId();
 					TicketEntry ticketToAdd = new TicketEntry.Builder()
-						.authorID(senderID)
+						.authorID(authorID)
 						.embedMessageID(starter.getId())
 						.threadChannelID(threadID)
 						.lastActivity(Timestamp.from(Instant.now()))
