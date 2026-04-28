@@ -40,7 +40,7 @@ public class TicketTable extends TableManager<TicketEntry> {
 		preparedStatement.close();
 		disconnect();
 	}
-	public TicketEntry get(String authorID) throws SQLException {
+	public TicketEntry getFromAuthorID(String authorID) throws SQLException {
 		connect();
 		PreparedStatement preparedStatement = connection.prepareStatement("SELECT * from tickets WHERE authorID = ?");
 		preparedStatement.setString(1,authorID);
@@ -51,6 +51,19 @@ public class TicketTable extends TableManager<TicketEntry> {
 		} finally {
 		disconnect();
 	}
+		return null;
+	}
+	public TicketEntry getFromThreadID(String threadID) throws SQLException {
+		connect();
+		PreparedStatement preparedStatement = connection.prepareStatement("SELECT * from tickets WHERE threadChannelID = ?");
+		preparedStatement.setString(1,threadID);
+		try (ResultSet resultSet = preparedStatement.executeQuery()){
+			if (resultSet.next()){
+				return new TicketEntry(resultSet);
+			}
+		} finally {
+			disconnect();
+		}
 		return null;
 	}
 }
