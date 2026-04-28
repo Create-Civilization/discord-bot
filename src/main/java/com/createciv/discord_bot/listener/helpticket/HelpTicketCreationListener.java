@@ -28,6 +28,7 @@ import java.time.Instant;
 public class HelpTicketCreationListener extends ListenerAdapter {
 	@Override
 	public void onMessageReceived(MessageReceivedEvent msg){
+		if (msg.getAuthor().isBot()) return;
 		if (msg.isFromType(ChannelType.PRIVATE)){
 			Timestamp time = Timestamp.from(Instant.now());
 			JDA jda = msg.getJDA();
@@ -38,32 +39,36 @@ public class HelpTicketCreationListener extends ListenerAdapter {
 			String authorID = msg.getAuthor().getId();
 			TicketTable manager = (TicketTable) DatabaseRegistry.getTableManager("tickets");
 			try {
-				TicketEntry ticket = manager.get(authorID);
+				TicketEntry ticket = manager.getFromAuthorID(authorID);
 				if (ticket != null){ //handle existing ticket
 					ThreadChannel threadChannel = guild.getThreadChannelById(ticket.threadChannelID);
 					MessageEmbed messageToSend = EmbedUtil.InternalTextTicketMessage(sender,mssg,"Message Received",time);
-					assert threadChannel != null;
-					threadChannel.sendMessageEmbeds(messageToSend).complete();
+					if (threadChannel == null) {return;}
+					threadChannel.sendMessageEmbeds(messageToSend).queue();
 				}
 				else { //create ticket - start by making embed msg and thread
 					MessageEmbed startingEmbed = EmbedUtil.StarterTicketChannelEmbed(sender);
 					TextChannel helpTicketChannel = guild.getTextChannelById(ConfigLoader.HELP_TICKET_CHANNEL_ID);
 					if (helpTicketChannel == null) {return;}
-					Message starter = helpTicketChannel.sendMessageEmbeds(startingEmbed).complete();
-					ThreadChannel thread = helpTicketChannel.createThreadChannel("threadchan",starter.getId()).complete();
-					TicketEntry ticketToAdd = new TicketEntry.Builder()
-						.authorID(authorID)
-						.embedMessageID(starter.getId())
-						.threadChannelID(thread.getId())
-						.lastActivity(Timestamp.from(Instant.now()))
-						.build();
-					try {
-						manager.add(ticketToAdd);
-					} catch (SQLException e){
-						throw new SQLException(e);
-					}
-					thread.sendMessageEmbeds(EmbedUtil.BasicEmbed("New Ticket Has Been Opened","To respond to this ticket use /reply every other message will be ignored. To close the ticket do /close this ticket will automatically close after 7 days",Color.gray)).complete();
-					thread.sendMessageEmbeds(EmbedUtil.InternalTextTicketMessage(sender,mssg,"Message Received",time)).complete();
+					helpTicketChannel.sendMessageEmbeds(startingEmbed).queue(starter -> {
+						helpTicketChannel.createThreadChannel(sender.getName() + "'s Help Ticket").queue(threadChannel -> {
+							TicketEntry ticketToAdd = new TicketEntry.Builder()
+									.authorID(authorID)
+									.embedMessageID(starter.getId())
+									.threadChannelID(threadChannel.getId())
+									.lastActivity(Timestamp.from(Instant.now()))
+									.build();
+							try {
+								manager.add(ticketToAdd);
+							} catch (SQLException e){
+								LoggingUtil.error(e);
+							}
+							threadChannel.sendMessageEmbeds(EmbedUtil.BasicEmbed("New Ticket Has Been Opened",
+									"To respond to this ticket use /reply every other message will be ignored. To close the ticket do /close this ticket will automatically close after 7 days",
+									Color.gray)).queue();
+							threadChannel.sendMessageEmbeds(EmbedUtil.InternalTextTicketMessage(sender,mssg,"Message Received",time)).queue();
+						});
+					});
 				}
 			}
 			catch (SQLException e) {
