@@ -51,7 +51,7 @@ public class HelpTicketCreationListener extends ListenerAdapter {
 					TextChannel helpTicketChannel = guild.getTextChannelById(ConfigLoader.HELP_TICKET_CHANNEL_ID);
 					if (helpTicketChannel == null) {return;}
 					helpTicketChannel.sendMessageEmbeds(startingEmbed).queue(starter -> {
-						helpTicketChannel.createThreadChannel(sender.getName() + "'s Help Ticket").queue(threadChannel -> {
+						helpTicketChannel.createThreadChannel(sender.getName() + "'s Help Ticket",starter.getId()).queue(threadChannel -> {
 							TicketEntry ticketToAdd = new TicketEntry.Builder()
 									.authorID(authorID)
 									.embedMessageID(starter.getId())
