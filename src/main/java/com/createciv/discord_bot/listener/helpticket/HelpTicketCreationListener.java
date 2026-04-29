@@ -41,7 +41,7 @@ public class HelpTicketCreationListener extends ListenerAdapter {
 				TicketEntry ticket = manager.getFromAuthorID(authorID);
 				if (ticket != null){ //handle existing ticket
 					ThreadChannel threadChannel = guild.getThreadChannelById(ticket.getThreadChannelID());
-					MessageEmbed messageToSend = EmbedUtil.InternalTextTicketMessage(sender,mssg,"Message Received",Timestamp.from(Instant.now()));
+					MessageEmbed messageToSend = EmbedUtil.InternalTextTicketMessage(sender,mssg,"Message Received",Timestamp.from(Instant.now()),"#8CC084");
 					if (threadChannel == null) {return;}
 					threadChannel.sendMessageEmbeds(messageToSend).queue();
 				}
@@ -65,7 +65,7 @@ public class HelpTicketCreationListener extends ListenerAdapter {
 							threadChannel.sendMessageEmbeds(EmbedUtil.BasicEmbed("New Ticket Has Been Opened",
 									"To respond to this ticket use /reply every other message will be ignored. To close the ticket do /close this ticket will automatically close after 7 days",
 									Color.gray)).queue();
-							threadChannel.sendMessageEmbeds(EmbedUtil.InternalTextTicketMessage(sender,mssg,"Message Received",Timestamp.from(Instant.now()))).queue();
+							threadChannel.sendMessageEmbeds(EmbedUtil.InternalTextTicketMessage(sender,mssg,"Message Received",Timestamp.from(Instant.now()),"#8CC084")).queue();
 						});
 					});
 				}
