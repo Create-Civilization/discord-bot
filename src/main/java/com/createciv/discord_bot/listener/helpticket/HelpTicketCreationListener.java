@@ -30,7 +30,6 @@ public class HelpTicketCreationListener extends ListenerAdapter {
 	public void onMessageReceived(MessageReceivedEvent msg){
 		if (msg.getAuthor().isBot()) return;
 		if (msg.isFromType(ChannelType.PRIVATE)){
-			Timestamp time = Timestamp.from(Instant.now());
 			JDA jda = msg.getJDA();
 			Guild guild = jda.getGuildById(ConfigLoader.GUILD_ID);
 			String mssg = msg.getMessage().getContentRaw();
@@ -41,8 +40,8 @@ public class HelpTicketCreationListener extends ListenerAdapter {
 			try {
 				TicketEntry ticket = manager.getFromAuthorID(authorID);
 				if (ticket != null){ //handle existing ticket
-					ThreadChannel threadChannel = guild.getThreadChannelById(ticket.threadChannelID);
-					MessageEmbed messageToSend = EmbedUtil.InternalTextTicketMessage(sender,mssg,"Message Received",time);
+					ThreadChannel threadChannel = guild.getThreadChannelById(ticket.getThreadChannelID());
+					MessageEmbed messageToSend = EmbedUtil.InternalTextTicketMessage(sender,mssg,"Message Received",Timestamp.from(Instant.now()));
 					if (threadChannel == null) {return;}
 					threadChannel.sendMessageEmbeds(messageToSend).queue();
 				}
@@ -66,7 +65,7 @@ public class HelpTicketCreationListener extends ListenerAdapter {
 							threadChannel.sendMessageEmbeds(EmbedUtil.BasicEmbed("New Ticket Has Been Opened",
 									"To respond to this ticket use /reply every other message will be ignored. To close the ticket do /close this ticket will automatically close after 7 days",
 									Color.gray)).queue();
-							threadChannel.sendMessageEmbeds(EmbedUtil.InternalTextTicketMessage(sender,mssg,"Message Received",time)).queue();
+							threadChannel.sendMessageEmbeds(EmbedUtil.InternalTextTicketMessage(sender,mssg,"Message Received",Timestamp.from(Instant.now()))).queue();
 						});
 					});
 				}

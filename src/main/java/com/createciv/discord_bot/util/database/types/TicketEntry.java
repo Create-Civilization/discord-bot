@@ -9,11 +9,11 @@ import java.util.UUID;
 
 public class TicketEntry extends TableEntry<TicketEntry> {
 
-	public int id;
-	public String authorID;
-	public String threadChannelID;
-	public String embedMessageID;
-	public Timestamp lastActivity;
+	private int id;
+	private String authorID;
+	private String threadChannelID;
+	private String embedMessageID;
+	private Timestamp lastActivity;
 
 	public TicketEntry(ResultSet resultSet) throws SQLException {
 		id = resultSet.getInt("id");
@@ -28,6 +28,11 @@ public class TicketEntry extends TableEntry<TicketEntry> {
 		authorID = builder.authorID;
 		lastActivity = builder.lastActivity;
 	}
+	public String getEmbedMessageID(){ return embedMessageID;}
+	public String getThreadChannelID(){ return threadChannelID;}
+	public Timestamp getLastActivity(){ return lastActivity;}
+	public String getAuthorID(){return authorID;}
+	public Integer getID(){return id;}
 
 
 	public static class Builder {

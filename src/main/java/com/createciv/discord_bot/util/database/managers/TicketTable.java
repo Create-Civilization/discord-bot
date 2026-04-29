@@ -32,10 +32,10 @@ public class TicketTable extends TableManager<TicketEntry> {
 	public void add(TicketEntry tableEntry) throws SQLException {
 		connect();
 		PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO tickets (authorID, threadChannelID, embedMessageID, lastActivity) VALUES (?, ?, ?, ?)");
-		preparedStatement.setString(1, tableEntry.authorID);
-		preparedStatement.setString(2, tableEntry.threadChannelID);
-		preparedStatement.setString(3, tableEntry.embedMessageID);
-		if (tableEntry.lastActivity != null) preparedStatement.setTimestamp(4, tableEntry.lastActivity);
+		preparedStatement.setString(1, tableEntry.getAuthorID());
+		preparedStatement.setString(2, tableEntry.getThreadChannelID());
+		preparedStatement.setString(3, tableEntry.getEmbedMessageID());
+		if (tableEntry.getLastActivity() != null) preparedStatement.setTimestamp(4, tableEntry.getLastActivity());
 		preparedStatement.execute();
 		preparedStatement.close();
 		disconnect();

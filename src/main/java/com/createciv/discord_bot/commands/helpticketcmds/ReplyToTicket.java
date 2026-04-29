@@ -31,7 +31,7 @@ public class ReplyToTicket extends SlashCommand {
 		JDA jda = interactionEvent.getJDA();
 		User sender = interactionEvent.getUser();
 		if (!interactionEvent.getChannel().getType().isThread()){
-			interactionEvent.reply("not in a thread silly").setEphemeral(true).queue();}
+			interactionEvent.reply("Enter a valid thread").setEphemeral(true).queue();}
 		ThreadChannel threadChannel = interactionEvent.getChannel().asThreadChannel();
 		TicketTable manager = (TicketTable) DatabaseRegistry.getTableManager("tickets");
 		TicketEntry ticket = null;
@@ -41,8 +41,7 @@ public class ReplyToTicket extends SlashCommand {
 			LoggingUtil.error(e);
 		}
 		if (ticket != null){
-			String ticketMakerID = ticket.authorID;
-			System.out.println("ticket maker id: " + ticketMakerID);
+			String ticketMakerID = ticket.getAuthorID();
 			MessageEmbed messageEmbedToSend = EmbedUtil.InternalTextTicketMessage(sender,interactionEvent.getOption("response").getAsString(),"Message Received", Timestamp.from(Instant.now()));
 			MessageEmbed embedToSendToThread = EmbedUtil.InternalTextTicketMessage(sender,interactionEvent.getOption("response").getAsString(),"Message Sent", Timestamp.from(Instant.now()));
 			jda.retrieveUserById(ticketMakerID)
@@ -52,7 +51,7 @@ public class ReplyToTicket extends SlashCommand {
 					success -> interactionEvent.reply("Reply sent!").setEphemeral(true).queue(),
 					error -> interactionEvent.reply("Failed to DM user.").setEphemeral(true).queue()
 				);
-			threadChannel.sendMessageEmbeds(embedToSendToThread).complete();
+			threadChannel.sendMessageEmbeds(embedToSendToThread).queue();
 		}
 	}
 	}
