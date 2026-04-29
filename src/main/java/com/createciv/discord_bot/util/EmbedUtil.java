@@ -37,7 +37,7 @@ public class EmbedUtil {
 			.build();
 		return starter;
 	}
-	public static MessageEmbed InternalTextTicketMessage(User sender, String message, String title, Timestamp timesent){
+	public static MessageEmbed InternalTextTicketMessage(User sender, String message, String title, Timestamp timesent, String color){
 		User bot = Bot.BOT;
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 		String readable = sdf.format(timesent);
@@ -46,7 +46,7 @@ public class EmbedUtil {
 		MessageEmbed embed = new EmbedBuilder()
 			.setAuthor(username,"https://discord.com/users/" + senderID,sender.getAvatarUrl())
 			.setTitle(title)
-			.setColor(Color.decode("#8CC084"))
+			.setColor(Color.decode(color))
 			.setDescription(message)
 			.setFooter(bot.getName() + " on " + readable, bot.getAvatarUrl())
 			.build();
