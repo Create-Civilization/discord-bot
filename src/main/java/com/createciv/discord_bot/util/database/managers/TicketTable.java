@@ -40,6 +40,15 @@ public class TicketTable extends TableManager<TicketEntry> {
 		preparedStatement.close();
 		disconnect();
 	}
+	public void remove(String authorID) throws SQLException {
+		connect();
+		try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM tickets WHERE authorID = ?")){
+		preparedStatement.setString(1, authorID);
+		preparedStatement.execute();
+	}finally {
+			disconnect();
+		}
+	}
 	public TicketEntry getFromAuthorID(String authorID) throws SQLException {
 		connect();
 		PreparedStatement preparedStatement = connection.prepareStatement("SELECT * from tickets WHERE authorID = ?");
