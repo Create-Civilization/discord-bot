@@ -2,7 +2,11 @@ package com.createciv.discord_bot.util;
 
 import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.ConfigLoader;
+import com.createciv.discord_bot.util.database.types.WhitelistEntry;
+import com.google.gson.JsonObject;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 
@@ -51,5 +55,37 @@ public class EmbedUtil {
 			.setFooter(bot.getName() + " on " + readable, bot.getAvatarUrl())
 			.build();
 		return embed;
+	}
+	public static MessageEmbed GetActiveEmbed(WhitelistEntry entry){
+		User bot = Bot.BOT;
+		Guild guild = Bot.API.getGuildById(ConfigLoader.GUILD_ID);
+		Timestamp timeCreated = entry.getCreatedAt();
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		String readable = sdf.format(timeCreated);
+		JsonObject response = MojangAPI.getPlayerInfo(entry.getPlayerUUID().toString());
+		String mcuserName;
+		if ((response != null) && response.get("username").getAsString()!= null ) {
+			mcuserName = response.get("username").getAsString();}
+		else{return null;}
+		MessageEmbed.Field createdAtField = new MessageEmbed.Field("Created at:",readable,true);
+		MessageEmbed.Field entryIDField = new MessageEmbed.Field("Entry ID:",entry.getEntryID().toString(),true);
+		MessageEmbed.Field discordUser = new MessageEmbed.Field("Discord User:","<@" + entry.getDiscordID() + ">", true);
+		MessageEmbed.Field mcUser = new MessageEmbed.Field("Minecraft User:", mcuserName,true);
+		MessageEmbed.Field mcUUID = new MessageEmbed.Field("Minecraft UUID:",entry.getPlayerUUID().toString(),false);
+		MessageEmbed.Field referralField = new MessageEmbed.Field("Referral Reason:",entry.getReferralReason(),false);
+		MessageEmbed.Field activeField = new MessageEmbed.Field("Active:", entry.getActive().toString(),true);
+		MessageEmbed embed = new EmbedBuilder()
+			.setAuthor(bot.getName(),bot.getAvatarUrl())
+			.setTitle(mcuserName + "'s Whitelist Information")
+			.addField(discordUser)
+			.addField(mcUser)
+			.addField(mcUUID)
+			.addField(createdAtField)
+			.addField(entryIDField)
+			.addField(activeField)
+			.addField(referralField)
+			.build();
+		return embed;
+
 	}
 }
