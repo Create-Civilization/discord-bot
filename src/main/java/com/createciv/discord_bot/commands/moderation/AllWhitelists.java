@@ -3,6 +3,7 @@ package com.createciv.discord_bot.commands.moderation;
 import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.SlashCommand;
+import com.createciv.discord_bot.util.ModerationUtil;
 import com.createciv.discord_bot.util.MojangAPI;
 import com.createciv.discord_bot.util.database.DatabaseRegistry;
 import com.createciv.discord_bot.util.database.managers.WhitelistTable;
@@ -82,18 +83,7 @@ public class AllWhitelists extends SlashCommand {
 	@Override
 		public void execute(SlashCommandInteractionEvent interactionEvent) throws SQLException {
 		//check if user is allowed to use command
-		Guild guild = interactionEvent.getGuild();
-		Member mem = interactionEvent.getMember();
-		assert guild != null;
-		assert mem != null;
-		List<Role> userRoles = mem.getRoles();
-		boolean authorized = false;
-		for (String adminRole : ConfigLoader.ADMIN_ROLE_IDS){
-			if (userRoles.contains(guild.getRoleById(adminRole))){
-				authorized = true;
-				break;
-			}}
-		if (authorized) {
+		if (ModerationUtil.isModeratorOnEvent(interactionEvent)) {
 			if (!Bot.DB_HEALTHY) {
 				interactionEvent.reply("Database is not connected, try again later").queue();
 				return;

@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 
+import java.awt.*;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -60,7 +61,7 @@ public class CloseTicket extends SlashCommand {
 			helpTicketChannel.retrieveMessageById(ticket.getEmbedMessageID()).queue(msg->{
 				msg.editMessageEmbeds(closingEmbed).queue();},
 				throwable -> {
-				System.out.println("Message not found.");
+				LoggingUtil.log(Color.red,"Help Ticket Issue","Help ticket embed not found");
 			});
 			try {
 				manager.remove(ticketMakerID);
