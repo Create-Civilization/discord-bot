@@ -14,6 +14,7 @@ import java.awt.*;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.List;
 
 public class EmbedUtil {
 	public static MessageEmbed BasicEmbed (String title, String description, Color color){
@@ -86,6 +87,51 @@ public class EmbedUtil {
 			.addField(referralField)
 			.build();
 		return embed;
-
+	}
+	public static MessageEmbed getAllDiscordFormatter (String playerUUID, List<WhitelistEntry> entries){
+		StringBuilder userEntries = new StringBuilder();
+		StringBuilder ids = new StringBuilder();
+		String activeWhitelist = "no active whitelist";
+		for (WhitelistEntry entry : entries){
+			userEntries.append("<@").append(entry.getDiscordID()).append(">\n");
+			ids.append(entry.getEntryID().toString()).append("\n");
+			if (entry.getActive()){
+				activeWhitelist = "<@" + entry.getDiscordID() + ">\n";
+			}}
+		MessageEmbed.Field field1 = new MessageEmbed.Field("All Related Discord Users ", userEntries.toString(),true);
+		MessageEmbed.Field field2 = new MessageEmbed.Field("Entry IDs ", ids.toString(),true);
+		MessageEmbed embed = new EmbedBuilder()
+			.setTitle("Whitelist Entries of **" + playerUUID + "**")
+			.setDescription("**Active Whitelist**: " + activeWhitelist)
+			.addField(field1)
+			.addField(field2)
+			.setColor(Color.decode("#809ae8"))
+			.setFooter(Bot.BOT.getName() + " | " + Bot.BOT.getId(), Bot.BOT.getAvatarUrl())
+			.build();
+		return embed;}
+	public static MessageEmbed getAllMinecraftFormatter(String discordUser, List<WhitelistEntry> entries){
+		StringBuilder userEntries = new StringBuilder();
+		StringBuilder ids = new StringBuilder();
+		String activeWhitelist = "no active whitelist";
+		for (WhitelistEntry entry : entries){
+			JsonObject response = MojangAPI.getPlayerInfo(entry.getPlayerUUID().toString());
+			if ((response != null) && response.get("username").getAsString()!= null ) {
+				userEntries.append(response.get("username").getAsString()).append("\n");
+				ids.append(entry.getEntryID().toString()).append("\n");
+				if (entry.getActive()){
+					activeWhitelist = response.get("username").getAsString() + "\n";
+				}}
+		}
+		MessageEmbed.Field field1 = new MessageEmbed.Field("All Related MC Users ", userEntries.toString(),true);
+		MessageEmbed.Field field2 = new MessageEmbed.Field("Entry IDs ", ids.toString(),true);
+		MessageEmbed embed = new EmbedBuilder()
+			.setTitle("Whitelist Entries of <@" + discordUser + "> ")
+			.setDescription("**Active Whitelist**: " + activeWhitelist)
+			.addField(field1)
+			.addField(field2)
+			.setColor(Color.decode("#809ae8"))
+			.setFooter(Bot.BOT.getName() + " | " + Bot.BOT.getId(), Bot.BOT.getAvatarUrl())
+			.build();
+		return embed;
 	}
 }
