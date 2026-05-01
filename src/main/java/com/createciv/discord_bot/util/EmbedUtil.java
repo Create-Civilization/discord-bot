@@ -125,7 +125,7 @@ public class EmbedUtil {
 		MessageEmbed.Field field1 = new MessageEmbed.Field("All Related MC Users ", userEntries.toString(),true);
 		MessageEmbed.Field field2 = new MessageEmbed.Field("Entry IDs ", ids.toString(),true);
 		MessageEmbed embed = new EmbedBuilder()
-			.setTitle("Whitelist Entries of <@" + discordUser + "> ")
+			.setTitle("Whitelist Entries of " + discordUser)
 			.setDescription("**Active Whitelist**: " + activeWhitelist)
 			.addField(field1)
 			.addField(field2)

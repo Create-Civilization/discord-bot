@@ -12,10 +12,7 @@ import com.createciv.discord_bot.util.database.managers.WhitelistTable;
 import com.createciv.discord_bot.util.database.types.WhitelistEntry;
 import com.google.gson.JsonObject;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -29,7 +26,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class AllWhitelists extends SlashCommand {
-	//TODO fix discord embed @'s
 	public AllWhitelists() {super("getallwhitelists", "see all whitelists for a user");
 		addOption(new Option(OptionType.USER,"discorduser","input a discorduser",false,false));
 		addOption(new Option(OptionType.STRING,"mcuser","input a mc user",false,false));
@@ -54,9 +50,21 @@ public class AllWhitelists extends SlashCommand {
 					interactionEvent.reply("No associated entries").queue();
 					return;
 				}
-				MessageEmbed embed = EmbedUtil.getAllMinecraftFormatter(discordUserID, entries);
-				logChannel.sendMessageEmbeds(embed).queue();
-				interactionEvent.reply("History Fetched").queue();
+				Guild guild = Bot.API.getGuildById(ConfigLoader.GUILD_ID);
+				guild.retrieveMemberById(discordUserID).queue(member -> {
+					if (member != null) {
+						String name = member.getNickname() != null
+							? member.getNickname()
+							: member.getUser().getName();
+						MessageEmbed embed = EmbedUtil.getAllMinecraftFormatter(name, entries);
+						logChannel.sendMessageEmbeds(embed).queue();
+					} else {
+						System.out.println("Member truly not found");
+					}
+				}, error -> {
+					interactionEvent.reply("user not found").setEphemeral(true).queue();
+				});
+				interactionEvent.reply("History Fetched").setEphemeral(true).queue();
 			} else if (playerID != null) {
 				JsonObject response = MojangAPI.getPlayerInfo(playerID);
 				if (response == null) {
