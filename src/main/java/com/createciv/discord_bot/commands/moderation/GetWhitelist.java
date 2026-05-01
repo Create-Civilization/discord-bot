@@ -41,7 +41,7 @@ public class GetWhitelist extends SlashCommand {
 			if (discordUserID != null){
 				try { entry = manager.getActive(discordUserID);} catch (SQLException e) {LoggingUtil.error(e);}
 				if (entry != null){
-					MessageEmbed discordEmbed = EmbedUtil.GetActiveEmbed(entry);
+					MessageEmbed discordEmbed = EmbedUtil.WhitelistEmbed(entry);
 					assert discordEmbed != null;
 					LoggingUtil.getLogChannel().sendMessageEmbeds(discordEmbed).queue();
 					interactionEvent.reply("whitelist fetched").queue();
@@ -56,7 +56,7 @@ public class GetWhitelist extends SlashCommand {
 					UUID playerUUID = UUID.fromString(response.get("uuid").getAsString());
 					try { entry = manager.getActive(playerUUID);} catch (SQLException e) {LoggingUtil.error(e);}
 					if (entry != null){
-						MessageEmbed discordEmbed = EmbedUtil.GetActiveEmbed(entry);
+						MessageEmbed discordEmbed = EmbedUtil.WhitelistEmbed(entry);
 						assert discordEmbed != null;
 						LoggingUtil.getLogChannel().sendMessageEmbeds(discordEmbed).queue();
 						interactionEvent.reply("whitelist fetched").queue();

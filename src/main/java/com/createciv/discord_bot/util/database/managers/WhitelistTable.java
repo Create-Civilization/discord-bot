@@ -70,7 +70,20 @@ public class WhitelistTable extends TableManager<WhitelistEntry> {
 			disconnect();
 		}
 	}
-//TODO make getAll and getActive for whitelists, getALL should be mod only
+	public WhitelistEntry get(int id) throws SQLException {
+		connect();
+		try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM whitelists WHERE ID = ?")) {
+			preparedStatement.setInt(1,id);
+			try (ResultSet resultSet = preparedStatement.executeQuery()){
+				if (resultSet.next()){
+					return new WhitelistEntry(resultSet);
+				}
+			}
+		} finally {
+			disconnect();
+		}
+		return null;
+	}
 	public WhitelistEntry getActive(int id) throws SQLException {
 		connect();
 		try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM whitelists WHERE discordID = ? AND active = True")) {

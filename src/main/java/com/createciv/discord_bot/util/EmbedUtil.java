@@ -57,7 +57,7 @@ public class EmbedUtil {
 			.build();
 		return embed;
 	}
-	public static MessageEmbed GetActiveEmbed(WhitelistEntry entry){
+	public static MessageEmbed WhitelistEmbed(WhitelistEntry entry){
 		User bot = Bot.BOT;
 		Guild guild = Bot.API.getGuildById(ConfigLoader.GUILD_ID);
 		Timestamp timeCreated = entry.getCreatedAt();
