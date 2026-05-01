@@ -26,6 +26,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 
 public class HelpTicketCreationListener extends ListenerAdapter {
+	//TODO add image compatability
 	@Override
 	public void onMessageReceived(MessageReceivedEvent msg){
 		if (msg.getAuthor().isBot()) return;

@@ -28,7 +28,6 @@ public class CloseTicket extends SlashCommand {
 		super("close","close this ticket");
 		addOption(new Option(OptionType.STRING,"reason","reason why ticket was closed, will be set to handled if not given",false,false));
 	}
-
 	@Override
 	public void execute(SlashCommandInteractionEvent interactionEvent){
 		JDA jda = interactionEvent.getJDA();

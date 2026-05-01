@@ -22,6 +22,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 
 public class ReplyToTicket extends SlashCommand {
+	//TODO make anon reply option
 	public ReplyToTicket() {
 		super("reply","reply to a ticket");
 		addOption(new Option(OptionType.STRING,"response","type your response here",true, false));

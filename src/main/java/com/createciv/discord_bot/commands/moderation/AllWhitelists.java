@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class AllWhitelists extends SlashCommand {
+	//TODO turn formatters into EmbedUtil functions and prolly just make this look better
 	private static final String logChannelID = ConfigLoader.LOG_CHANNEL_ID;
 	private static final TextChannel logChannel = Bot.API.getTextChannelById(logChannelID);
 	public AllWhitelists() {super("getallwhitelists", "see all whitelists for a user");
