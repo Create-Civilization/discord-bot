@@ -30,6 +30,9 @@ public class HelpTicketCreationListener extends ListenerAdapter {
 	@Override
 	public void onMessageReceived(MessageReceivedEvent msg){
 		if (msg.getAuthor().isBot()) return;
+		if (!Bot.DB_HEALTHY) {
+			return;
+		}
 		if (msg.isFromType(ChannelType.PRIVATE)){
 			JDA jda = msg.getJDA();
 			Guild guild = jda.getGuildById(ConfigLoader.GUILD_ID);

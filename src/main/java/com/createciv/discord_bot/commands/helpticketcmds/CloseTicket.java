@@ -1,5 +1,6 @@
 package com.createciv.discord_bot.commands.helpticketcmds;
 
+import com.createciv.discord_bot.Bot;
 import com.createciv.discord_bot.ConfigLoader;
 import com.createciv.discord_bot.classes.SlashCommand;
 import com.createciv.discord_bot.util.EmbedUtil;
@@ -30,6 +31,10 @@ public class CloseTicket extends SlashCommand {
 	}
 	@Override
 	public void execute(SlashCommandInteractionEvent interactionEvent){
+		if (!Bot.DB_HEALTHY) {
+			interactionEvent.reply("Database is not connected, try again later").queue();
+			return;
+		}
 		JDA jda = interactionEvent.getJDA();
 		User sender = interactionEvent.getUser();
 		Guild guild = jda.getGuildById(ConfigLoader.GUILD_ID);

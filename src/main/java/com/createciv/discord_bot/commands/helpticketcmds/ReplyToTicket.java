@@ -22,7 +22,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 
 public class ReplyToTicket extends SlashCommand {
-	//TODO make anon reply option
+	//TODO make anon reply option and have it update last active
 	public ReplyToTicket() {
 		super("reply","reply to a ticket");
 		addOption(new Option(OptionType.STRING,"response","type your response here",true, false));
@@ -31,6 +31,10 @@ public class ReplyToTicket extends SlashCommand {
 	public void execute(SlashCommandInteractionEvent interactionEvent) {
 		JDA jda = interactionEvent.getJDA();
 		User sender = interactionEvent.getUser();
+		if (!Bot.DB_HEALTHY) {
+			interactionEvent.reply("Database is not connected, try again later").queue();
+			return;
+		}
 		if (!interactionEvent.getChannel().getType().isThread()){
 			interactionEvent.reply("Enter a valid thread").setEphemeral(true).queue();}
 		ThreadChannel threadChannel = interactionEvent.getChannel().asThreadChannel();
