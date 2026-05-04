@@ -98,11 +98,13 @@ public class EmbedUtil {
 			if (entry.getActive()){
 				activeWhitelist = "<@" + entry.getDiscordID() + ">\n";
 			}}
+		MessageEmbed.Field activeField = new MessageEmbed.Field("**Active Whitelist:**", activeWhitelist,false);
 		MessageEmbed.Field field1 = new MessageEmbed.Field("All Related Discord Users ", userEntries.toString(),true);
 		MessageEmbed.Field field2 = new MessageEmbed.Field("Entry IDs ", ids.toString(),true);
 		MessageEmbed embed = new EmbedBuilder()
 			.setTitle("Whitelist Entries of **" + playerUUID + "**")
-			.setDescription("**Active Whitelist**: " + activeWhitelist)
+			.setDescription("**Total Whitelists**: " + String.valueOf(entries.size()))
+			.addField(activeField)
 			.addField(field1)
 			.addField(field2)
 			.setColor(Color.decode("#809ae8"))
@@ -122,11 +124,13 @@ public class EmbedUtil {
 					activeWhitelist = response.get("username").getAsString() + "\n";
 				}}
 		}
+		MessageEmbed.Field activeWhitelistField = new MessageEmbed.Field("**Active Whitelist:**", activeWhitelist,false);
 		MessageEmbed.Field field1 = new MessageEmbed.Field("All Related MC Users ", userEntries.toString(),true);
 		MessageEmbed.Field field2 = new MessageEmbed.Field("Entry IDs ", ids.toString(),true);
 		MessageEmbed embed = new EmbedBuilder()
 			.setTitle("Whitelist Entries of " + discordUser)
-			.setDescription("**Active Whitelist**: " + activeWhitelist)
+			.setDescription("**Total Whitelists**: " + String.valueOf(entries.size()))
+			.addField(activeWhitelistField)
 			.addField(field1)
 			.addField(field2)
 			.setColor(Color.decode("#809ae8"))
