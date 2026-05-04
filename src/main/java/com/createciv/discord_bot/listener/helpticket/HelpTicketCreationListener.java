@@ -50,7 +50,7 @@ public class HelpTicketCreationListener extends ListenerAdapter {
 					threadChannel.sendMessageEmbeds(messageToSend).queue();
 				}
 				else { //create ticket - start by making embed msg and thread
-					MessageEmbed startingEmbed = EmbedUtil.StarterTicketChannelEmbed(sender);
+					MessageEmbed startingEmbed = EmbedUtil.StarterTicketChannelEmbed(sender,"open ticket");
 					TextChannel helpTicketChannel = guild.getTextChannelById(ConfigLoader.HELP_TICKET_CHANNEL_ID);
 					if (helpTicketChannel == null) {return;}
 					helpTicketChannel.sendMessageEmbeds(startingEmbed).queue(starter -> {
@@ -70,6 +70,8 @@ public class HelpTicketCreationListener extends ListenerAdapter {
 									"To respond to this ticket use /reply every other message will be ignored. To close the ticket do /close this ticket will automatically close after 7 days",
 									Color.gray)).queue();
 							threadChannel.sendMessageEmbeds(EmbedUtil.InternalTextTicketMessage(sender,mssg,"Message Received",Timestamp.from(Instant.now()),"#8CC084")).queue();
+							String newDescription = threadChannel.getJumpUrl();
+							starter.editMessageEmbeds(EmbedUtil.StarterTicketChannelEmbed(sender,newDescription)).queue();
 						});
 					});
 				}

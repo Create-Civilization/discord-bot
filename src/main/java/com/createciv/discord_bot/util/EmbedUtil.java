@@ -31,12 +31,12 @@ public class EmbedUtil {
 		return embed;
 	}
 	//TODO make it so it takes optional input of link to help ticket thread
-	public static MessageEmbed StarterTicketChannelEmbed(User sender){
+	public static MessageEmbed StarterTicketChannelEmbed(User sender,String description){
 		String senderID = sender.getId();
 		String username = sender.getName();
 		MessageEmbed starter = new EmbedBuilder()
 			.setTitle("Help Ticket for " + username)
-			.setDescription("open ticket")
+			.setDescription(description)
 			.setColor(Color.decode("#8CC084"))
 			.setFooter(username + " | " + senderID, sender.getAvatarUrl())
 			.build();
